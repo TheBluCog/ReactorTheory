@@ -1,3 +1,10 @@
+![License](https://img.shields.io/badge/license-GPLv3-blue.svg)
+![Vercel](https://vercelbadge.vercel.app/api/TheBluCog/ReactorTheory)
+![Status](https://img.shields.io/badge/status-Active-brightgreen)
+![Visitors](https://komarev.com/ghpvc/?username=TheBluCog&color=orange)
+![Built With Love](https://img.shields.io/badge/Built%20With-%E2%9D%A4-red)
+
+
 echo "# 🧠 Reactor Theory — DadMode Vault
 
 Welcome to the official **Reactor Theory** source code vault, activated by [George Dunphy](https://github.com/TheBluCog).
