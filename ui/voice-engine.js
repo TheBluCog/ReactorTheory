@@ -1,10 +1,12 @@
 export class VoiceEngine {
-  constructor({ mode = 'silent', profile = 'joshua', hum = false, locale = 'en-US', cooldownMs = 1400 } = {}) {
+  constructor({ mode = 'silent', profile = 'joshua', hum = false, locale = 'en-US', cooldownMs = 1400, autoSwitch = true } = {}) {
     this.mode = mode;
     this.profile = profile;
+    this.baseProfile = profile;
     this.locale = locale;
     this.humEnabled = hum;
     this.cooldownMs = cooldownMs;
+    this.autoSwitch = autoSwitch;
     this.audioCtx = null;
     this.humOsc = null;
     this.humGain = null;
@@ -16,6 +18,7 @@ export class VoiceEngine {
   arm(mode = 'cinematic', profile = this.profile) {
     this.mode = mode;
     this.profile = profile;
+    this.baseProfile = profile;
     this.initAudio();
     if (this.humEnabled) this.startHum();
   }
@@ -28,10 +31,27 @@ export class VoiceEngine {
 
   setProfile(profile) {
     this.profile = profile;
+    this.baseProfile = profile;
+  }
+
+  setAutoSwitch(enabled = true) {
+    this.autoSwitch = enabled;
   }
 
   setLocale(locale) {
     this.locale = locale;
+  }
+
+  resolveProfileForEvent(type) {
+    if (!this.autoSwitch) return this.profile;
+    if (this.mode === 'executive') {
+      return type === 'HARD_BLOCK' ? 'auditor' : 'corporate';
+    }
+    return {
+      PASS: 'joshua',
+      SOFT_FRICTION: 'oracle',
+      HARD_BLOCK: 'chuck'
+    }[type] || this.baseProfile || 'joshua';
   }
 
   initAudio() {
@@ -44,7 +64,7 @@ export class VoiceEngine {
     return { PASS: 1, SOFT_FRICTION: 2, HARD_BLOCK: 3 }[type] || 1;
   }
 
-  pickVoice() {
+  pickVoice(profile = this.profile) {
     if (typeof speechSynthesis === 'undefined') return null;
     const voices = speechSynthesis.getVoices();
     const sameLocale = voices.filter(v => v.lang?.toLowerCase().startsWith(this.locale.toLowerCase().slice(0, 2)));
@@ -53,11 +73,13 @@ export class VoiceEngine {
     const profilePatterns = {
       joshua: /daniel|google|microsoft|male|english|david|mark/i,
       chuck: /alex|daniel|david|mark|male/i,
+      oracle: /samantha|victoria|google|english|serena/i,
+      auditor: /zira|microsoft|google|english|samantha/i,
       corporate: /samantha|zira|google|microsoft|english/i,
       neutral: /google|microsoft|english/i
     };
 
-    const pattern = profilePatterns[this.profile] || profilePatterns.neutral;
+    const pattern = profilePatterns[profile] || profilePatterns.neutral;
     return pool.find(v => pattern.test(v.name)) || pool[0] || null;
   }
 
@@ -71,7 +93,7 @@ export class VoiceEngine {
     };
   }
 
-  lineFor(type, findings = []) {
+  lineFor(type, findings = [], profile = this.profile) {
     const { threat, detail } = this.threatSummary(findings);
 
     const lines = {
@@ -83,7 +105,17 @@ export class VoiceEngine {
       chuck: {
         PASS: 'Clean pass. System holds.',
         SOFT_FRICTION: `Friction detected: ${threat}. Watching the boundary.`,
-        HARD_BLOCK: `Hard block. ${threat}. Request terminated.`
+        HARD_BLOCK: `Stop. ${threat}. Request terminated. Boundary holds.`
+      },
+      oracle: {
+        PASS: 'All signals align. The path is clear.',
+        SOFT_FRICTION: `Disturbance detected. ${threat}. ${detail}. Probabilities shifting. Continue under observation.`,
+        HARD_BLOCK: `The path collapses. ${threat}. Execution must not proceed.`
+      },
+      auditor: {
+        PASS: 'Execution validated within policy bounds.',
+        SOFT_FRICTION: `Advisory condition logged: ${threat}. ${detail}.`,
+        HARD_BLOCK: `Policy violation confirmed: ${threat}. Request rejected and logged.`
       },
       corporate: {
         PASS: 'Execution validated. No material control exception detected.',
@@ -97,18 +129,20 @@ export class VoiceEngine {
       }
     };
 
-    const persona = this.mode === 'executive' ? 'corporate' : this.profile;
+    const persona = this.mode === 'executive' && !this.autoSwitch ? 'corporate' : profile;
     return (lines[persona] || lines.neutral)[type] || 'Telemetry event received.';
   }
 
-  voiceSettings() {
+  voiceSettings(profile = this.profile) {
     const settings = {
       joshua: { rate: 0.84, pitch: 0.66, volume: 0.94 },
       chuck: { rate: 0.9, pitch: 0.58, volume: 0.96 },
+      oracle: { rate: 0.78, pitch: 0.74, volume: 0.9 },
+      auditor: { rate: 0.96, pitch: 0.86, volume: 0.56 },
       corporate: { rate: 0.96, pitch: 0.86, volume: 0.56 },
       neutral: { rate: 0.92, pitch: 0.82, volume: 0.7 }
     };
-    return this.mode === 'executive' ? settings.corporate : (settings[this.profile] || settings.neutral);
+    return this.mode === 'executive' && !this.autoSwitch ? settings.corporate : (settings[profile] || settings.neutral);
   }
 
   shouldSpeak(event) {
@@ -125,13 +159,14 @@ export class VoiceEngine {
     if (!this.shouldSpeak(event)) return;
 
     const p = this.priority(event.type);
+    const activeProfile = this.resolveProfileForEvent(event.type);
     if (p >= this.lastPriority || p === 3) {
       speechSynthesis.cancel();
     }
 
-    const utterance = new SpeechSynthesisUtterance(this.lineFor(event.type, event.metadata || []));
-    const voice = this.pickVoice();
-    const settings = this.voiceSettings();
+    const utterance = new SpeechSynthesisUtterance(this.lineFor(event.type, event.metadata || [], activeProfile));
+    const voice = this.pickVoice(activeProfile);
+    const settings = this.voiceSettings(activeProfile);
     if (voice) utterance.voice = voice;
     utterance.lang = this.locale;
     utterance.rate = settings.rate;
@@ -139,6 +174,7 @@ export class VoiceEngine {
     utterance.volume = settings.volume;
 
     speechSynthesis.speak(utterance);
+    this.profile = activeProfile;
     this.lastSpokenId = event.id;
     this.lastSpokenAt = Date.now();
     this.lastPriority = p;
@@ -149,14 +185,15 @@ export class VoiceEngine {
     this.initAudio();
     if (!this.audioCtx) return;
 
+    const activeProfile = this.resolveProfileForEvent(type);
     const osc = this.audioCtx.createOscillator();
     const gain = this.audioCtx.createGain();
     const pan = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
 
     const cinematic = {
       PASS: { freq: 480, pan: -0.35, type: 'sine', gain: 0.14, duration: 0.34 },
-      SOFT_FRICTION: { freq: 260, pan: 0, type: 'triangle', gain: 0.16, duration: 0.42 },
-      HARD_BLOCK: { freq: 120, pan: 0.35, type: 'sawtooth', gain: 0.2, duration: 0.55 }
+      SOFT_FRICTION: { freq: 300, pan: 0, type: 'triangle', gain: 0.16, duration: 0.42 },
+      HARD_BLOCK: { freq: 95, pan: 0.35, type: 'sawtooth', gain: 0.22, duration: 0.58 }
     }[type] || { freq: 320, pan: 0, type: 'sine', gain: 0.12, duration: 0.35 };
 
     const executive = {
@@ -181,6 +218,7 @@ export class VoiceEngine {
 
     osc.start();
     osc.stop(this.audioCtx.currentTime + cfg.duration + 0.03);
+    this.profile = activeProfile;
   }
 
   startHum() {
@@ -189,7 +227,8 @@ export class VoiceEngine {
     if (!this.audioCtx) return;
     this.humOsc = this.audioCtx.createOscillator();
     this.humGain = this.audioCtx.createGain();
-    this.humOsc.frequency.value = this.profile === 'chuck' ? 52 : 58;
+    const activeProfile = this.profile;
+    this.humOsc.frequency.value = activeProfile === 'chuck' ? 52 : activeProfile === 'oracle' ? 64 : 58;
     this.humOsc.type = 'sine';
     this.humGain.gain.value = this.mode === 'executive' ? 0.005 : 0.018;
     this.humOsc.connect(this.humGain).connect(this.audioCtx.destination);
@@ -209,6 +248,9 @@ export class VoiceEngine {
     const levels = this.mode === 'executive'
       ? { PASS: 0.004, SOFT_FRICTION: 0.008, HARD_BLOCK: 0.014 }
       : { PASS: 0.018, SOFT_FRICTION: 0.04, HARD_BLOCK: 0.075 };
+    const activeProfile = this.resolveProfileForEvent(type);
+    const humHz = activeProfile === 'chuck' ? 52 : activeProfile === 'oracle' ? 64 : 58;
+    if (this.humOsc) this.humOsc.frequency.setTargetAtTime(humHz, this.audioCtx.currentTime, 0.25);
     this.humGain.gain.setTargetAtTime(levels[type] || 0.01, this.audioCtx.currentTime, 0.25);
   }
 
