@@ -1,0 +1,27 @@
+body { margin:0; background:#05070d; color:#e6f1ff; font-family:Inter,system-ui,monospace; }
+.shell { padding:24px; display:grid; gap:24px; }
+.hero-panel { display:flex; justify-content:space-between; align-items:center; }
+.eyebrow { font-size:12px; color:#6b7cff; letter-spacing:2px; }
+h1 { margin:4px 0; }
+.subtitle { color:#9fb0d4; }
+.status-orb { width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#111; box-shadow:0 0 20px #0ff; }
+.status-orb.pass { box-shadow:0 0 25px #00ff99; }
+.status-orb.soft { box-shadow:0 0 25px #ffaa00; }
+.status-orb.block { box-shadow:0 0 25px #ff0033; }
+.metrics-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+.metric { padding:16px; border-radius:12px; background:#0d111c; }
+.metric.pass { border:1px solid #00ff99; }
+.metric.soft { border:1px solid #ffaa00; }
+.metric.block { border:1px solid #ff0033; }
+.console-grid { display:grid; grid-template-columns:2fr 1fr; gap:16px; }
+.panel { background:#0d111c; border-radius:12px; padding:16px; }
+.panel-head { display:flex; justify-content:space-between; margin-bottom:12px; }
+.event-stream { max-height:300px; overflow:auto; }
+.event { padding:8px; margin-bottom:6px; border-left:4px solid #444; }
+.event.pass { border-color:#00ff99; }
+.event.soft { border-color:#ffaa00; }
+.event.block { border-color:#ff0033; }
+.threat { padding:8px; margin-bottom:6px; border-left:4px solid #444; }
+.threat.soft { border-color:#ffaa00; }
+.threat.block { border-color:#ff0033; }
+.operator-panel pre { background:#000; padding:12px; border-radius:8px; }
