@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JOSHUA · Wicked Engine</title>
+  <link rel="stylesheet" href="./joshua-wicked-engine.css" />
+</head>
+<body>
+  <div class="screen-noise"></div>
+  <main class="wicked-shell">
+    <header class="wicked-header">
+      <div>
+        <p class="kicker">J.O.S.H.U.A. · WICKED ENGINE</p>
+        <h1>GOVERNANCE WAR ROOM</h1>
+        <p class="subline">RT9.1 telemetry · WORM chain · ZTB-NATOHEX boundary</p>
+      </div>
+      <div class="threat-core" id="threatCore"><span>ONLINE</span></div>
+    </header>
+
+    <section class="wicked-grid">
+      <article class="wicked-card pass"><span>PASS</span><strong id="jPass">0</strong></article>
+      <article class="wicked-card soft"><span>SOFT FRICTION</span><strong id="jSoft">0</strong></article>
+      <article class="wicked-card block"><span>HARD BLOCK</span><strong id="jBlock">0</strong></article>
+    </section>
+
+    <section class="war-layout">
+      <article class="terminal-panel">
+        <h2>EXECUTION FLASH STREAM</h2>
+        <div id="jStream" class="j-stream"></div>
+      </article>
+      <article class="terminal-panel side">
+        <h2>JOSHUA ANALYSIS</h2>
+        <div id="jThreats" class="j-threats"></div>
+      </article>
+    </section>
+
+    <section class="terminal-panel command">
+      <h2>WICKED ENGINE CONSOLE</h2>
+      <pre id="jConsole">JOSHUA INITIALIZING...</pre>
+    </section>
+  </main>
+
+<script>
+const jStream = document.getElementById('jStream');
+const jThreats = document.getElementById('jThreats');
+const jConsole = document.getElementById('jConsole');
+const jPass = document.getElementById('jPass');
+const jSoft = document.getElementById('jSoft');
+const jBlock = document.getElementById('jBlock');
+const core = document.getElementById('threatCore');
+
+function styleOf(type){ return type === 'PASS' ? 'pass' : type === 'SOFT_FRICTION' ? 'soft' : 'block'; }
+
+function render(events){
+  let pass=0, soft=0, block=0;
+  events.forEach(e => { if(e.type==='PASS') pass++; if(e.type==='SOFT_FRICTION') soft++; if(e.type==='HARD_BLOCK') block++; });
+  jPass.textContent = pass; jSoft.textContent = soft; jBlock.textContent = block;
+  const latest = events[0];
+  core.className = 'threat-core ' + (latest ? styleOf(latest.type) : '');
+
+  jStream.innerHTML = events.map(e => `<div class="flash ${styleOf(e.type)}"><b>${e.type}</b><span>${new Date(e.ts).toLocaleTimeString()}</span><small>${e.entry_hash?.slice(0,18) || 'NOHASH'}</small></div>`).join('');
+
+  const threats = events.flatMap(e => (e.metadata || []).map(m => ({...m, parent:e.type})));
+  jThreats.innerHTML = threats.length ? threats.slice(0,10).map(t => `<div class="threat ${t.severity === 'HARD' ? 'block' : 'soft'}"><b>${t.class}</b><span>${t.severity}</span><small>${t.detail || 'drift vector classified'}</small></div>`).join('') : '<div class="quiet">NO ACTIVE DRIFT. SYSTEM COHERENCE NOMINAL.</div>';
+
+  jConsole.textContent = [
+    'JOSHUA: WICKED ENGINE ONLINE',
+    'MODE: CINEMATIC GOVERNANCE / DEMO WAR ROOM',
+    'BOUNDARY: ZTB-NATOHEX-1.0',
+    `LAST_DECISION: ${latest?.type || 'NONE'}`,
+    `LATEST_WORM_HASH: ${latest?.entry_hash || 'NONE'}`,
+    `PREVIOUS_CHAIN_HASH: ${latest?.prev_hash || 'GENESIS'}`,
+    `EVENT_BUFFER: ${events.length}`,
+    'COMMAND: GOVERN();'
+  ].join('\n');
+}
+
+async function poll(){
+  try { const r = await fetch('/api/ztb/audit-stream'); render(await r.json()); }
+  catch { jConsole.textContent = 'JOSHUA: AUDIT STREAM UNAVAILABLE'; }
+}
+poll(); setInterval(poll, 1000);
+</script>
+</body>
+</html>
