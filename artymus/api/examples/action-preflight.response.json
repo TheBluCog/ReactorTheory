@@ -1,0 +1,12 @@
+{
+  "decision": "PASS",
+  "uap_score": 2.95,
+  "drift_score": 0.18,
+  "intent_alignment": 0.91,
+  "control_score": 0.86,
+  "proof_status": "BOUND",
+  "confidence": 0.89,
+  "mode": "PASS",
+  "reason": "State is aligned, drift below threshold, proof valid.",
+  "receipt_id": "rcpt_20260426_0001"
+}
