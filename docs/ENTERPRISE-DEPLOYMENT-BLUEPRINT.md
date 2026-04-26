@@ -1,54 +1,66 @@
-# RT9.1 + Resonance Engine Enterprise Deployment Blueprint
+# Resonance Engine + RT9.1 Enterprise Deployment Blueprint
 
 Status: Enterprise Blueprint
-Version: 1.0
+Version: 1.1 — Governance-First Architecture
 Effective Date: 2026-04-26
 
 ## 1. Executive Summary
 
-RT9.1 + Resonance Engine is an enterprise AI governance control plane designed to secure agentic AI systems before execution. It combines zero-trust API boundaries, cryptographic request validation, threat classification, WORM audit telemetry, predictive agents, adaptive learning, policy suggestions, operator approval, and controlled policy deployment.
+The Resonance Engine + RT9.1 stack is an enterprise AI governance control plane designed to secure agentic AI systems before execution.
+
+The Resonance Engine is the sovereign governance core. It validates truth, evaluates coherence, classifies threat conditions, learns from drift patterns, and produces authoritative policy intelligence.
+
+RT9.1 is the execution architecture. It carries out Resonance Engine decisions through zero-trust API enforcement, cryptographic request validation, execution gating, WORM audit telemetry, operator approval, and controlled policy deployment.
 
 The system follows a simple doctrine:
 
 ```text
-Trust before intelligence.
-Proof before execution.
+Governance before execution.
+Truth before action.
+Proof before trust.
 Human approval before policy mutation.
 ```
 
 ## 2. Reference Architecture
 
 ```text
-Client / Agent / LLM Tool
+Resonance Engine (Sovereign Core)
+  ├── Truth Validation
+  ├── Coherence Evaluation
+  ├── Threat Intelligence
+  ├── Adaptive Learning
+  └── Policy Intelligence
         ↓
-ZTB Client SDK
+Authoritative Governance State
         ↓
-API Gateway / WAF / Rate Limiter
+RT9.1 Execution Architecture
+  ├── ZTB-NATOHEX Gateway (Enforcement Boundary)
+  ├── Deterministic Validation Pipeline
+  ├── Execution Control (PASS / SOFT_FRICTION / HARD_BLOCK)
+  ├── Observability Layer
+  ├── Operator Approval Workflow
+  ├── Controlled Policy Deployment Engine
+  └── WORM Audit Logging
         ↓
-ZTB-NATOHEX Gateway
-        ↓
-Threat Detection Engine
-        ↓
-WORM Audit Log
-        ↓
-Adaptive Learning + Predictive Agents
-        ↓
-Policy Suggestion Engine
-        ↓
-Operator Approval Workflow
-        ↓
-Controlled Policy Deployment Engine
+Client / Agent / LLM Tool Systems
         ↓
 Dashboard Layer
    ├── CORPMODE Executive Dashboard
    └── JOSHUA Wicked Engine Demo UI
 ```
 
+The Resonance Engine is the sovereign governance core of the system. It defines truth, evaluates coherence, and produces authoritative policy decisions.
+
+RT9.1 serves as the execution architecture that enforces those decisions at the boundary.
+
+The gateway does not determine truth. The gateway enforces governance decisions produced by the Resonance Engine.
+
 ## 3. Azure-First Deployment Mapping
 
 | Layer | Azure Service | Purpose |
 |---|---|---|
-| Edge/API | Azure API Management | API routing, throttling, auth policies |
+| Sovereign Core | Azure Container Apps / App Service | Resonance Engine policy and governance intelligence |
+| Execution Boundary | Azure API Management | RT9.1 routing, throttling, auth policies |
 | Network Protection | Azure Front Door + WAF | DDoS/WAF boundary |
 | Identity | Microsoft Entra ID | Operator auth, RBAC, enterprise SSO |
 | Secrets | Azure Key Vault | HMAC secrets, operator signing keys |
@@ -63,9 +75,30 @@ Dashboard Layer
 
 ## 4. Core Security Controls
 
-### 4.1 Zero-Trust Boundary
+### 4.1 Governance-First Control Model
 
-All external requests must pass:
+```text
+1. Resonance Engine determines:
+   - Truth validity
+   - System coherence
+   - Threat classification
+   - Drift interpretation
+   - Policy decisions
+
+2. RT9.1 enforces:
+   - Request validation
+   - Boundary protection
+   - Execution gating
+   - Operator approval flow
+   - Policy deployment control
+   - WORM audit logging
+```
+
+### 4.2 Enforcement Boundary
+
+All external requests are evaluated against governance policy produced by the Resonance Engine.
+
+The ZTB-NATOHEX Gateway enforces:
 
 - tenant validation
 - client identity validation
@@ -77,7 +110,22 @@ All external requests must pass:
 - blocked-term inspection
 - rate-limit check
 
-### 4.2 Client Isolation
+The ZTB-NATOHEX Gateway does not:
+
+- determine truth
+- generate governance policy
+- replace the Resonance Engine
+- make sovereign coherence decisions
+
+```text
+GOVERNANCE PRECEDES EXECUTION
+
+Resonance Engine = decision authority
+RT9.1 = execution authority
+Gateway = enforcement boundary
+```
+
+### 4.3 Client Isolation
 
 Each enterprise tenant receives:
 
@@ -87,7 +135,7 @@ Each enterprise tenant receives:
 - tenant-specific capability scopes
 - tenant-specific audit partition
 
-### 4.3 Secret Handling
+### 4.4 Secret Handling
 
 No production secret may be stored in source control.
 
@@ -101,19 +149,21 @@ ZTB_ALLOWED_TENANTS
 
 Production storage target: Azure Key Vault.
 
-### 4.4 Operator Approval
+### 4.5 Operator Approval
 
-AI may recommend policy changes but must not apply them autonomously.
+The Resonance Engine may recommend policy changes but must not apply them autonomously.
 
 ```text
-AI suggests.
-Human approves.
+Resonance Engine suggests.
+Human operator approves.
 Policy engine stages.
-Controlled deployment activates.
+RT9.1 deployment layer activates.
 WORM logs everything.
 ```
 
 ## 5. WORM Audit Model
+
+The WORM audit model records governance decisions and execution outcomes. It is not the brain of the system; it is the evidence layer that proves what the Resonance Engine decided and what RT9.1 enforced.
 
 Audit events are append-only, hash-linked, and immutable.
 
@@ -186,7 +236,7 @@ Recommended production storage:
 
 ## 8. API Gateway Policy Requirements
 
-Gateway must enforce:
+The gateway must enforce governance policy produced by the Resonance Engine:
 
 ```text
 deny by default
@@ -199,6 +249,8 @@ no plaintext deprecated schema terms
 rate limit per tenant + route
 ```
 
+The gateway is an enforcement boundary, not the sovereign governance core.
+
 ## 9. Enterprise Demo Storyline
 
 ### CORPMODE
@@ -208,7 +260,7 @@ Use for executives, procurement, legal, banking, and compliance.
 Message:
 
 ```text
-This is a governed AI execution control plane with auditability, human approval, and policy separation.
+This is a governance-first AI control plane where the Resonance Engine determines policy and RT9.1 enforces it with auditability, human approval, and controlled deployment.
 ```
 
 ### JOSHUA Wicked Engine
@@ -218,15 +270,17 @@ Use for vision demos and technical differentiation.
 Message:
 
 ```text
-The system sees execution state, predicts drift, blocks unsafe requests, and narrates its reasoning.
+The Resonance Engine sees truth and coherence, predicts drift, and produces governance decisions. RT9.1 enforces those decisions before unsafe action can execute.
 ```
 
 ## 10. Buyer-Facing Value Proposition
 
-RT9.1 + Resonance Engine helps enterprises answer:
+The Resonance Engine + RT9.1 stack helps enterprises answer:
 
 - Who authorized this AI action?
-- What did the system see before acting?
+- What governance state existed before execution?
+- What did the Resonance Engine determine about truth, coherence, and drift?
+- Did RT9.1 enforce the correct boundary decision?
 - Was the request valid, stale, replayed, or malformed?
 - Was drift detected before execution?
 - Was a policy change suggested, approved, staged, and deployed?
@@ -234,16 +288,30 @@ RT9.1 + Resonance Engine helps enterprises answer:
 
 ## 11. Production Boundary Statement
 
-Public schemas, demos, SDKs, dashboards, and documentation are non-executable without the cryptographic gateway, tenant identity, signed payloads, valid nonces, salted routes, and server-side policy engine.
+Public schemas, demos, SDKs, dashboards, and documentation are non-executable without the Resonance Engine governance state, cryptographic gateway, tenant identity, signed payloads, valid nonces, salted routes, and server-side policy engine.
 
 Leaked schemas are dead artifacts.
 
 ## 12. Final Architecture Classification
 
 ```text
-RT9.1 + Resonance Engine = Governed AI Control Plane
-Security posture = Zero-trust pre-execution validation
+Resonance Engine = Sovereign governance core
+RT9.1 = Execution architecture
+ZTB-NATOHEX Gateway = Enforcement boundary
+Security posture = Zero-trust pre-execution enforcement
 Audit posture = WORM/hash-linked evidence
 Governance posture = Human-in-the-loop policy deployment
 Enterprise status = Pre-production hardened; Azure-ready blueprint
 ```
+
+## 13. Governance-First Architecture Lock
+
+This architecture is governance-first, not data-first.
+
+Intelligence defines policy.
+Execution enforces policy.
+
+The Resonance Engine is the sovereign core.
+RT9.1 is the execution system.
+
+This separation is the foundation of safe, scalable AI.
