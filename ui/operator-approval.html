@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>RT9.1 Operator Approval Panel</title>
+<style>
+body{font-family:Arial;background:#0a0f1f;color:#fff;margin:0;padding:20px}
+.card{background:#111;padding:16px;margin-bottom:12px;border-radius:8px}
+button{margin-right:8px;padding:8px 12px}
+.approve{background:#0a8f4a;color:#fff}
+.reject{background:#b00020;color:#fff}
+</style>
+</head>
+<body>
+<h1>Operator Approval Panel</h1>
+<div id="suggestions"></div>
+<script>
+async function fetchSuggestions(){
+  const res = await fetch('/api/ztb/policy-suggestions');
+  const data = await res.json();
+  render([data]);
+}
+
+function render(items){
+  const el = document.getElementById('suggestions');
+  el.innerHTML = items.map(s=>`
+    <div class="card">
+      <b>Threat:</b> ${s.top_threat}<br/>
+      <b>Action:</b> ${s.suggestion.action}<br/>
+      <b>Risk:</b> ${Math.round(s.risk*100)}%<br/>
+      <p>${s.suggestion.rationale}</p>
+      <button class="approve" onclick="decide('APPROVED')">Approve</button>
+      <button class="reject" onclick="decide('REJECTED')">Reject</button>
+    </div>
+  `).join('');
+}
+
+async function decide(state){
+  await fetch('/api/ztb/operator-decision',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      operator:'demo_operator',
+      action:'policy_update',
+      approval_state:state
+    })
+  });
+  alert('Decision '+state);
+}
+
+fetchSuggestions();
+</script>
+</body>
+</html>
