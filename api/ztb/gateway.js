@@ -1,4 +1,6 @@
 import crypto from 'crypto';
+import { appendWormEvent, EVENT_TYPES } from './audit.js';
+import { classifyThreat, hasHardThreat, hasSoftThreat } from './threat-detection.js';
 
 const SECRET = process.env.ZTB_SECRET || 'dev_secret_change_me';
 const NONCE_CACHE = new Set();
@@ -20,7 +22,7 @@ function hmac(data) {
 
 function verifySignature(body, sig) {
   const computed = hmac(JSON.stringify(body.payload) + body.nonce + body.ts);
-  return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(computed));
+  return sig === computed;
 }
 
 function isReplay(nonce) {
@@ -40,38 +42,49 @@ function deriveRoute(clientId, capability, epoch) {
 }
 
 export default async function handler(req, res) {
-  try {
-    const body = req.body;
+  const now = Date.now();
+  const body = req.body;
 
-    if (!body || !body.nonce || !body.ts || !body.proof) {
-      return res.status(403).json({ status: 'BLOCK' });
-    }
+  const replayed = body?.nonce ? isReplay(body.nonce) : false;
+  const blockedTerms = blockedTermsPresent(body);
 
-    if (blockedTermsPresent(body)) {
-      return res.status(403).json({ status: 'BLOCK' });
-    }
+  const signatureFailed = body?.proof ? !verifySignature(body, body.proof.sig) : true;
 
-    if (isReplay(body.nonce)) {
-      return res.status(403).json({ status: 'BLOCK' });
-    }
+  const expectedRoute = body?.cid ? deriveRoute(body.cid, 'exec', body.epoch) : null;
+  const routeMismatch = expectedRoute ? !req.url.includes(expectedRoute) : true;
 
-    const now = Date.now();
-    if (Math.abs(now - body.ts) > 30000) {
-      return res.status(403).json({ status: 'BLOCK' });
-    }
+  const findings = classifyThreat({
+    body,
+    url: req.url,
+    now,
+    blockedTermsPresent: blockedTerms,
+    replayed,
+    signatureFailed,
+    routeMismatch
+  });
 
-    if (!verifySignature(body, body.proof.sig)) {
-      return res.status(403).json({ status: 'BLOCK' });
-    }
+  let decision = EVENT_TYPES.PASS;
 
-    const expectedRoute = deriveRoute(body.cid, 'exec', body.epoch);
-    if (!req.url.includes(expectedRoute)) {
-      return res.status(403).json({ status: 'BLOCK' });
-    }
+  if (hasHardThreat(findings)) {
+    decision = EVENT_TYPES.HARD_BLOCK;
+  } else if (hasSoftThreat(findings)) {
+    decision = EVENT_TYPES.SOFT_FRICTION;
+  }
 
-    return res.status(200).json({ status: 'PASS' });
+  appendWormEvent({
+    type: decision,
+    cid: body?.cid,
+    route: req.url,
+    metadata: findings
+  });
 
-  } catch (e) {
+  if (decision === EVENT_TYPES.HARD_BLOCK) {
     return res.status(403).json({ status: 'BLOCK' });
   }
+
+  if (decision === EVENT_TYPES.SOFT_FRICTION) {
+    return res.status(200).json({ status: 'SOFT_FRICTION' });
+  }
+
+  return res.status(200).json({ status: 'PASS' });
 }
