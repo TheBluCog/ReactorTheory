@@ -1,0 +1,14 @@
+{
+  "name": "reactor-theory-ztb-gateway",
+  "version": "9.1.0",
+  "private": true,
+  "type": "module",
+  "description": "RT9.1 ZTB-NATOHEX API gateway enforcement layer.",
+  "scripts": {
+    "start": "node api/ztb/gateway.js",
+    "test:gateway": "node api/ztb/selftest.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
