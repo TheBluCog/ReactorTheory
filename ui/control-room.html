@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RT9.1 Resonance Engine Control Room</title>
+  <link rel="stylesheet" href="./control-room.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="hero-panel">
+      <div class="brand-block">
+        <p class="eyebrow">RT9.1 · RESONANCE ENGINE · ZTB-NATOHEX</p>
+        <h1>Enterprise Governance Control Room</h1>
+        <p class="subtitle">WORM audit telemetry, threat classification, and execution boundary state in real time.</p>
+      </div>
+      <div class="status-orb" id="statusOrb"><span>SYNC</span></div>
+    </section>
+
+    <section class="metrics-grid">
+      <article class="metric pass"><span>PASS</span><strong id="passCount">0</strong></article>
+      <article class="metric soft"><span>SOFT_FRICTION</span><strong id="softCount">0</strong></article>
+      <article class="metric block"><span>HARD_BLOCK</span><strong id="blockCount">0</strong></article>
+      <article class="metric hash"><span>LATEST HASH</span><strong id="latestHash">—</strong></article>
+    </section>
+
+    <section class="console-grid">
+      <article class="panel worm-panel">
+        <div class="panel-head"><h2>WORM Flash Stream</h2><span id="heartbeat">LIVE</span></div>
+        <div id="eventStream" class="event-stream"></div>
+      </article>
+
+      <article class="panel threat-panel">
+        <div class="panel-head"><h2>Threat Classification</h2><span>AUTO</span></div>
+        <div id="threatList" class="threat-list"></div>
+      </article>
+    </section>
+
+    <section class="panel operator-panel">
+      <div class="panel-head"><h2>Operator Console</h2><span>GOVERN</span></div>
+      <pre id="operatorConsole">BOOTING CONTROL ROOM...</pre>
+    </section>
+  </main>
+
+  <script>
+    const streamEl = document.getElementById('eventStream');
+    const threatEl = document.getElementById('threatList');
+    const consoleEl = document.getElementById('operatorConsole');
+    const passCount = document.getElementById('passCount');
+    const softCount = document.getElementById('softCount');
+    const blockCount = document.getElementById('blockCount');
+    const latestHash = document.getElementById('latestHash');
+    const orb = document.getElementById('statusOrb');
+
+    function cls(type) {
+      if (type === 'PASS') return 'pass';
+      if (type === 'SOFT_FRICTION') return 'soft';
+      return 'block';
+    }
+
+    function render(events) {
+      let pass = 0, soft = 0, block = 0;
+      events.forEach(e => {
+        if (e.type === 'PASS') pass++;
+        if (e.type === 'SOFT_FRICTION') soft++;
+        if (e.type === 'HARD_BLOCK') block++;
+      });
+
+      passCount.textContent = pass;
+      softCount.textContent = soft;
+      blockCount.textContent = block;
+      latestHash.textContent = events[0]?.entry_hash?.slice(0, 12) || '—';
+
+      streamEl.innerHTML = events.map(e => `
+        <div class="event ${cls(e.type)}">
+          <strong>${e.type}</strong>
+          <span>${new Date(e.ts).toLocaleTimeString()}</span>
+          <small>cid:${e.cid_hash} · route:${e.route_hash}</small>
+        </div>
+      `).join('');
+
+      const threats = events.flatMap(e => (e.metadata || []).map(m => ({ ...m, eventType: e.type, ts: e.ts })));
+      threatEl.innerHTML = threats.length ? threats.slice(0, 12).map(t => `
+        <div class="threat ${t.severity === 'HARD' ? 'block' : 'soft'}">
+          <strong>${t.class}</strong>
+          <span>${t.severity}</span>
+          <small>${t.detail || 'classified drift'}</small>
+        </div>
+      `).join('') : '<div class="empty">No active drift signatures detected.</div>';
+
+      const top = events[0];
+      orb.className = 'status-orb ' + (top ? cls(top.type) : '');
+      consoleEl.textContent = [
+        'RT9.1 CONTROL ROOM ONLINE',
+        'BOUNDARY: ZTB-NATOHEX-1.0',
+        `LAST_EVENT: ${top?.type || 'NONE'}`,
+        `LAST_HASH: ${top?.entry_hash || 'NONE'}`,
+        `CHAIN_PREV: ${top?.prev_hash || 'GENESIS'}`,
+        `TELEMETRY: ${events.length} EVENTS LOADED`,
+        'MODE: GOVERNANCE OBSERVABILITY'
+      ].join('\n');
+    }
+
+    async function poll() {
+      try {
+        const res = await fetch('/api/ztb/audit-stream');
+        const events = await res.json();
+        render(events);
+      } catch (err) {
+        consoleEl.textContent = 'CONTROL ROOM ERROR: audit stream unavailable';
+      }
+    }
+
+    poll();
+    setInterval(poll, 1000);
+  </script>
+</body>
+</html>
