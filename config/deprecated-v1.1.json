@@ -1,0 +1,14 @@
+{
+  "status": "deprecated",
+  "effective": "2026-04-26",
+  "blocked_terms": [
+    "RT8",
+    "Intent Lattice",
+    "y_base",
+    "UAP",
+    "state_seed",
+    "operator_scope",
+    "boundary_state"
+  ],
+  "rule": "If any blocked term appears in client payloads, SDKs, routes, or UI, reject request and flag audit."
+}
