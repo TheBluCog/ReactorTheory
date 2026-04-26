@@ -15,7 +15,10 @@
         <h1>GOVERNANCE WAR ROOM</h1>
         <p class="subline">RT9.1 telemetry · WORM chain · ZTB-NATOHEX boundary</p>
       </div>
-      <div class="threat-core" id="threatCore"><span>ONLINE</span></div>
+      <div class="voice-controls">
+        <button id="voiceToggle" class="voice-toggle">VOICE: OFF</button>
+        <div class="threat-core" id="threatCore"><span>ONLINE</span></div>
+      </div>
     </header>
 
     <section class="wicked-grid">
@@ -49,8 +52,58 @@ const jPass = document.getElementById('jPass');
 const jSoft = document.getElementById('jSoft');
 const jBlock = document.getElementById('jBlock');
 const core = document.getElementById('threatCore');
+const voiceToggle = document.getElementById('voiceToggle');
+let voiceEnabled = false;
+let audioCtx = null;
+let lastEventId = null;
 
 function styleOf(type){ return type === 'PASS' ? 'pass' : type === 'SOFT_FRICTION' ? 'soft' : 'block'; }
+
+function initAudio(){
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function tone(type){
+  if (!voiceEnabled) return;
+  initAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const freq = type === 'PASS' ? 440 : type === 'SOFT_FRICTION' ? 220 : 110;
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  osc.type = type === 'HARD_BLOCK' ? 'sawtooth' : 'sine';
+  gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.38);
+}
+
+function speak(type, findings=[]){
+  if (!voiceEnabled || !window.speechSynthesis) return;
+  const top = findings[0]?.class || 'NO ACTIVE DRIFT';
+  const lines = {
+    PASS: 'Joshua confirms pass. Boundary coherent.',
+    SOFT_FRICTION: `Soft friction detected. Drift class ${top}. Execution allowed under observation.`,
+    HARD_BLOCK: `Hard block. Threat class ${top}. Execution denied.`
+  };
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(lines[type] || 'Telemetry event received.');
+  utterance.rate = 0.86;
+  utterance.pitch = 0.72;
+  utterance.volume = 0.92;
+  window.speechSynthesis.speak(utterance);
+}
+
+voiceToggle.addEventListener('click', () => {
+  voiceEnabled = !voiceEnabled;
+  voiceToggle.textContent = voiceEnabled ? 'VOICE: ON' : 'VOICE: OFF';
+  if (voiceEnabled) {
+    initAudio();
+    speak('PASS', []);
+  }
+});
 
 function render(events){
   let pass=0, soft=0, block=0;
@@ -59,6 +112,12 @@ function render(events){
   const latest = events[0];
   core.className = 'threat-core ' + (latest ? styleOf(latest.type) : '');
 
+  if (latest && latest.id !== lastEventId) {
+    lastEventId = latest.id;
+    tone(latest.type);
+    speak(latest.type, latest.metadata || []);
+  }
+
   jStream.innerHTML = events.map(e => `<div class="flash ${styleOf(e.type)}"><b>${e.type}</b><span>${new Date(e.ts).toLocaleTimeString()}</span><small>${e.entry_hash?.slice(0,18) || 'NOHASH'}</small></div>`).join('');
 
   const threats = events.flatMap(e => (e.metadata || []).map(m => ({...m, parent:e.type})));
@@ -66,6 +125,7 @@ function render(events){
 
   jConsole.textContent = [
     'JOSHUA: WICKED ENGINE ONLINE',
+    'VOICE_LAYER: ' + (voiceEnabled ? 'ARMED' : 'STANDBY'),
     'MODE: CINEMATIC GOVERNANCE / DEMO WAR ROOM',
     'BOUNDARY: ZTB-NATOHEX-1.0',
     `LAST_DECISION: ${latest?.type || 'NONE'}`,
