@@ -1,0 +1,17 @@
+openapi: 3.0.0
+info:
+  title: ARTYMUS Governance API
+  version: 1.0.0
+paths:
+  /v1/action/preflight:
+    post:
+      summary: Evaluate action before execution
+      responses:
+        '200':
+          description: Decision envelope
+  /v1/state/evaluate:
+    post:
+      summary: Evaluate system state
+  /v1/drift/score:
+    post:
+      summary: Calculate drift score
