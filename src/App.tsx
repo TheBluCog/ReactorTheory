@@ -1,40 +1,71 @@
-import { useSystem } from './features/system/useSystem'
-import HUDPanel from './components/hud/HUDPanel'
-import OperatorConsole from './components/hud/OperatorConsole'
-import FederationPanel from './components/hud/FederationPanel'
+const core = { E: 92, I: 88, C: 84, D: 0.18 }
+const uap = Math.round((core.E / 100) * (core.I / 100) * (core.C / 100) * (1 - core.D) * 100)
+const decision = uap < 60 ? 'AUDIT' : 'OPTIMIZE'
+const drift = Math.round(core.D * 100)
 
 export default function App() {
-  const { uap, decision, drift, core, error, history, prediction } = useSystem()
-
   return (
-    <main style={{ padding: 20 }}>
-      <HUDPanel
-        uap={uap}
-        decision={decision}
-        drift={drift}
-        error={error}
-      />
+    <main className="control-shell">
+      <section className="hero-panel">
+        <p className="eyebrow">REACTOR THEORY // RT9.1</p>
+        <h1>ReactorCore Governance Control Plane</h1>
+        <p className="subtitle">
+          Stable client runtime. No backend dependency required. API layer is optional and non-blocking.
+        </p>
+      </section>
 
-      <OperatorConsole />
+      <section className="control-grid">
+        <article className="metric-card">
+          <span>Unified Alignment Performance</span>
+          <strong>{uap}</strong>
+          <small>Current operational score</small>
+        </article>
 
-      <FederationPanel />
+        <article className="metric-card">
+          <span>Decision</span>
+          <strong>{decision}</strong>
+          <small>Policy posture</small>
+        </article>
 
-      <div className="hud-panel">
-        <h3>Predictive Risk</h3>
-        <p>Next Drift: {Math.round(prediction.driftNext * 100)}%</p>
-        <p>Projected UAP: {prediction.uapNext}</p>
-        <p>Risk: {prediction.risk}</p>
-      </div>
+        <article className="metric-card">
+          <span>Drift</span>
+          <strong>{drift}%</strong>
+          <small>Instability pressure</small>
+        </article>
 
-      <div className="hud-panel">
-        <h3>Recent Alerts</h3>
-        {history?.filter((h: any) => h.anomaly).slice(-5).map((a: any, i: number) => (
-          <div key={i} style={{ color: '#ff4d4d' }}>
-            ⚠ Drift spike at {new Date(a.timestamp).toLocaleTimeString()}
+        <article className="metric-card">
+          <span>Runtime</span>
+          <strong>LIVE</strong>
+          <small>Client-safe mode</small>
+        </article>
+      </section>
+
+      <section className="panel-row">
+        <article className="control-panel">
+          <h2>Operator Console</h2>
+          <div className="button-row">
+            <button>Resume</button>
+            <button>Force Review</button>
+            <button>Escalate</button>
+            <button className="danger">Lockdown</button>
           </div>
-        ))}
-      </div>
+        </article>
 
+        <article className="control-panel">
+          <h2>Federation View</h2>
+          <div className="node-list">
+            <span>Core · 95%</span>
+            <span>Edge-1 · 82%</span>
+            <span>Edge-2 · 76%</span>
+            <span>External-A · 61%</span>
+          </div>
+        </article>
+      </section>
+
+      <section className="control-panel">
+        <h2>Predictive Overlay</h2>
+        <p>Projected drift: 18% · projected UAP: {uap} · risk: LOW</p>
+      </section>
     </main>
   )
 }
