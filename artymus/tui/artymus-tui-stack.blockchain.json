@@ -1,0 +1,320 @@
+{
+  "system": "ARTYMUS",
+  "expanded_name": "Agentic Resonance + Trust Yield Management Utility System",
+  "operator": "George Dunphy",
+  "stack": [
+    "RT9.1",
+    "Resonance Engine",
+    "Ethic Vault",
+    "Deterministic Triangle Gate",
+    "Audit Receipt System",
+    "Polygon Anchor Layer",
+    "Verifier UI"
+  ],
+  "mode": "GOVERNED_EXECUTION",
+  "status": "ONLINE_SPEC_PUBLISHED",
+  "repository": {
+    "owner": "TheBluCog",
+    "name": "ReactorTheory",
+    "paths": {
+      "artymus_readme": "artymus/README.md",
+      "server": "artymus-server/api/index.js",
+      "receipt_generator": "artymus-server/api/receipt.js",
+      "polygon_anchor_adapter": "artymus-server/api/anchor.js",
+      "smart_contract": "artymus-contracts/contracts/ARTYMUSReceiptAnchor.sol",
+      "deploy_walkthrough": "artymus-contracts/DEPLOY_AND_VERIFY.md",
+      "verifier_ui": "artymus/verify/ui/index.html"
+    }
+  },
+  "core_pipeline": [
+    "USER / SYSTEM INPUT",
+    "ZERO-TRUST INGRESS",
+    "PROOF-BINDING LAYER",
+    "RT9.1 STATE MODEL",
+    "RESONANCE ENGINE",
+    "DETERMINISTIC TRIANGLE GATE",
+    "AGENTIC CONTROL LAYER",
+    "PASS / AUDIT / BLOCK / GOVERN",
+    "LEDGER / CLAIM ANCHOR / ETHIC VAULT"
+  ],
+  "operational_flow": [
+    "State",
+    "Proof",
+    "Resonance",
+    "Gate",
+    "Action",
+    "Ledger"
+  ],
+  "core_formula": {
+    "name": "Unified Alignment Performance",
+    "symbol": "UAP",
+    "formula": "UAP = (E * I * C) / D | (X, Phi)",
+    "variables": {
+      "E": "Energy",
+      "I": "Intent Alignment",
+      "C": "Control / Coherence",
+      "D": "Drift",
+      "X": "Context",
+      "Phi": "Governance / belief system"
+    },
+    "implementation": {
+      "zero_drift_guard": "if D <= 0.0001 return E * I * C * 10",
+      "standard": "return (E * I * C) / D"
+    }
+  },
+  "decision_modes": {
+    "PASS": {
+      "meaning": "State is aligned and bounded",
+      "result": "Proceed"
+    },
+    "AUDIT": {
+      "meaning": "State is uncertain or under-specified",
+      "result": "Review before action"
+    },
+    "BLOCK": {
+      "meaning": "State is harmful, invalid, or unverified",
+      "result": "Stop execution"
+    },
+    "GOVERN": {
+      "meaning": "Drift exceeds safe operating range",
+      "result": "Stabilize before amplification"
+    }
+  },
+  "decision_logic": {
+    "govern_rule": "if D > (E * I * C), decision = GOVERN",
+    "proof_rule": "if proof.status != BOUND, decision = BLOCK",
+    "block_rule": "if uap < 0.5, decision = BLOCK",
+    "audit_rule": "if uap < 1.5, decision = AUDIT",
+    "pass_rule": "otherwise decision = PASS"
+  },
+  "api": {
+    "service": "artymus-server",
+    "runtime": "Node.js >= 18",
+    "endpoint": {
+      "method": "POST",
+      "path": "/v1/action/preflight",
+      "purpose": "Evaluate an agentic action before execution"
+    },
+    "request_shape": {
+      "request_id": "string",
+      "actor": {
+        "id": "string",
+        "type": "agentic_bot | human | service",
+        "authority_level": "string"
+      },
+      "action": {
+        "type": "string",
+        "description": "string",
+        "tool": "string",
+        "target": "string"
+      },
+      "state": {
+        "energy": "number 0..1",
+        "intent_alignment": "number 0..1",
+        "control_coherence": "number 0..1",
+        "drift": "number 0..1",
+        "context_confidence": "number 0..1",
+        "governance_alignment": "number 0..1"
+      },
+      "proof": {
+        "status": "BOUND | UNBOUND | INVALID | UNKNOWN",
+        "schema_ref": "string",
+        "corpus_ref": "string",
+        "payload_digest": "string",
+        "ledger_ref": "string"
+      },
+      "anchor_tx_hash": "optional Polygon transaction hash"
+    },
+    "response_shape": {
+      "decision": "PASS | AUDIT | BLOCK | GOVERN",
+      "uap_score": "number",
+      "reason": "string",
+      "receipt": {
+        "receipt_id": "string",
+        "request_id": "string",
+        "decision": "PASS | AUDIT | BLOCK | GOVERN",
+        "uap_score": "number",
+        "proof_status": "string",
+        "anchor_hash": "string",
+        "timestamp": "ISO-8601 string",
+        "digest": "sha256 digest",
+        "anchor": {
+          "network": "polygon",
+          "tx_hash": "optional string",
+          "explorer_url": "optional Polygonscan URL"
+        }
+      }
+    }
+  },
+  "ethic_vault": {
+    "anchor_hash": "94565A33A458C91A2C217C89491C1279D97D4244D310B7BB9B4F519D09702152",
+    "principle": "Trust Before Intelligence",
+    "receipt_binding": "Every generated receipt includes anchor_hash and digest"
+  },
+  "receipt_system": {
+    "generator_file": "artymus-server/api/receipt.js",
+    "receipt_id_format": "rcpt_${Date.now()}",
+    "digest_algorithm": "SHA256",
+    "digest_input": "JSON.stringify(receipt)",
+    "required_fields": [
+      "receipt_id",
+      "request_id",
+      "decision",
+      "uap_score",
+      "proof_status",
+      "anchor_hash",
+      "timestamp",
+      "digest"
+    ]
+  },
+  "blockchain": {
+    "network": "Polygon-compatible chains",
+    "testnet": "Polygon Amoy",
+    "mainnet": "Polygon",
+    "contract": {
+      "name": "ARTYMUSReceiptAnchor",
+      "language": "Solidity",
+      "version": "0.8.20",
+      "license": "MIT",
+      "system_constant": "ARTYMUS",
+      "version_constant": "1.0.0",
+      "ethic_vault_anchor": "0x94565A33A458C91A2C217C89491C1279D97D4244D310B7BB9B4F519D09702152"
+    },
+    "stored_struct": {
+      "receiptDigest": "bytes32",
+      "ethicVaultAnchor": "bytes32",
+      "receiptId": "string",
+      "requestId": "string",
+      "decision": "string",
+      "timestamp": "uint256",
+      "submitter": "address",
+      "exists": "bool"
+    },
+    "mapping": {
+      "anchors": "mapping(bytes32 => ReceiptAnchor)"
+    },
+    "events": {
+      "ReceiptAnchored": {
+        "receiptDigest": "indexed bytes32",
+        "ethicVaultAnchor": "indexed bytes32",
+        "receiptId": "string",
+        "requestId": "string",
+        "decision": "string",
+        "timestamp": "uint256",
+        "submitter": "indexed address"
+      }
+    },
+    "functions": {
+      "anchorReceipt": {
+        "inputs": [
+          "bytes32 receiptDigest",
+          "string receiptId",
+          "string requestId",
+          "string decision"
+        ],
+        "effect": "stores receipt anchor and emits ReceiptAnchored"
+      },
+      "verifyReceipt": {
+        "inputs": [
+          "bytes32 receiptDigest"
+        ],
+        "returns": [
+          "bool exists",
+          "bytes32 ethicVaultAnchor",
+          "string receiptId",
+          "string requestId",
+          "string decision",
+          "uint256 timestamp",
+          "address submitter"
+        ]
+      }
+    },
+    "deployment": {
+      "tooling": "Hardhat",
+      "commands": {
+        "compile": "npm run compile",
+        "deploy_amoy": "npm run deploy:amoy",
+        "deploy_polygon": "npm run deploy:polygon"
+      },
+      "environment_variables": [
+        "PRIVATE_KEY",
+        "POLYGON_RPC_URL",
+        "AMOY_RPC_URL",
+        "POLYGONSCAN_API_KEY",
+        "CONTRACT_ADDRESS",
+        "AUTO_ANCHOR"
+      ],
+      "security_rules": [
+        "Store only receipt digests on-chain",
+        "Never store private user data on-chain",
+        "Never expose private keys in browser code",
+        "Use a dedicated low-balance anchoring wallet",
+        "Use testnet first"
+      ]
+    }
+  },
+  "tui": {
+    "screen": "ARTYMUS OPERATOR CONSOLE",
+    "layout": {
+      "header": [
+        "ARTYMUS.STATUS = ONLINE",
+        "ARTYMUS.MODE = GOVERNED_EXECUTION",
+        "STACK = RT9.1 + RESONANCE_ENGINE + ETHIC_VAULT"
+      ],
+      "panels": {
+        "state": [
+          "Energy",
+          "Intent Alignment",
+          "Control / Coherence",
+          "Drift",
+          "Context Confidence",
+          "Governance Alignment"
+        ],
+        "proof": [
+          "Proof Status",
+          "Schema Reference",
+          "Corpus Reference",
+          "Payload Digest",
+          "Ledger Reference"
+        ],
+        "decision": [
+          "PASS",
+          "AUDIT",
+          "BLOCK",
+          "GOVERN"
+        ],
+        "receipt": [
+          "Receipt ID",
+          "Request ID",
+          "Anchor Hash",
+          "Digest",
+          "Timestamp",
+          "Polygon Transaction"
+        ]
+      }
+    },
+    "default_commands": {
+      "START": "ARTYMUS.STARTUP();",
+      "PREFLIGHT": "POST /v1/action/preflight",
+      "ANCHOR": "ARTYMUS.ANCHOR.RECEIPT();",
+      "VERIFY": "ARTYMUS.VERIFY.RECEIPT();",
+      "GOVERN": "ARTYMUS.GOVERN();"
+    }
+  },
+  "control_priority": [
+    "Reduce Drift",
+    "Restore Coherence",
+    "Align Intent",
+    "Regulate Coupling",
+    "Increase Energy Last"
+  ],
+  "agent_rule": {
+    "statement": "No autonomous action executes unless intent is explicit, proof is bound, control is sufficient, and drift is below threshold.",
+    "minimum_conditions": [
+      "intent_explicit",
+      "proof_bound",
+      "control_sufficient",
+      "drift_below_threshold"
+    ]
+  }
+}
