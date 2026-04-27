@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ARTYMUS Audit Receipt",
+  "type": "object",
+  "required": [
+    "receipt_id",
+    "request_id",
+    "decision",
+    "uap_score",
+    "proof_status",
+    "anchor_hash",
+    "timestamp",
+    "digest"
+  ],
+  "properties": {
+    "receipt_id": { "type": "string" },
+    "request_id": { "type": "string" },
+    "decision": { "type": "string", "enum": ["PASS", "AUDIT", "BLOCK", "GOVERN"] },
+    "uap_score": { "type": "number" },
+    "proof_status": { "type": "string" },
+    "anchor_hash": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "digest": { "type": "string" }
+  }
+}
