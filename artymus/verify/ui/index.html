@@ -5,27 +5,38 @@
   <style>
     body { font-family: monospace; background:#111; color:#0f0; padding:20px }
     textarea { width:100%; height:200px }
+    input { width:100%; margin-top:10px }
     button { padding:10px; margin-top:10px }
     .result { margin-top:20px }
   </style>
 </head>
 <body>
   <h2>ARTYMUS Receipt Verifier</h2>
-  <textarea id="input"></textarea><br>
+
+  <textarea id="receipt"></textarea>
+  <input id="contract" placeholder="Contract Address">
+
   <button onclick="verify()">VERIFY</button>
+
   <div class="result" id="result"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.10.0/dist/ethers.min.js"></script>
 <script>
 async function verify() {
-  const receipt = JSON.parse(document.getElementById('input').value);
+  const receipt = JSON.parse(document.getElementById('receipt').value);
+  const contractAddress = document.getElementById('contract').value;
   const res = document.getElementById('result');
 
-  if (!receipt.digest) {
-    res.innerText = 'INVALID: No digest';
-    return;
-  }
+  const provider = new ethers.JsonRpcProvider('https://polygon-rpc.com');
+  const abi = ["function verifyReceipt(bytes32) view returns (bool,bytes32,string,string,string,uint256,address)"];
+  const contract = new ethers.Contract(contractAddress, abi, provider);
 
-  res.innerText = 'Digest present. Verify on-chain via contract.';
+  try {
+    const data = await contract.verifyReceipt(receipt.digest);
+    res.innerText = data[0] ? 'VERIFIED ON-CHAIN ✅' : 'NOT FOUND ❌';
+  } catch (e) {
+    res.innerText = 'ERROR: ' + e.message;
+  }
 }
 </script>
 </body>
