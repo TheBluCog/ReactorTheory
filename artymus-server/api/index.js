@@ -1,5 +1,6 @@
 import http from 'http';
 import { generateReceipt } from './receipt.js';
+import { attachAnchor } from './anchor.js';
 
 function calculateUAP(E, I, C, D) {
   if (D <= 0.0001) return E * I * C * 10;
@@ -26,7 +27,11 @@ function preflight(input) {
     decision = "AUDIT";
   }
 
-  const receipt = generateReceipt(input, decision, uap);
+  let receipt = generateReceipt(input, decision, uap);
+
+  if (input.anchor_tx_hash) {
+    receipt = attachAnchor(receipt, input.anchor_tx_hash);
+  }
 
   return {
     decision,
