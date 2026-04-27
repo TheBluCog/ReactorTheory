@@ -10,26 +10,25 @@ export default function handler(req, res) {
       100
     )
 
-    const decision = core.D >= 0.7
-      ? { type: 'BLOCK', reason: 'High drift' }
-      : uap < 60
-      ? { type: 'AUDIT', reason: 'Low performance' }
-      : { type: 'OPTIMIZE', reason: 'Stable' }
+    const decision =
+      core.D > 0.7
+        ? { type: 'BLOCK' }
+        : uap < 60
+        ? { type: 'AUDIT' }
+        : { type: 'OPTIMIZE' }
 
     return res.status(200).json({
       ok: true,
       core,
       uap,
-      policy: { enforcedDecision: decision }
+      policy: {
+        enforcedDecision: decision
+      }
     })
-
-  } catch (err) {
+  } catch {
     return res.status(200).json({
       ok: false,
-      fallback: true,
-      core: { E: 50, I: 50, C: 50, D: 0.2 },
-      uap: 20,
-      policy: { enforcedDecision: { type: 'AUDIT' } }
+      fallback: true
     })
   }
 }
