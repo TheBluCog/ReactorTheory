@@ -1,12 +1,26 @@
 {
-  "name": "reactor-theory-ztb-gateway",
+  "name": "reactor-theory-ethic-vault",
   "version": "9.1.0",
   "private": true,
   "type": "module",
-  "description": "RT9.1 ZTB-NATOHEX API gateway enforcement layer.",
+  "description": "Ethic Vault production UI and RT9.1 governance artifacts for Reactor Theory.",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "start": "node api/ztb/gateway.js",
     "test:gateway": "node api/ztb/selftest.js"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0"
   },
   "engines": {
     "node": ">=20"
