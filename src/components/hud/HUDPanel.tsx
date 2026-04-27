@@ -5,7 +5,6 @@ type Props = {
   uap: number
   decision: DecisionType
   drift: number
-  error?: string | null
 }
 
 function decisionColor(type: DecisionType) {
@@ -17,7 +16,7 @@ function decisionColor(type: DecisionType) {
   }
 }
 
-export default function HUDPanel({ uap, decision, drift, error }: Props) {
+export default function HUDPanel({ uap, decision, drift }: Props) {
   const color = decisionColor(decision)
 
   return (
@@ -47,12 +46,6 @@ export default function HUDPanel({ uap, decision, drift, error }: Props) {
           <div style={{ fontSize: 28, color }}>{decision}</div>
         </div>
       </div>
-
-      {error && (
-        <div style={{ marginTop: 10, color: '#ff6b6b' }}>
-          {error}
-        </div>
-      )}
     </section>
   )
 }
