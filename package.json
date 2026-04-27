@@ -3,11 +3,16 @@
   "version": "9.1.0",
   "private": true,
   "type": "module",
-  "description": "Ethic Vault production UI and RT9.1 governance artifacts for Reactor Theory.",
+  "description": "Reactor Theory RT5-RT9.1 documentation reference site with verified build and test pipeline.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" \"tests/**/*.{ts,tsx}\"",
+    "type-check": "tsc --noEmit",
+    "test": "playwright test",
+    "test:e2e": "playwright test",
+    "verify": "npm run lint && npm run type-check && npm run build && npm run test:e2e",
     "start": "node api/ztb/gateway.js",
     "test:gateway": "node api/ztb/selftest.js"
   },
@@ -19,8 +24,17 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
     "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0"
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.19.0",
+    "@typescript-eslint/parser": "^8.19.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2"
   },
   "engines": {
     "node": ">=20"
