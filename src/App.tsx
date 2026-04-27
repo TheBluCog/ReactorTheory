@@ -1,35 +1,17 @@
-import { useEffect, useState } from 'react'
+import { useSystem } from './features/system/useSystem'
+import HUDPanel from './components/hud/HUDPanel'
 
 export default function App() {
-  const [uap, setUap] = useState(0)
-  const [decision, setDecision] = useState('WAITING')
-  const [drift, setDrift] = useState(0)
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch('/api/system?action=recommend')
-        const data = await res.json()
-
-        setUap(data.uap || 0)
-        setDecision(data.policy?.enforcedDecision?.type || 'UNKNOWN')
-        setDrift(data.core?.D || 0)
-      } catch {
-        // silent fail for now
-      }
-    }
-
-    load()
-    const i = setInterval(load, 3000)
-    return () => clearInterval(i)
-  }, [])
+  const { uap, decision, drift, error } = useSystem()
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>ReactorCore</h1>
-      <h2>UAP: {uap}</h2>
-      <h3>{decision}</h3>
-      <p>Drift: {Math.round(drift * 100)}%</p>
-    </div>
+    <main style={{ padding: 20 }}>
+      <HUDPanel
+        uap={uap}
+        decision={decision}
+        drift={drift}
+        error={error}
+      />
+    </main>
   )
 }
