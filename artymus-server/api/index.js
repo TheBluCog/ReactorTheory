@@ -1,4 +1,5 @@
 import http from 'http';
+import { generateReceipt } from './receipt.js';
 
 function calculateUAP(E, I, C, D) {
   if (D <= 0.0001) return E * I * C * 10;
@@ -10,26 +11,28 @@ function preflight(input) {
 
   const uap = calculateUAP(E, I, C, D);
 
+  let decision = "PASS";
+  let reason = "RT9.1 evaluation";
+
   if (D > (E * I * C)) {
-    return result("GOVERN", uap, "Drift exceeds control capacity");
+    decision = "GOVERN";
+    reason = "Drift exceeds control capacity";
+  } else if (input.proof?.status !== "BOUND") {
+    decision = "BLOCK";
+    reason = "Unbound proof";
+  } else if (uap < 0.5) {
+    decision = "BLOCK";
+  } else if (uap < 1.5) {
+    decision = "AUDIT";
   }
 
-  if (input.proof?.status !== "BOUND") {
-    return result("BLOCK", uap, "Unbound proof");
-  }
+  const receipt = generateReceipt(input, decision, uap);
 
-  if (uap < 0.5) return result("BLOCK", uap);
-  if (uap < 1.5) return result("AUDIT", uap);
-
-  return result("PASS", uap);
-}
-
-function result(mode, uap, reason) {
   return {
-    decision: mode,
+    decision,
     uap_score: Number(uap.toFixed(4)),
-    reason: reason || "RT9.1 evaluation",
-    receipt_id: `rcpt_${Date.now()}`
+    reason,
+    receipt
   };
 }
 
