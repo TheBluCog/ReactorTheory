@@ -12,9 +12,7 @@
     "type-check": "tsc --noEmit",
     "test": "playwright test",
     "test:e2e": "playwright test",
-    "verify": "npm run lint && npm run type-check && npm run build && npm run test:e2e",
-    "start": "node api/ztb/gateway.js",
-    "test:gateway": "node api/ztb/selftest.js"
+    "verify": "npm run lint && npm run type-check && npm run build && npm run test:e2e"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.1",
