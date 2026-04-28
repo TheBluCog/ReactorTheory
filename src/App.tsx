@@ -1,121 +1,27 @@
+import { useMemo, useState } from 'react'
 import './styles.css'
 
-type Version = {
-  id: string
-  name: string
-  layer: string
-  summary: string
-  bullets: string[]
-}
+type Version = { id: string; name: string; layer: string; summary: string; bullets: string[] }
+type Topic = { id: string; label: string; title: string; body: string; bullets: string[] }
 
-type Topic = {
-  id: string
-  label: string
-  title: string
-  body: string
-  bullets: string[]
-}
+type UAPState = { E: number; I: number; C: number; D: number }
 
 const versions: Version[] = [
-  {
-    id: 'rt5',
-    name: 'RT5.0 — Symbolic Foundation',
-    layer: 'Meaning, emotional signal, belief structure, and canonical artifacts.',
-    summary:
-      'RT5 defines the symbolic foundation of Reactor Theory: how meaning, emotion, intent, memory, belief, and canon become structured inputs for analysis and governance.',
-    bullets: ['Symbolic mapping', 'Emotional signal encoding', 'Belief-system framing', 'Canonical artifact lineage'],
-  },
-  {
-    id: 'rt6',
-    name: 'RT6.0 — Propagation Layer',
-    layer: 'Controlled transmission across people, agents, documents, and systems.',
-    summary:
-      'RT6 treats propagation as a governed process. It organizes how signals move between rings, agents, systems, public interfaces, and institutional contexts.',
-    bullets: ['Ring architecture', 'Agent-to-agent synchronization', 'Broadcast tiering', 'Message integrity'],
-  },
-  {
-    id: 'rt7',
-    name: 'RT7.0 — Governance Layer',
-    layer: 'Ethics, prohibited conduct, constraints, and remediation boundaries.',
-    summary:
-      'RT7 establishes governance rules and explicit boundaries. It supports documentation, protection, repair, and lawful remediation while rejecting coercive or harmful optimization.',
-    bullets: ['Governance-first constraints', 'Harm prevention', 'Auditability', 'Human-centered remediation'],
-  },
-  {
-    id: 'rt8',
-    name: 'RT8.0 / RT8.1 — State + Intent Model',
-    layer: '8192-point emotional and operational state representation.',
-    summary:
-      'RT8 models emotion as a state vector, not a moral label. Polarity, control, coherence, arousal, and intent are separated so outcomes can be analyzed by internal architecture.',
-    bullets: ['8192 state grid', 'Blue ↔ orange polarity axis', 'Control / coherence axis', 'Intent lattice'],
-  },
-  {
-    id: 'rt9',
-    name: 'RT9.0 — Unified System Framework',
-    layer: 'State → System → Performance.',
-    summary:
-      'RT9 connects emotional state, intent, control, coherence, drift, and execution into a unified performance model for governed systems.',
-    bullets: ['Unified Alignment Performance', 'Drift suppression', 'State-to-system mapping', 'Performance dynamics'],
-  },
-  {
-    id: 'rt91',
-    name: 'RT9.1 — Resonance Engine Reference',
-    layer: 'Documentation reference for proof-bound deterministic governance.',
-    summary:
-      'RT9.1 documents the execution vocabulary: Resonance Engine, Deterministic Triangle Gate, zero-trust ingress, proof binding, and PASS / AUDIT / BLOCK / GOVERN outcomes.',
-    bullets: ['Resonance Engine', 'Deterministic Triangle Gate', 'Zero-trust boundary', 'Ethic Vault ledger model'],
-  },
+  { id: 'rt5', name: 'RT5.0 — Symbolic Foundation', layer: 'Meaning, emotional signal, belief structure, and canonical artifacts.', summary: 'RT5 defines the symbolic foundation of Reactor Theory: how meaning, emotion, intent, memory, belief, and canon become structured inputs for analysis and governance.', bullets: ['Symbolic mapping', 'Emotional signal encoding', 'Belief-system framing', 'Canonical artifact lineage'] },
+  { id: 'rt6', name: 'RT6.0 — Propagation Layer', layer: 'Controlled transmission across people, agents, documents, and systems.', summary: 'RT6 treats propagation as a governed process. It organizes how signals move between rings, agents, systems, public interfaces, and institutional contexts.', bullets: ['Ring architecture', 'Agent-to-agent synchronization', 'Broadcast tiering', 'Message integrity'] },
+  { id: 'rt7', name: 'RT7.0 — Governance Layer', layer: 'Ethics, prohibited conduct, constraints, and remediation boundaries.', summary: 'RT7 establishes governance rules and explicit boundaries. It supports documentation, protection, repair, and lawful remediation while rejecting coercive or harmful optimization.', bullets: ['Governance-first constraints', 'Harm prevention', 'Auditability', 'Human-centered remediation'] },
+  { id: 'rt8', name: 'RT8.0 / RT8.1 — State + Intent Model', layer: '8192-point emotional and operational state representation.', summary: 'RT8 models emotion as a state vector, not a moral label. Polarity, control, coherence, arousal, and intent are separated so outcomes can be analyzed by internal architecture.', bullets: ['8192 state grid', 'Blue ↔ orange polarity axis', 'Control / coherence axis', 'Intent lattice'] },
+  { id: 'rt9', name: 'RT9.0 — Unified System Framework', layer: 'State → System → Performance.', summary: 'RT9 connects emotional state, intent, control, coherence, drift, and execution into a unified performance model for governed systems.', bullets: ['Unified Alignment Performance', 'Drift suppression', 'State-to-system mapping', 'Performance dynamics'] },
+  { id: 'rt91', name: 'RT9.1 — Resonance Engine Reference', layer: 'Documentation reference for proof-bound deterministic governance.', summary: 'RT9.1 documents the execution vocabulary: Resonance Engine, Deterministic Triangle Gate, zero-trust ingress, proof binding, and PASS / AUDIT / BLOCK / GOVERN outcomes.', bullets: ['Resonance Engine', 'Deterministic Triangle Gate', 'Zero-trust boundary', 'Ethic Vault ledger model'] },
 ]
 
 const topics: Topic[] = [
-  {
-    id: 'architecture',
-    label: 'Reference Architecture',
-    title: 'End-to-end stack map',
-    body:
-      'The reference stack describes how input is framed, validated, modeled, evaluated, and documented. ReactorTheory is documentation-only: it explains the model without exposing private schemas, secrets, or operational endpoints.',
-    bullets: ['Input framing', 'Zero-trust ingress concept', 'Proof-binding layer', 'RT8 state model', 'Resonance Engine reference', 'Deterministic Triangle Gate', 'Ledger / Ethic Vault concept'],
-  },
-  {
-    id: 'uap',
-    label: 'Performance Formula',
-    title: 'Unified Alignment Performance',
-    body:
-      'Unified Alignment Performance is the operational bridge from state to performance. It measures whether aligned energy and coherent control are strong enough to overcome drift.',
-    bullets: ['UAP = (Energy × Intent Alignment × Control) / Drift', 'High energy without control amplifies chaos', 'High control without intent produces efficient wrong outcomes', 'If drift exceeds aligned capacity, the system destabilizes'],
-  },
-  {
-    id: 'resonance-engine',
-    label: 'Runtime Concept',
-    title: 'Resonance Engine',
-    body:
-      'The Resonance Engine is documented here as the RT9.1 evaluator concept. It scores alignment between signal, intent, control, context, and drift before a system moves toward an action state.',
-    bullets: ['Evaluates signal coherence', 'Detects drift', 'Routes uncertain states to AUDIT', 'Blocks unsafe or unverified states', 'Escalates critical control states to GOVERN'],
-  },
-  {
-    id: 'governance',
-    label: 'Control Vocabulary',
-    title: 'PASS / AUDIT / BLOCK / GOVERN',
-    body:
-      'RT9.1 governance vocabulary separates validated operation from uncertainty, unsafe states, and critical control interventions.',
-    bullets: ['PASS: validated and aligned', 'AUDIT: uncertain or incomplete proof', 'BLOCK: unsafe, unverified, or high-drift', 'GOVERN: controlled intervention for critical states'],
-  },
-  {
-    id: 'security',
-    label: 'Security Model',
-    title: 'Zero-trust documentation boundary',
-    body:
-      'This reference site intentionally avoids publishing active client schemas, secrets, private endpoints, or live operational keys. It documents the architecture while preserving deployment safety.',
-    bullets: ['No secrets', 'No private client schemas', 'No wallet or chain write UI', 'No runtime control surface', 'Public education and reference only'],
-  },
-  {
-    id: 'wiki',
-    label: 'Wiki Index',
-    title: 'Documentation knowledge base',
-    body:
-      'The wiki structure gives readers a stable entry point into Reactor Theory versions, terms, formulas, architecture, governance, and implementation vocabulary.',
-    bullets: ['Version map', 'Architecture glossary', 'Formula reference', 'Governance reference', 'Security notes', 'Implementation concepts'],
-  },
+  { id: 'architecture', label: 'Reference Architecture', title: 'End-to-end stack map', body: 'The reference stack describes how input is framed, validated, modeled, evaluated, and documented. ReactorTheory is documentation-only: it explains the model without exposing private schemas, secrets, or operational endpoints.', bullets: ['Input framing', 'Zero-trust ingress concept', 'Proof-binding layer', 'RT8 state model', 'Resonance Engine reference', 'Deterministic Triangle Gate', 'Ledger / Ethic Vault concept'] },
+  { id: 'uap', label: 'Performance Formula', title: 'Unified Alignment Performance', body: 'Unified Alignment Performance is the operational bridge from state to performance. It measures whether aligned energy and coherent control are strong enough to overcome drift.', bullets: ['UAP = (Energy × Intent Alignment × Control) / Drift', 'High energy without control amplifies chaos', 'High control without intent produces efficient wrong outcomes', 'If drift exceeds aligned capacity, the system destabilizes'] },
+  { id: 'resonance-engine', label: 'Runtime Concept', title: 'Resonance Engine', body: 'The Resonance Engine is documented here as the RT9.1 evaluator concept. It scores alignment between signal, intent, control, context, and drift before a system moves toward an action state.', bullets: ['Evaluates signal coherence', 'Detects drift', 'Routes uncertain states to AUDIT', 'Blocks unsafe or unverified states', 'Escalates critical control states to GOVERN'] },
+  { id: 'governance', label: 'Control Vocabulary', title: 'PASS / AUDIT / BLOCK / GOVERN', body: 'RT9.1 governance vocabulary separates validated operation from uncertainty, unsafe states, and critical control interventions.', bullets: ['PASS: validated and aligned', 'AUDIT: uncertain or incomplete proof', 'BLOCK: unsafe, unverified, or high-drift', 'GOVERN: controlled intervention for critical states'] },
+  { id: 'security', label: 'Security Model', title: 'Zero-trust documentation boundary', body: 'This reference site intentionally avoids publishing active client schemas, secrets, private endpoints, or live operational keys. It documents the architecture while preserving deployment safety.', bullets: ['No secrets', 'No private client schemas', 'No wallet or chain write UI', 'No runtime control surface', 'Public education and reference only'] },
+  { id: 'wiki', label: 'Wiki Index', title: 'Documentation knowledge base', body: 'The wiki structure gives readers a stable entry point into Reactor Theory versions, terms, formulas, architecture, governance, and implementation vocabulary.', bullets: ['Version map', 'Architecture glossary', 'Formula reference', 'Governance reference', 'Security notes', 'Implementation concepts'] },
 ]
 
 const glossary = [
@@ -129,118 +35,137 @@ const glossary = [
   ['GOVERN', 'A controlled intervention state used when passive analysis is insufficient.'],
 ]
 
+function readInitialState(): UAPState {
+  if (typeof window === 'undefined') return { E: 80, I: 80, C: 80, D: 20 }
+  const p = new URLSearchParams(window.location.search)
+  const clamp = (value: string | null, fallback: number) => Math.min(100, Math.max(1, Number(value ?? fallback) || fallback))
+  return { E: clamp(p.get('E'), 80), I: clamp(p.get('I'), 80), C: clamp(p.get('C'), 80), D: clamp(p.get('D'), 20) }
+}
+
+function score(state: UAPState) {
+  const alignment = (state.E / 100) * (state.I / 100) * (state.C / 100)
+  const drift = Math.max(state.D / 100, 0.01)
+  const uap = Math.round((alignment / drift) * 100)
+  const decision = state.D > 78 && alignment > 0.62 ? 'GOVERN' : drift >= alignment ? 'BLOCK' : uap < 75 ? 'AUDIT' : 'PASS'
+  return { alignment, drift, uap, decision }
+}
+
+function UAPSimulator() {
+  const init = readInitialState()
+  const [state, setState] = useState<UAPState>(init)
+  const [copied, setCopied] = useState(false)
+  const result = score(state)
+  const shareUrl = `${window.location.origin}${window.location.pathname}?E=${state.E}&I=${state.I}&C=${state.C}&D=${state.D}#simulator`
+  const update = (key: keyof UAPState, value: number) => setState((current) => ({ ...current, [key]: value }))
+
+  async function copyShareLink() {
+    window.history.replaceState(null, '', shareUrl)
+    await navigator.clipboard?.writeText(shareUrl)
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 1800)
+  }
+
+  return (
+    <section className="simulator-panel" id="simulator">
+      <div className="section-heading">
+        <p className="eyebrow">INTERACTIVE REFERENCE</p>
+        <h2>The First Interactive Reactor Theory Reference System</h2>
+        <p>Adjust the RT9 variables to explore how alignment, control, and drift change the governance state. This simulator is client-side only.</p>
+      </div>
+      <div className="simulator-grid">
+        <article className="sim-card">
+          <h3>UAP Simulator</h3>
+          {(['E', 'I', 'C', 'D'] as const).map((key) => (
+            <label className="slider-row" key={key}>
+              <span>{key === 'E' ? 'Energy' : key === 'I' ? 'Intent Alignment' : key === 'C' ? 'Control / Coherence' : 'Drift'} <b>{state[key]}{key === 'D' ? '%' : ''}</b></span>
+              <input type="range" min="1" max="100" value={state[key]} onChange={(event) => update(key, Number(event.target.value))} />
+            </label>
+          ))}
+          <div className="result-grid">
+            <div><span>UAP</span><strong>{result.uap}</strong></div>
+            <div><span>Decision</span><strong>{result.decision}</strong></div>
+            <div><span>Alignment</span><strong>{Math.round(result.alignment * 100)}%</strong></div>
+            <div><span>Drift</span><strong>{Math.round(result.drift * 100)}%</strong></div>
+          </div>
+          <button className="button primary share-button" onClick={copyShareLink}>{copied ? 'Copied' : 'Copy Share Link'}</button>
+          <p className="share-url">{shareUrl}</p>
+        </article>
+        <DecisionMap state={state} />
+        <StateGrid state={state} />
+      </div>
+    </section>
+  )
+}
+
+function DecisionMap({ state }: { state: UAPState }) {
+  const result = score(state)
+  const px = 24 + result.alignment * 252
+  const py = 276 - result.drift * 252
+  return (
+    <article className="sim-card">
+      <h3>Decision Map</h3>
+      <svg className="decision-map" viewBox="0 0 300 300" role="img" aria-label="Visual decision graph">
+        <rect x="24" y="24" width="252" height="252" rx="14" className="zone-bg" />
+        <path d="M24 276 L276 24" className="threshold-line" />
+        <rect x="24" y="24" width="252" height="100" className="zone-govern" />
+        <text x="38" y="54" className="map-label">GOVERN / BLOCK PRESSURE</text>
+        <text x="188" y="256" className="map-label">PASS</text>
+        <text x="44" y="236" className="map-label">AUDIT</text>
+        <text x="42" y="108" className="map-label">BLOCK</text>
+        <line x1="24" y1="276" x2="276" y2="276" className="axis" />
+        <line x1="24" y1="24" x2="24" y2="276" className="axis" />
+        <circle cx={px} cy={py} r="8" className="decision-dot" />
+        <text x={Math.min(px + 10, 236)} y={Math.max(py - 10, 36)} className="decision-text">{result.decision}</text>
+      </svg>
+      <p>Horizontal axis is alignment. Vertical axis is drift. The diagonal line marks where drift begins to overwhelm aligned capacity.</p>
+    </article>
+  )
+}
+
+function StateGrid({ state }: { state: UAPState }) {
+  const cells = useMemo(() => {
+    const size = 16
+    const polarityCursor = Math.round((state.E / 100) * (size - 1))
+    const controlCursor = size - 1 - Math.round((state.C / 100) * (size - 1))
+    return Array.from({ length: size * size }, (_, index) => {
+      const x = index % size
+      const y = Math.floor(index / size)
+      const polarity = (x / (size - 1)) * 10 - 5
+      const control = 1 - y / (size - 1)
+      const active = x === polarityCursor && y === controlCursor
+      return { key: `${x}-${y}`, hue: polarity >= 0 ? 30 : 210, light: 22 + control * 28, active }
+    })
+  }, [state.E, state.C])
+
+  return (
+    <article className="sim-card">
+      <h3>RT8 State Grid Explorer</h3>
+      <div className="state-grid" aria-label="RT8 state grid explorer">
+        {cells.map((cell) => <span key={cell.key} className={cell.active ? 'active' : ''} style={{ background: `hsl(${cell.hue}, 78%, ${cell.light}%)` }} />)}
+      </div>
+      <p>Blue side represents negative polarity. Orange side represents positive polarity. Brightness represents control / coherence. The active cell follows Energy and Control.</p>
+    </article>
+  )
+}
+
 export default function App() {
   return (
     <main className="site-shell">
       <aside className="sidebar">
-        <a className="brand-lockup" href="#top" aria-label="Reactor Theory reference home">
-          <span className="brand-mark">RT</span>
-          <div>
-            <strong>Reactor Theory</strong>
-            <small>RT5 → RT9.1 Docs</small>
-          </div>
-        </a>
-
-        <nav className="nav-stack" aria-label="Reference navigation">
-          <a href="#overview">Overview</a>
-          <a href="#stack">Stack Versions</a>
-          <a href="#architecture">Architecture</a>
-          <a href="#uap">Unified Alignment Performance</a>
-          <a href="#resonance-engine">Resonance Engine</a>
-          <a href="#governance">Governance</a>
-          <a href="#security">Security</a>
-          <a href="#glossary">Glossary</a>
-        </nav>
-
-        <div className="operator-card">
-          <span>Site Mode</span>
-          <strong>Documentation Only</strong>
-          <small>No live control plane. No private runtime exposure.</small>
-        </div>
+        <a className="brand-lockup" href="#top" aria-label="Reactor Theory reference home"><span className="brand-mark">RT</span><div><strong>Reactor Theory</strong><small>RT5 → RT9.1 Docs</small></div></a>
+        <nav className="nav-stack" aria-label="Reference navigation"><a href="#overview">Overview</a><a href="#stack">Stack Versions</a><a href="#simulator">UAP Simulator</a><a href="#architecture">Architecture</a><a href="#uap">Unified Alignment Performance</a><a href="#resonance-engine">Resonance Engine</a><a href="#governance">Governance</a><a href="#security">Security</a><a href="#glossary">Glossary</a></nav>
+        <div className="operator-card"><span>Site Mode</span><strong>Documentation Only</strong><small>No live control plane. No private runtime exposure.</small></div>
       </aside>
-
       <section className="workspace" id="top">
-        <header className="hero" id="overview">
-          <p className="eyebrow">OFFICIAL REFERENCE SITE</p>
-          <h1>Reactor Theory Stack Documentation</h1>
-          <p className="subtitle">
-            Public documentation and wiki reference for RT5.0 through RT9.1, including symbolic foundations, propagation, governance, state modeling, Unified Alignment Performance, and the Resonance Engine vocabulary.
-          </p>
-          <div className="hero-actions">
-            <a className="button primary" href="#stack">Read the Stack</a>
-            <a className="button" href="#wiki">Open Wiki Index</a>
-          </div>
-        </header>
-
-        <section className="metric-grid" aria-label="Documentation pillars">
-          <article className="metric-card"><p>Current Reference</p><strong>RT9.1</strong><span>Resonance Engine vocabulary</span></article>
-          <article className="metric-card"><p>State Model</p><strong>8192</strong><span>RT8 emotional / operational grid</span></article>
-          <article className="metric-card"><p>Decision Terms</p><strong>4</strong><span>PASS / AUDIT / BLOCK / GOVERN</span></article>
-          <article className="metric-card"><p>Boundary</p><strong>Docs</strong><span>No secrets or runtime controls</span></article>
-        </section>
-
-        <section className="section-block" id="stack">
-          <div className="section-heading">
-            <p className="eyebrow">STACK VERSION MAP</p>
-            <h2>RT5.0 through RT9.1</h2>
-            <p>Each version adds a distinct conceptual layer: symbolic foundation, propagation, governance, state modeling, performance dynamics, and deterministic governance reference.</p>
-          </div>
-          <div className="version-grid">
-            {versions.map((version) => (
-              <article className="version-card" id={version.id} key={version.id}>
-                <p className="version-role">{version.layer}</p>
-                <h3>{version.name}</h3>
-                <p>{version.summary}</p>
-                <ul>{version.bullets.map((item) => <li key={item}>{item}</li>)}</ul>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="pipeline-card" aria-label="Reference pipeline">
-          <p className="eyebrow">REFERENCE PIPELINE</p>
-          <h2>Input → Proof → State → Resonance → Gate → Record</h2>
-          <div className="pipeline">
-            {['Input', 'Zero Trust', 'Proof Binding', 'RT8 State', 'Resonance', 'Triangle Gate', 'Ethic Vault'].map((step) => <span key={step}>{step}</span>)}
-          </div>
-        </section>
-
-        <section className="wiki-grid" id="wiki">
-          {topics.map((topic) => (
-            <article className="wiki-card" id={topic.id} key={topic.id}>
-              <p className="eyebrow">{topic.label}</p>
-              <h2>{topic.title}</h2>
-              <p>{topic.body}</p>
-              <ul>{topic.bullets.map((item) => <li key={item}>{item}</li>)}</ul>
-            </article>
-          ))}
-        </section>
-
-        <section className="formula-panel">
-          <div>
-            <p className="eyebrow">RT9 FORMULA</p>
-            <h2>Unified Alignment Performance</h2>
-            <p>UAP links energy, intent alignment, control, and drift into a single operational performance concept.</p>
-          </div>
-          <pre>{'UAP = (E × I × C) / D\n\nE = Energy\nI = Intent Alignment\nC = Control / Coherence\nD = Drift\n\nIf D > (E × I × C), the system enters AUDIT, BLOCK, or GOVERN.'}</pre>
-        </section>
-
-        <section className="glossary-panel" id="glossary">
-          <div className="section-heading">
-            <p className="eyebrow">WIKI GLOSSARY</p>
-            <h2>Core Terms</h2>
-          </div>
-          <div className="glossary-list">
-            {glossary.map(([term, definition]) => (
-              <article key={term}><strong>{term}</strong><p>{definition}</p></article>
-            ))}
-          </div>
-        </section>
-
-        <footer className="site-footer">
-          <strong>Reactor Theory Stack RT5–RT9.1</strong>
-          <span>Public reference site. Documentation only. Built for explanation, onboarding, and governance literacy.</span>
-        </footer>
+        <header className="hero" id="overview"><p className="eyebrow">OFFICIAL REFERENCE SITE</p><h1>Reactor Theory Stack Documentation</h1><p className="subtitle">Public documentation and interactive wiki reference for RT5.0 through RT9.1, including symbolic foundations, propagation, governance, state modeling, Unified Alignment Performance, and the Resonance Engine vocabulary.</p><div className="hero-actions"><a className="button primary" href="#simulator">Open Simulator</a><a className="button" href="#stack">Read the Stack</a></div></header>
+        <section className="metric-grid" aria-label="Documentation pillars"><article className="metric-card"><p>Current Reference</p><strong>RT9.1</strong><span>Resonance Engine vocabulary</span></article><article className="metric-card"><p>State Model</p><strong>8192</strong><span>RT8 emotional / operational grid</span></article><article className="metric-card"><p>Decision Terms</p><strong>4</strong><span>PASS / AUDIT / BLOCK / GOVERN</span></article><article className="metric-card"><p>Boundary</p><strong>Docs</strong><span>No secrets or runtime controls</span></article></section>
+        <UAPSimulator />
+        <section className="section-block" id="stack"><div className="section-heading"><p className="eyebrow">STACK VERSION MAP</p><h2>RT5.0 through RT9.1</h2><p>Each version adds a distinct conceptual layer: symbolic foundation, propagation, governance, state modeling, performance dynamics, and deterministic governance reference.</p></div><div className="version-grid">{versions.map((version) => <article className="version-card" id={version.id} key={version.id}><p className="version-role">{version.layer}</p><h3>{version.name}</h3><p>{version.summary}</p><ul>{version.bullets.map((item) => <li key={item}>{item}</li>)}</ul></article>)}</div></section>
+        <section className="pipeline-card" aria-label="Reference pipeline"><p className="eyebrow">REFERENCE PIPELINE</p><h2>Input → Proof → State → Resonance → Gate → Record</h2><div className="pipeline">{['Input', 'Zero Trust', 'Proof Binding', 'RT8 State', 'Resonance', 'Triangle Gate', 'Ethic Vault'].map((step) => <span key={step}>{step}</span>)}</div></section>
+        <section className="wiki-grid" id="wiki">{topics.map((topic) => <article className="wiki-card" id={topic.id} key={topic.id}><p className="eyebrow">{topic.label}</p><h2>{topic.title}</h2><p>{topic.body}</p><ul>{topic.bullets.map((item) => <li key={item}>{item}</li>)}</ul></article>)}</section>
+        <section className="formula-panel"><div><p className="eyebrow">RT9 FORMULA</p><h2>Unified Alignment Performance</h2><p>UAP links energy, intent alignment, control, and drift into a single operational performance concept.</p></div><pre>{'UAP = (E × I × C) / D\n\nE = Energy\nI = Intent Alignment\nC = Control / Coherence\nD = Drift\n\nIf D > (E × I × C), the system enters AUDIT, BLOCK, or GOVERN.'}</pre></section>
+        <section className="glossary-panel" id="glossary"><div className="section-heading"><p className="eyebrow">WIKI GLOSSARY</p><h2>Core Terms</h2></div><div className="glossary-list">{glossary.map(([term, definition]) => <article key={term}><strong>{term}</strong><p>{definition}</p></article>)}</div></section>
+        <footer className="site-footer"><strong>Reactor Theory Stack RT5–RT9.1</strong><span>Public interactive reference site. Documentation only. Built for explanation, onboarding, and governance literacy.</span></footer>
       </section>
     </main>
   )
