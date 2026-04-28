@@ -1,62 +1,67 @@
-// FINAL FINAL TIER DEPLOY
-import { useMemo, useState, useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import './styles.css'
 
-function LockScreen({ onUnlock }: any) {
-  return (
-    <div className="lock-screen" onClick={onUnlock}>
-      <div className="lock-content">
-        <div className="face-id-ring" />
-        <p>Face ID</p>
-      </div>
-    </div>
-  )
+type UAPState = { E: number; I: number; C: number; D: number }
+type Scenario = UAPState & { id: string; name: string; note: string }
+
+const versions = [
+  ['RT5.0', 'Symbolic Foundation', 'Meaning, emotional signal, belief structure, and canonical artifacts.'],
+  ['RT6.0', 'Propagation Layer', 'Controlled transmission across people, agents, documents, and systems.'],
+  ['RT7.0', 'Governance Layer', 'Ethics, constraints, safety, and remediation boundaries.'],
+  ['RT8.1', 'State + Intent Model', '8192-point emotional and operational state representation.'],
+  ['RT9.0', 'Unified System Framework', 'State → System → Performance.'],
+  ['RT9.1', 'Resonance Engine Reference', 'Deterministic governance vocabulary: PASS / AUDIT / BLOCK / GOVERN.'],
+]
+
+const scenarios: Scenario[] = [
+  { id: 'stable', name: 'Stable Execution', note: 'High alignment, high control, low drift. The system is likely clear to proceed.', E: 86, I: 88, C: 90, D: 18 },
+  { id: 'burnout', name: 'Burnout Pattern', note: 'High energy with low control and rising drift. Output may look productive while degrading fast.', E: 91, I: 62, C: 34, D: 68 },
+  { id: 'chaos', name: 'Chaotic Energy', note: 'Energy is high, but intent and control are weak. The system needs containment before action.', E: 95, I: 31, C: 28, D: 82 },
+  { id: 'cold', name: 'Cold Control', note: 'Control is high, but intent alignment is low. Execution may be efficient but directionally wrong.', E: 58, I: 26, C: 93, D: 24 },
+  { id: 'recovery', name: 'Recovery State', note: 'Intent and control are rebuilding while drift remains moderate. Audit and support are appropriate.', E: 62, I: 76, C: 70, D: 42 },
+  { id: 'govern', name: 'Govern Threshold', note: 'High capacity exists, but drift is extreme. Leadership intervention is required.', E: 94, I: 91, C: 88, D: 84 },
+]
+
+function haptic() { try { navigator.vibrate?.(10) } catch {} }
+function track(event: string) { try { const g = window as any; const log = JSON.parse(localStorage.getItem('rt.analytics.events') || '[]'); localStorage.setItem('rt.analytics.events', JSON.stringify([...log.slice(-40), { event, at: new Date().toISOString() }])); if (g.posthog?.capture) g.posthog.capture(event); if (g.gtag) g.gtag('event', event); window.dispatchEvent(new CustomEvent('rt-track', { detail: { event } })) } catch {} }
+function speak(text: string) { try { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.rate = .92; u.pitch = .92; window.speechSynthesis.speak(u) } catch {} }
+function startAutoDemo() { haptic(); track('auto_demo_voice'); document.getElementById('simulator')?.scrollIntoView({ behavior: 'smooth' }); speak('Auto demo started. Reactor Theory models energy, intent alignment, control, and drift. Stable execution passes. Chaotic energy blocks. Extreme drift with high capacity enters govern.') }
+function score(state: UAPState) { const alignment = (state.E / 100) * (state.I / 100) * (state.C / 100); const drift = Math.max(state.D / 100, 0.01); const uap = Math.round((alignment / drift) * 100); const decision = state.D > 78 && alignment > 0.62 ? 'GOVERN' : drift >= alignment ? 'BLOCK' : uap < 75 ? 'AUDIT' : 'PASS'; return { alignment, drift, uap, decision } }
+function explain(state: UAPState) { const r = score(state); const a = Math.round(r.alignment * 100); if (r.decision === 'PASS') return `PASS: alignment is ${a}% while drift is ${state.D}%. Energy, intent, and control are coherent enough to proceed.`; if (r.decision === 'AUDIT') return `AUDIT: alignment is above drift, but the UAP score is ${r.uap}. Continue only with review or stabilizing support.`; if (r.decision === 'GOVERN') return `GOVERN: capacity is strong, but drift is extreme at ${state.D}%. Active intervention is required.`; return `BLOCK: drift at ${state.D}% exceeds aligned capacity (${a}%). Execution should stop until stability improves.` }
+
+function LockScreen({ onUnlock }: { onUnlock: () => void }) {
+  return <div className="lock-screen" onClick={() => { haptic(); onUnlock(); track('unlock') }}><div className="lock-content"><div className="face-id-ring" /><p>Face ID</p><small>Tap to unlock Reactor Theory</small></div></div>
 }
 
 function InvestorDashboard() {
   const [events, setEvents] = useState<any[]>([])
-
-  useEffect(() => {
-    const load = () => {
-      const data = JSON.parse(localStorage.getItem('rt.analytics.events') || '[]')
-      setEvents(data.reverse())
-    }
-    load()
-    window.addEventListener('rt-track', load)
-    return () => window.removeEventListener('rt-track', load)
-  }, [])
-
-  return (
-    <div className="dashboard" id="dashboard">
-      <h2>Live Engagement</h2>
-      {events.map((e, i) => (
-        <div key={i} className="event">
-          <strong>{e.event}</strong>
-          <span>{new Date(e.at).toLocaleTimeString()}</span>
-        </div>
-      ))}
-    </div>
-  )
+  useEffect(() => { const load = () => setEvents(JSON.parse(localStorage.getItem('rt.analytics.events') || '[]').slice().reverse()); load(); window.addEventListener('rt-track', load); return () => window.removeEventListener('rt-track', load) }, [])
+  return <section className="dashboard glass-card" id="dashboard"><p className="eyebrow">LIVE INVESTOR DASHBOARD</p><h2>Engagement Signal</h2>{events.length === 0 && <p>No events yet. Tap Auto Demo, scenarios, or CTAs to generate local signals.</p>}{events.map((e, i) => <div key={i} className="event"><strong>{e.event}</strong><span>{new Date(e.at).toLocaleTimeString()}</span></div>)}</section>
 }
 
+function UAPSimulator() {
+  const [state, setState] = useState<UAPState>({ E: 80, I: 80, C: 80, D: 20 })
+  const [active, setActive] = useState('custom')
+  const [copied, setCopied] = useState(false)
+  const result = score(state)
+  const update = (key: keyof UAPState, value: number) => { setActive('custom'); setState(s => ({ ...s, [key]: value })) }
+  const applyScenario = (s: Scenario) => { haptic(); track(`scenario_${s.id}`); setActive(s.id); setState({ E: s.E, I: s.I, C: s.C, D: s.D }); speak(`${s.name}. ${s.note}`) }
+  const shareUrl = `${window.location.origin}${window.location.pathname}?E=${state.E}&I=${state.I}&C=${state.C}&D=${state.D}#simulator`
+  async function copyShareLink() { track('copy_share_link'); await navigator.clipboard?.writeText(shareUrl); setCopied(true); setTimeout(() => setCopied(false), 1600) }
+  return <section className="simulator-panel" id="simulator"><div className="section-heading"><p className="eyebrow">INTERACTIVE REFERENCE</p><h2>Live Model — Try It</h2><p>Adjust variables, load real-world scenarios, and watch the decision model explain itself.</p></div><div className="scenario-strip">{scenarios.map(s => <button className={active === s.id ? 'active' : ''} key={s.id} onClick={() => applyScenario(s)}><strong>{s.name}</strong><span>{s.note}</span></button>)}</div><div className="simulator-grid"><article className="sim-card glass-card"><h3>UAP Simulator</h3>{(['E','I','C','D'] as const).map(k => <label className="slider-row" key={k}><span>{k === 'E' ? 'Energy' : k === 'I' ? 'Intent Alignment' : k === 'C' ? 'Control / Coherence' : 'Drift'} <b>{state[k]}{k === 'D' ? '%' : ''}</b></span><input type="range" min="1" max="100" value={state[k]} onChange={e => update(k, Number(e.target.value))} /></label>)}<div className="result-grid"><div><span>UAP</span><strong>{result.uap}</strong></div><div><span>Decision</span><strong>{result.decision}</strong></div><div><span>Alignment</span><strong>{Math.round(result.alignment * 100)}%</strong></div><div><span>Drift</span><strong>{Math.round(result.drift * 100)}%</strong></div></div><button className="button primary share-button" onClick={copyShareLink}>{copied ? 'Copied' : 'Copy Share Link'}</button></article><DecisionMap state={state} /><StateGrid state={state} /></div><article className="decision-explainer glass-card"><p className="eyebrow">MODEL REASONING</p><h3>{result.decision}</h3><p>{explain(state)}</p></article></section>
+}
+
+function DecisionMap({ state }: { state: UAPState }) { const r = score(state); const px = 24 + r.alignment * 252; const py = 276 - r.drift * 252; return <article className="sim-card glass-card"><h3>Decision Map</h3><svg className="decision-map" viewBox="0 0 300 300"><rect x="24" y="24" width="252" height="252" rx="14" className="zone-bg" /><path d="M24 276 L276 24" className="threshold-line" /><rect x="24" y="24" width="252" height="100" className="zone-govern" /><text x="188" y="256" className="map-label">PASS</text><text x="44" y="236" className="map-label">AUDIT</text><text x="42" y="108" className="map-label">BLOCK</text><circle cx={px} cy={py} r="8" className="decision-dot" /><text x={Math.min(px+10,236)} y={Math.max(py-10,36)} className="decision-text">{r.decision}</text></svg><p>Horizontal axis is alignment. Vertical axis is drift.</p></article> }
+function StateGrid({ state }: { state: UAPState }) { const cells = useMemo(() => { const size = 16; const px = Math.round((state.E/100)*(size-1)); const py = size-1-Math.round((state.C/100)*(size-1)); return Array.from({length:size*size},(_,i)=>{ const x=i%size; const y=Math.floor(i/size); const polarity=(x/(size-1))*10-5; const control=1-y/(size-1); return { key:`${x}-${y}`, hue: polarity>=0?30:210, light:22+control*28, active:x===px&&y===py }}) }, [state.E,state.C]); return <article className="sim-card glass-card"><h3>RT8 State Grid Explorer</h3><div className="state-grid">{cells.map(c => <span key={c.key} className={c.active?'active':''} style={{background:`hsl(${c.hue},78%,${c.light}%)`}} />)}</div><p>Blue = negative polarity. Orange = positive polarity. Brightness = control.</p></article> }
+
+function Pitch() { return <section className="investor-panel" id="pitch"><p className="eyebrow">PITCH DECK MODE</p><h2>From framework to fundable story</h2><div className="pitch-grid">{['Problem: systems act faster than they can be governed.','Gap: tools ask can it act, not should it act now.','Solution: UAP converts state into governed decisions.','Proof: live simulator, decision map, and state grid.','Product path: API, SDK, middleware, dashboard.','Thesis: every autonomous system needs a control language.'].map((x,i)=><article className="pitch-card glass-card" key={x}><span>{String(i+1).padStart(2,'0')}</span><p>{x}</p></article>)}</div></section> }
+function About() { return <section className="about-panel" id="about"><p className="eyebrow">ABOUT REACTOR THEORY</p><h2>Decision Intelligence for High-Risk Systems</h2><p>Reactor Theory models energy, intent alignment, control, and drift to help complex systems decide when to proceed, pause, block, or intervene.</p><div className="about-grid"><article className="glass-card"><h3>Why this exists</h3><p>Autonomous systems create control failure risk.</p></article><article className="glass-card"><h3>The model</h3><pre>UAP = (Energy × Intent × Control) / Drift</pre></article><article className="glass-card"><h3>Use cases</h3><p>AI governance, enterprise operations, risk, cybersecurity, and executive decision support.</p></article></div></section> }
+function Stack() { return <section className="section-block" id="stack"><p className="eyebrow">STACK VERSION MAP</p><h2>RT5.0 through RT9.1</h2><div className="version-grid">{versions.map(v => <article className="version-card" key={v[0]}><p className="version-role">{v[1]}</p><h3>{v[0]}</h3><p>{v[2]}</p></article>)}</div></section> }
+function Tools() { const [recording,setRecording]=useState(false); return <section className="tool-panel" id="tools"><p className="eyebrow">PITCH MACHINE TOOLS</p><h2>Auto Demo, Analytics, and Export</h2><div className="tool-grid"><button className="glass-card" onClick={startAutoDemo}><strong>Auto Demo + Voice</strong><span>Launch guided pitch.</span></button><button className="glass-card" onClick={()=>{track('export_video_button');setRecording(!recording)}}><strong>Export Video Button</strong><span>Open recording workflow.</span></button><button className="glass-card" onClick={()=>track('analytics_check')}><strong>Analytics Ready</strong><span>Local + PostHog / GA hooks.</span></button></div>{recording && <div className="trust-callout"><strong>Export video:</strong><span>Start iOS Screen Recording, tap Auto Demo + Voice, run scenarios, save the clip.</span></div>}</section> }
+function Tabs() { return <div className="tab-bar"><a onClick={()=>track('tab_home')} href="#overview">Home</a><a onClick={()=>track('tab_sim')} href="#simulator">Sim</a><a onClick={()=>track('tab_pitch')} href="#pitch">Pitch</a><a onClick={()=>track('tab_data')} href="#dashboard">Data</a></div> }
+
 export default function App() {
-  const [locked, setLocked] = useState(true)
-
-  if (locked) return <LockScreen onUnlock={() => setLocked(false)} />
-
-  return (
-    <div className="app-shell">
-      <h1>Reactor Theory</h1>
-      <p>Decision Intelligence for High-Risk Systems</p>
-      <a href="#simulator">Open Simulator</a>
-      <InvestorDashboard />
-
-      <div className="tab-bar">
-        <a href="#overview">Home</a>
-        <a href="#simulator">Sim</a>
-        <a href="#pitch">Pitch</a>
-        <a href="#dashboard">Data</a>
-      </div>
-    </div>
-  )
+  const [locked, setLocked] = useState(() => sessionStorage.getItem('rt.unlocked') !== '1')
+  if (locked) return <LockScreen onUnlock={() => { sessionStorage.setItem('rt.unlocked','1'); setLocked(false) }} />
+  return <main className="site-shell app-mode"><aside className="sidebar"><a className="brand-lockup" href="#overview"><span className="brand-mark">RT</span><div><strong>Reactor Theory</strong><small>RT5 → RT9.1</small></div></a><nav className="nav-stack"><a href="#overview">Overview</a><a href="#tools">Tools</a><a href="#about">About</a><a href="#pitch">Pitch</a><a href="#simulator">Simulator</a><a href="#dashboard">Dashboard</a><a href="#stack">Stack</a></nav><div className="operator-card"><span>Mode</span><strong>Docs Only</strong><small>No runtime control plane.</small></div></aside><section className="workspace" id="top"><header className="hero" id="overview"><p className="eyebrow">OFFICIAL REFERENCE APP</p><h1>Decision Intelligence for High-Risk Systems</h1><p className="subtitle">Reactor Theory models energy, intent alignment, control, and drift to decide when systems should pass, audit, block, or govern.</p><div className="hero-actions"><a className="button primary" onClick={()=>track('open_simulator')} href="#simulator">Open Simulator</a><button className="button" onClick={startAutoDemo}>Auto Demo + Voice</button></div></header><section className="metric-grid"><article className="metric-card"><p>Reference</p><strong>RT9.1</strong><span>Resonance Engine</span></article><article className="metric-card"><p>State Model</p><strong>8192</strong><span>RT8 grid</span></article><article className="metric-card"><p>Decisions</p><strong>4</strong><span>PASS / AUDIT / BLOCK / GOVERN</span></article><article className="metric-card"><p>Boundary</p><strong>Docs</strong><span>No runtime controls</span></article></section><Tools /><About /><Pitch /><UAPSimulator /><InvestorDashboard /><Stack /><footer className="site-footer"><strong>Reactor Theory Stack RT5–RT9.1</strong><span>Interactive reference app. Documentation only.</span></footer></section><Tabs /></main>
 }
