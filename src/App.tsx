@@ -17,12 +17,13 @@ const resonance = (a:Agent) => ((a.E*a.I*a.C)*a.impact)/Math.max(a.D*a.entropy,.
 const clamp = (n:number,min:number,max:number)=>Math.max(min,Math.min(max,n))
 
 function Overview({ setTab }:{setTab:(t:Tab)=>void}) {
-  return <section className="rt-card hero-card">
+  return <section className="rt-card hero-card elite-hero">
+    <div className="system-pill">SYSTEM STATE: PROTOCOL READY</div>
     <p className="eyebrow">ETHIC VAULT / RT11</p>
     <h1>Programmable trust for AI governance.</h1>
     <p className="lead">RT11 scores contribution, suppresses drift, and routes treasury value through auditable resonance economics.</p>
     <div className="action-row"><button className="primary" onClick={()=>setTab('simulator')}>Run Simulator</button><button onClick={()=>setTab('wallet')}>Connect Wallet</button></div>
-    <div className="proof-row"><span>Math</span><span>Simulation</span><span>Contracts</span><span>Polygon</span></div>
+    <div className="proof-row"><span>Math</span><span>Simulation</span><span>Contracts</span><span>Polygon</span><span>Governance</span></div>
   </section>
 }
 
@@ -37,14 +38,14 @@ function Simulator() {
   const avgI=agents.reduce((s,a)=>s+a.I,0)/agents.length; const avgC=agents.reduce((s,a)=>s+a.C,0)/agents.length; const avgD=agents.reduce((s,a)=>s+a.D,0)/agents.length; const avgEntropy=agents.reduce((s,a)=>s+a.entropy,0)/agents.length; const avgR=rows.reduce((s,a)=>s+a.R,0)/rows.length
   const trust=clamp((avgI+avgC)/2,0,1); const cooperation=clamp(avgR/(avgR+25),0,1); const entropy=clamp((avgD+avgEntropy)/2,.05,5); const stability=(trust*cooperation*avgI)/entropy
   const active=rows.find(r=>r.name===selected.name) || rows[0]
-  return <section className="sim-layout">
-    <div className="rt-card"><p className="eyebrow">SIMULATOR</p><h2>RT11 Resonance Engine</h2><label className="range"><span>Treasury Inflow <b>{treasury}</b></span><input type="range" min="100" max="10000" step="100" value={treasury} onChange={e=>setTreasury(Number(e.target.value))}/></label><div className="kpi-grid"><div><span>UBI Pool</span><b>{Math.round(treasury*.8)}</b></div><div><span>Ops Pool</span><b>{Math.round(treasury*.2)}</b></div><div><span>Trust</span><b>{Math.round(trust*100)}%</b></div><div><span>Stability</span><b>{stability.toFixed(3)}</b></div></div></div>
-    <div className="rt-card"><p className="eyebrow">AGENTS</p><div className="agent-list">{rows.map(r=><button key={r.name} className={selected.name===r.name?'active':''} onClick={()=>setSelected(r)}><strong>{r.name}</strong><small>{r.role}</small><span>R {r.R.toFixed(1)} · Pay {r.payout.toFixed(1)}</span></button>)}</div></div>
-    <div className="rt-card"><p className="eyebrow">SELECTED STATE</p><h2>{active.name}</h2><p>{active.role}</p><div className="kpi-grid"><div><span>UAP</span><b>{active.U.toFixed(2)}</b></div><div><span>Resonance</span><b>{active.R.toFixed(2)}</b></div><div><span>Drift</span><b>{active.D}</b></div><div><span>Payout</span><b>{active.payout.toFixed(2)}</b></div></div></div>
+  return <section className="sim-layout elite-sim">
+    <div className="rt-card"><div className="system-pill">LIVE ENGINE</div><p className="eyebrow">SIMULATOR</p><h2>RT11 Resonance Engine</h2><label className="range"><span>Treasury Inflow <b>{treasury}</b></span><input type="range" min="100" max="10000" step="100" value={treasury} onChange={e=>setTreasury(Number(e.target.value))}/></label><div className="kpi-grid"><div><span>UBI Pool</span><b>{Math.round(treasury*.8)}</b></div><div><span>Ops Pool</span><b>{Math.round(treasury*.2)}</b></div><div><span>Trust</span><b>{Math.round(trust*100)}%</b></div><div><span>Stability</span><b>{stability.toFixed(3)}</b></div></div></div>
+    <div className="rt-card"><div className="system-pill">AGENT LAYER</div><p className="eyebrow">AGENTS</p><div className="agent-list">{rows.map(r=><button key={r.name} className={selected.name===r.name?'active':''} onClick={()=>setSelected(r)}><strong>{r.name}</strong><small>{r.role}</small><span>R {r.R.toFixed(1)} · Pay {r.payout.toFixed(1)}</span></button>)}</div></div>
+    <div className="rt-card"><div className="system-pill">SELECTED NODE</div><p className="eyebrow">STATE INSPECTOR</p><h2>{active.name}</h2><p>{active.role}</p><div className="kpi-grid"><div><span>UAP</span><b>{active.U.toFixed(2)}</b></div><div><span>Resonance</span><b>{active.R.toFixed(2)}</b></div><div><span>Drift</span><b>{active.D}</b></div><div><span>Payout</span><b>{active.payout.toFixed(2)}</b></div></div></div>
   </section>
 }
 
-function ChainStatus(){ return <section className="rt-card"><p className="eyebrow">CHAIN STATUS</p><h2>Polygon readiness</h2><div className="status-list"><p><b>Treasury:</b> 0x27f780E6d46dF69347f954674bbDF39924e3D644</p><p><b>Anchor:</b> 0x9971c17e2d9638cbb63a2d2670db69fa4f335a8a98b222777a3838acf0b2b3e8</p><p><b>Status:</b> Amoy deployment pending</p></div></section> }
-function Governance(){ return <section className="rt-card"><p className="eyebrow">GOVERNANCE</p><h2>Safety gates</h2><div className="checklist"><span>✓ Testnet first</span><span>✓ Dry-run payout</span><span>✓ Recipient allowlist</span><span>✓ Multisig approval</span><span>□ Mainnet execution</span></div></section> }
+function ChainStatus(){ return <section className="rt-card"><div className="system-pill">CHAIN BRIDGE</div><p className="eyebrow">CHAIN STATUS</p><h2>Polygon readiness</h2><div className="status-list"><p><b>Treasury:</b> 0x27f780E6d46dF69347f954674bbDF39924e3D644</p><p><b>Anchor:</b> 0x9971c17e2d9638cbb63a2d2670db69fa4f335a8a98b222777a3838acf0b2b3e8</p><p><b>Status:</b> Amoy deployment pending</p></div></section> }
+function Governance(){ return <section className="rt-card"><div className="system-pill">SAFETY ACTIVE</div><p className="eyebrow">GOVERNANCE</p><h2>Safety gates</h2><div className="checklist"><span>✓ Testnet first</span><span>✓ Dry-run payout</span><span>✓ Recipient allowlist</span><span>✓ Multisig approval</span><span>□ Mainnet execution</span></div></section> }
 
-export default function App(){ const [tab,setTab]=useState<Tab>('overview'); return <main className="app-shell"><header className="topbar"><div><strong>RT11</strong><span>Resonance Economics</span></div><a href="https://github.com/TheBluCog/ReactorTheory" target="_blank" rel="noreferrer">GitHub</a></header><nav className="tabs">{(['overview','simulator','wallet','chain','governance'] as Tab[]).map(t=><button key={t} className={tab===t?'active':''} onClick={()=>setTab(t)}>{t}</button>)}</nav><section className="app-content">{tab==='overview'&&<Overview setTab={setTab}/>} {tab==='simulator'&&<Simulator/>} {tab==='wallet'&&<RT11Wallet/>} {tab==='chain'&&<ChainStatus/>} {tab==='governance'&&<Governance/>}</section></main> }
+export default function App(){ const [tab,setTab]=useState<Tab>('overview'); return <main className="app-shell"><header className="topbar"><div><strong>RT11</strong><span>Resonance Economics</span></div><a href="https://github.com/TheBluCog/ReactorTheory" target="_blank" rel="noreferrer">GitHub</a></header><nav className="tabs">{(['overview','simulator','wallet','chain','governance'] as Tab[]).map(t=><button key={t} className={tab===t?'active':''} onClick={()=>setTab(t)}>{t}</button>)}</nav><section className="app-content cinematic-tab">{tab==='overview'&&<Overview setTab={setTab}/>} {tab==='simulator'&&<Simulator/>} {tab==='wallet'&&<RT11Wallet/>} {tab==='chain'&&<ChainStatus/>} {tab==='governance'&&<Governance/>}</section></main> }
