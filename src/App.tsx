@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
 import RT11Wallet from './RT11Wallet'
+import RT11Money from './RT11Money'
 
 type Agent = { name:string; role:string; E:number; I:number; C:number; D:number; impact:number; entropy:number }
-type Tab = 'overview'|'simulator'|'wallet'|'chain'|'governance'
+type Tab = 'overview'|'simulator'|'wallet'|'chain'|'governance'|'money'
 
 const agents: Agent[] = [
   { name:'MediatorNode', role:'Conflict Resolution', E:5.5, I:.93, C:.92, D:.30, impact:1.7, entropy:.45 },
@@ -22,7 +23,7 @@ function Overview({ setTab }:{setTab:(t:Tab)=>void}) {
     <p className="eyebrow">ETHIC VAULT / RT11</p>
     <h1>Programmable trust for AI governance.</h1>
     <p className="lead">RT11 scores contribution, suppresses drift, and routes treasury value through auditable resonance economics.</p>
-    <div className="action-row"><button className="primary" onClick={()=>setTab('simulator')}>Run Simulator</button><button onClick={()=>setTab('wallet')}>Connect Wallet</button></div>
+    <div className="action-row"><button className="primary" onClick={()=>setTab('simulator')}>Run Simulator</button><button onClick={()=>setTab('money')}>Connect Money</button></div>
     <div className="proof-row"><span>Math</span><span>Simulation</span><span>Contracts</span><span>Polygon</span><span>Governance</span></div>
   </section>
 }
@@ -48,4 +49,4 @@ function Simulator() {
 function ChainStatus(){ return <section className="rt-card"><div className="system-pill">CHAIN BRIDGE</div><p className="eyebrow">CHAIN STATUS</p><h2>Polygon readiness</h2><div className="status-list"><p><b>Treasury:</b> 0x27f780E6d46dF69347f954674bbDF39924e3D644</p><p><b>Anchor:</b> 0x9971c17e2d9638cbb63a2d2670db69fa4f335a8a98b222777a3838acf0b2b3e8</p><p><b>Status:</b> Amoy deployment pending</p></div></section> }
 function Governance(){ return <section className="rt-card"><div className="system-pill">SAFETY ACTIVE</div><p className="eyebrow">GOVERNANCE</p><h2>Safety gates</h2><div className="checklist"><span>✓ Testnet first</span><span>✓ Dry-run payout</span><span>✓ Recipient allowlist</span><span>✓ Multisig approval</span><span>□ Mainnet execution</span></div></section> }
 
-export default function App(){ const [tab,setTab]=useState<Tab>('overview'); return <main className="app-shell"><header className="topbar"><div><strong>RT11</strong><span>Resonance Economics</span></div><a href="https://github.com/TheBluCog/ReactorTheory" target="_blank" rel="noreferrer">GitHub</a></header><nav className="tabs">{(['overview','simulator','wallet','chain','governance'] as Tab[]).map(t=><button key={t} className={tab===t?'active':''} onClick={()=>setTab(t)}>{t}</button>)}</nav><section className="app-content cinematic-tab">{tab==='overview'&&<Overview setTab={setTab}/>} {tab==='simulator'&&<Simulator/>} {tab==='wallet'&&<RT11Wallet/>} {tab==='chain'&&<ChainStatus/>} {tab==='governance'&&<Governance/>}</section></main> }
+export default function App(){ const [tab,setTab]=useState<Tab>('overview'); return <main className="app-shell"><header className="topbar"><div><strong>RT11</strong><span>Resonance Economics</span></div><a href="https://github.com/TheBluCog/ReactorTheory" target="_blank" rel="noreferrer">GitHub</a></header><nav className="tabs">{(['overview','simulator','money','wallet','chain','governance'] as Tab[]).map(t=><button key={t} className={tab===t?'active':''} onClick={()=>setTab(t)}>{t}</button>)}</nav><section className="app-content cinematic-tab">{tab==='overview'&&<Overview setTab={setTab}/>} {tab==='simulator'&&<Simulator/>} {tab==='money'&&<RT11Money/>} {tab==='wallet'&&<RT11Wallet/>} {tab==='chain'&&<ChainStatus/>} {tab==='governance'&&<Governance/>}</section></main> }
