@@ -14,6 +14,7 @@
       <a href="#overview">Overview</a>
       <a href="#why">Why Now</a>
       <a href="#product">Product</a>
+      <a href="#chain">Live Chain</a>
       <a href="#math">Math</a>
       <a href="#traction">Traction</a>
       <a href="#market">Market</a>
@@ -60,6 +61,22 @@
         <article><span>02</span><h2>Resonance Engine</h2><p>Measure downstream positive or negative network impact.</p></article>
         <article><span>03</span><h2>Cred‑NFT</h2><p>Persist portable contribution and reputation state.</p></article>
         <article><span>04</span><h2>Treasury Router</h2><p>Allocate funds through auditable baseline + weighted payout logic.</p></article>
+      </section>
+
+      <section class="panel" id="chain">
+        <p class="eyebrow">LIVE CHAIN STATUS</p>
+        <h2>Polygon-linked infrastructure status</h2>
+        <p>This panel reads public Polygon references and is ready to display deployed Amoy / Polygon contract addresses once the deployment output is added.</p>
+        <div class="grid chain-grid">
+          <article><h3>Canonical Wallet</h3><a id="wallet-link" target="_blank" rel="noreferrer">Loading…</a></article>
+          <article><h3>Polygon Anchor Tx</h3><a id="anchor-link" target="_blank" rel="noreferrer">Loading…</a></article>
+          <article><h3>IDM Provenance</h3><a id="idm-link" target="_blank" rel="noreferrer">Loading…</a></article>
+        </div>
+        <div class="grid chain-grid deploy-grid">
+          <article><h3>CredNFT</h3><a id="cred-link" target="_blank" rel="noreferrer">Awaiting Amoy deployment</a></article>
+          <article><h3>ResonanceEngine</h3><a id="engine-link" target="_blank" rel="noreferrer">Awaiting Amoy deployment</a></article>
+          <article><h3>TreasuryRouter</h3><a id="treasury-link" target="_blank" rel="noreferrer">Awaiting Amoy deployment</a></article>
+        </div>
       </section>
 
       <section class="panel" id="math">
@@ -115,5 +132,23 @@ Civilization Stability = (Trust × Cooperation × Alignment) / Entropy</pre>
       <footer>RT11 / ReactorTheory / Ethic Vault — Investor landing page and protocol documentation.</footer>
     </section>
   </main>
+  <script>
+    const rt11Chain = {
+      canonicalWallet: '0x27f780E6d46dF69347f954674bbDF39924e3D644',
+      anchorTx: '0x9971c17e2d9638cbb63a2d2670db69fa4f335a8a98b222777a3838acf0b2b3e8',
+      idmFrom: '0x5c90e838c809b7c5b91a41b3271599ae2172d23e',
+      idmTo: '0x09522b7807bb8ebfddcd5efffaacc742a660bfbd',
+      amoy: { credNFT: '', resonanceEngine: '', treasuryRouter: '' }
+    };
+    const mainBase = 'https://polygonscan.com';
+    const amoyBase = 'https://amoy.polygonscan.com';
+    const setLink = (id, label, url) => { const el = document.getElementById(id); if (!el) return; el.textContent = label; el.href = url; };
+    setLink('wallet-link', rt11Chain.canonicalWallet, `${mainBase}/address/${rt11Chain.canonicalWallet}`);
+    setLink('anchor-link', rt11Chain.anchorTx, `${mainBase}/tx/${rt11Chain.anchorTx}`);
+    setLink('idm-link', `${rt11Chain.idmFrom.slice(0,10)}… → ${rt11Chain.idmTo.slice(0,10)}…`, `${mainBase}/idm?addresses=${rt11Chain.idmFrom},${rt11Chain.idmTo}&type=1`);
+    if (rt11Chain.amoy.credNFT) setLink('cred-link', rt11Chain.amoy.credNFT, `${amoyBase}/address/${rt11Chain.amoy.credNFT}`);
+    if (rt11Chain.amoy.resonanceEngine) setLink('engine-link', rt11Chain.amoy.resonanceEngine, `${amoyBase}/address/${rt11Chain.amoy.resonanceEngine}`);
+    if (rt11Chain.amoy.treasuryRouter) setLink('treasury-link', rt11Chain.amoy.treasuryRouter, `${amoyBase}/address/${rt11Chain.amoy.treasuryRouter}`);
+  </script>
 </body>
 </html>
