@@ -1,4 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
+import { useAccount, useChainId, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { TREASURY_ROUTER_ABI } from './contracts/treasuryRouter'
+import { useTxFeed } from './hooks/useTxFeed'
+
+// ...existing types remain
 
 type Recipient = { name: string; address: string; payload: { energy:number; intent:number; control:number; drift:number; impact:number; entropy:number } }
 
@@ -16,15 +21,32 @@ const recipients: Recipient[] = [
 ]
 
 export default function RT11Money() {
+  const { address } = useAccount()
+  const chainId = useChainId()
+  const { writeContractAsync } = useWriteContract()
+  const { feed, addEvent } = useTxFeed()
+
   const [amount,setAmount]=useState(1000)
   const [selected,setSelected]=useState(recipients[0])
   const [proof,setProof]=useState<ApiProof>(null)
   const [status,setStatus]=useState<'idle'|'loading'|'success'|'error'>('idle')
-  const [txState,setTxState]=useState('contracts_not_deployed')
+  const [txHash,setTxHash]=useState<`0x${string}` | undefined>()
+
+  const { data: receipt } = useWaitForTransactionReceipt({ hash: txHash, query: { enabled: !!txHash } })
+
+  useEffect(() => {
+    if (receipt && txHash) {
+      addEvent({
+        type: 'tx_confirmed',
+        tx: txHash,
+        network: 'Polygon Amoy',
+        detail: 'Transaction confirmed on-chain'
+      })
+    }
+  }, [receipt, txHash])
 
   const rows=useMemo(()=>{
     const ubiPool=amount*.8
-    const opsPool=amount*.2
     const baseline=(ubiPool*.5)/recipients.length
     const weightedPool=ubiPool*.5
     const weights=recipients.map(r=>{
@@ -34,38 +56,56 @@ export default function RT11Money() {
       return {...r,resonance,weight}
     })
     const total=weights.reduce((s,r)=>s+r.weight,0)
-    return weights.map(r=>({...r,payout:baseline+weightedPool*(r.weight/total),ubiPool,opsPool}))
+    return weights.map(r=>({...r,payout:baseline+weightedPool*(r.weight/total)}))
   },[amount])
 
   async function runApiScore(){
     setStatus('loading')
+    const res=await fetch('/api/rt11/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(selected.payload)})
+    const data=await res.json()
+    setProof({status:res.status,ok:res.ok,timestamp:new Date().toISOString(),request:selected.payload,response:data})
+    setStatus(res.ok?'success':'error')
+    addEvent({ type:'api_score_ready', network:'local', detail:'API score computed' })
+  }
+
+  async function execute(){
+    if(!treasuryRouter){
+      addEvent({ type:'tx_blocked', network:'local', detail:'Missing TreasuryRouter address' })
+      return
+    }
+    if(!address){
+      addEvent({ type:'tx_blocked', network:'local', detail:'Wallet not connected' })
+      return
+    }
+
     try{
-      const res=await fetch('/api/rt11/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(selected.payload)})
-      const data=await res.json()
-      setProof({status:res.status,ok:res.ok,timestamp:new Date().toISOString(),request:selected.payload,response:data})
-      setStatus(res.ok?'success':'error')
+      addEvent({ type:'tx_signing', network:'Polygon Amoy', detail:'Awaiting wallet signature' })
+
+      const recipientsList = rows.map(r=>r.address)
+      const amounts = rows.map(r=>BigInt(Math.floor(r.payout*1e6)))
+
+      const hash = await writeContractAsync({
+        address: treasuryRouter,
+        abi: TREASURY_ROUTER_ABI,
+        functionName: 'distribute',
+        args: [recipientsList, amounts]
+      })
+
+      setTxHash(hash)
+
+      addEvent({
+        type:'tx_submitted',
+        tx: hash,
+        network:'Polygon Amoy',
+        detail:'Transaction submitted'
+      })
+
     }catch(e:any){
-      setProof({status:0,ok:false,timestamp:new Date().toISOString(),request:selected.payload,response:{error:String(e?.message||e)}})
-      setStatus('error')
+      addEvent({ type:'tx_failed', network:'Polygon Amoy', detail:String(e?.message||e) })
     }
   }
 
-  function prepareExecution(){
-    if(!treasuryRouter){ setTxState('blocked_missing_amoy_contract'); return }
-    setTxState('ready_requires_wallet_signature')
-  }
-
-  const selectedRow=rows.find(r=>r.name===selected.name) || rows[0]
-  const apiResonance=proof?.response?.output?.resonance
-  const apiPreview=apiResonance ? Number(apiResonance*10).toFixed(2) : '—'
-
   return <section className="sim-layout elite-sim">
-    <div className="rt-card"><div className="system-pill">PAYOUT CONTROL</div><p className="eyebrow">API-CONNECTED PREVIEW</p><h2>Score first. Preview payout second. Execute only after proof.</h2><label className="range"><span>Test Treasury <b>{amount}</b></span><input type="range" min="100" max="10000" step="100" value={amount} onChange={e=>setAmount(Number(e.target.value))}/></label><div className="kpi-grid"><div><span>Reward Pool</span><b>{Math.round(amount*.8)}</b></div><div><span>Ops / Safety</span><b>{Math.round(amount*.2)}</b></div><div><span>API Status</span><b>{status}</b></div><div><span>API Preview</span><b>{apiPreview}</b></div></div><div className="action-row"><button className="primary" onClick={runApiScore}>{status==='loading'?'Calling API…':'Run API Score'}</button><button onClick={prepareExecution}>Prepare Testnet Execution</button></div></div>
-
-    <div className="rt-card"><div className="system-pill">RECIPIENTS</div><p className="eyebrow">SELECT WORK TYPE</p><div className="agent-list">{rows.map(r=><button key={r.name} className={selected.name===r.name?'active':''} onClick={()=>setSelected(r)}><strong>{r.name}</strong><small>{r.address.slice(0,8)}…{r.address.slice(-4)}</small><span>Local preview {r.payout.toFixed(2)} · Score {r.resonance.toFixed(1)}</span></button>)}</div></div>
-
-    <div className="rt-card"><div className="system-pill">LIVE JSON</div><p className="eyebrow">API RESPONSE</p><h2>{selected.name}</h2><p>{selected.payload.drift > 1 ? 'Risk is high, payout should be reduced.' : 'Usefulness is higher, payout should increase.'}</p><pre>{proof?JSON.stringify(proof,null,2):'Click “Run API Score” to show live JSON here.'}</pre></div>
-
-    <div className="rt-card"><div className="system-pill">PROOF PANEL</div><p className="eyebrow">EXECUTION STATUS</p><h2>{treasuryRouter?'Contract configured':'Awaiting Amoy contract'}</h2><div className="checklist"><span>Score Source: Live API</span><span>Payout Source: API-derived preview</span><span>Execution State: {txState}</span><span>Treasury: {treasuryWallet}</span>{treasuryRouter&&<span>TreasuryRouter: {treasuryRouter}</span>}</div><p>Real payout execution remains locked until Amoy deployment, contract funding, recipient allowlist, and wallet signature are ready.</p></div>
+    <div className="rt-card"><div className="system-pill">EXECUTION</div><button className="primary" onClick={execute}>Execute Testnet Payout</button><p>Wallet: {address||'not connected'}</p><p>Chain: {chainId}</p></div>
   </section>
 }
