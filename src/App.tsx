@@ -3,7 +3,7 @@ import RT11Wallet from './RT11Wallet'
 import RT11Money from './RT11Money'
 
 type Agent = { name:string; role:string; E:number; I:number; C:number; D:number; impact:number; entropy:number }
-type Tab = 'overview'|'simulator'|'money'|'wallet'|'chain'|'governance'|'docs'
+type Tab = 'start'|'overview'|'simulator'|'money'|'wallet'|'chain'|'governance'|'docs'
 
 const agents: Agent[] = [
   { name:'MediatorNode', role:'Conflict Resolution', E:5.5, I:.93, C:.92, D:.30, impact:1.7, entropy:.45 },
@@ -17,8 +17,31 @@ const uap = (a:Agent) => (a.E*a.I*a.C)/Math.max(a.D,.0001)
 const resonance = (a:Agent) => ((a.E*a.I*a.C)*a.impact)/Math.max(a.D*a.entropy,.0001)
 const clamp = (n:number,min:number,max:number)=>Math.max(min,Math.min(max,n))
 
+function Start({ setTab }:{setTab:(t:Tab)=>void}) {
+  return <section className="sim-layout">
+    <div className="rt-card hero-card elite-hero" id="rt11-landing">
+      <div className="system-pill">DEFAULT LANDING / SIMPLE EXPLANATION</div>
+      <p className="eyebrow">ETHIC VAULT / RT11</p>
+      <h1>Get paid for using AI ethically.</h1>
+      <p className="lead">RT11 is a prototype for rewarding people who use AI in ways that create trust, reduce harm, teach others, build useful tools, and improve their communities.</p>
+      <div className="action-row"><button className="primary" onClick={()=>setTab('simulator')}>See Example</button><button onClick={()=>setTab('money')}>See Payouts</button></div>
+      <div className="proof-row"><span>Use AI well</span><span>Prove contribution</span><span>Reduce harm</span><span>Earn weight</span><span>Share value</span></div>
+    </div>
+
+    <div className="rt-card"><div className="system-pill">HOW IT WORKS</div><p className="eyebrow">PLAIN LANGUAGE</p><h2>Good AI work creates value. RT11 measures it.</h2><div className="checklist"><span>1. A person uses AI to do something useful.</span><span>2. The system checks whether the work is aligned, controlled, and low-drift.</span><span>3. Positive impact increases the person’s reputation weight.</span><span>4. A treasury distributes rewards using baseline + contribution-weighted payouts.</span></div></div>
+
+    <div className="rt-card"><div className="system-pill">EXAMPLE 1</div><p className="eyebrow">TEACHING</p><h2>Someone uses AI to teach safely.</h2><p>A teacher creates clear study guides, checks for mistakes, cites sources, and helps students understand. That creates high trust and low drift, so their contribution earns higher resonance.</p></div>
+
+    <div className="rt-card"><div className="system-pill">EXAMPLE 2</div><p className="eyebrow">COMMUNITY</p><h2>Someone uses AI to reduce conflict.</h2><p>A mediator uses AI to summarize disputes fairly, lower emotional heat, and propose respectful next steps. This reduces entropy, so the system rewards the stabilizing contribution.</p></div>
+
+    <div className="rt-card"><div className="system-pill">EXAMPLE 3</div><p className="eyebrow">BAD ACTOR</p><h2>Spam and manipulation lose value.</h2><p>If someone uses AI to generate spam, manipulate people, or spread misinformation, their Energy may be high, but Drift and Entropy rise. RT11 suppresses that payout instead of rewarding raw activity.</p></div>
+
+    <div className="rt-card"><div className="system-pill">WHY PEOPLE GET PAID</div><p className="eyebrow">ECONOMICS</p><h2>The treasury rewards useful, ethical AI behavior.</h2><p>RT11 uses an 80/20 model: most value goes toward UBI and public-good rewards, while a smaller portion supports operators, governance, and infrastructure.</p><div className="kpi-grid"><div><span>Public / UBI Pool</span><b>80%</b></div><div><span>Ops / Governance</span><b>20%</b></div></div></div>
+  </section>
+}
+
 function Overview({ setTab }:{setTab:(t:Tab)=>void}) {
-  return <section className="rt-card hero-card elite-hero" id="rt11-landing">
+  return <section className="rt-card hero-card elite-hero">
     <div className="system-pill">SYSTEM STATE: PROTOCOL READY</div>
     <p className="eyebrow">ETHIC VAULT / RT11</p>
     <h1>Programmable trust for AI governance.</h1>
@@ -50,4 +73,4 @@ function ChainStatus(){ return <section className="rt-card"><div className="syst
 function Governance(){ return <section className="rt-card"><div className="system-pill">SAFETY ACTIVE</div><p className="eyebrow">GOVERNANCE</p><h2>Safety gates</h2><div className="checklist"><span>✓ Testnet first</span><span>✓ Dry-run payout</span><span>✓ Recipient allowlist</span><span>✓ Multisig approval</span><span>□ Mainnet execution</span></div></section> }
 function Docs(){ return <section className="sim-layout"><div className="rt-card"><div className="system-pill">DOCUMENTATION</div><p className="eyebrow">RT11 DOCS</p><h2>Operator documentation</h2><p>RT11 is a governance and contribution economics layer. Use this section for validation, review, and partner onboarding.</p><div className="checklist"><span>UAP = (E × I × C) / D</span><span>R = ((E × I × C) × Impact) / (Drift × Entropy)</span><span>80% UBI/Public Goods · 20% Operators/Governance</span></div></div><div className="rt-card"><div className="system-pill">REKAB REVIEW</div><p className="eyebrow">VALIDATION LINKS</p><h2>Technical review package</h2><div className="agent-list"><a className="doc-link" href="https://github.com/TheBluCog/ReactorTheory/blob/main/RT11/docs/REKAB_VALIDATION_PACKET.md" target="_blank" rel="noreferrer"><strong>Validation Packet</strong><small>Pressure-test math, assumptions, and architecture.</small></a><a className="doc-link" href="https://github.com/TheBluCog/ReactorTheory/blob/main/RT11/docs/CLAIM_TEST_EVIDENCE_MATRIX.md" target="_blank" rel="noreferrer"><strong>Claim Matrix</strong><small>Claim → Mechanism → Test → Evidence → Risk.</small></a><a className="doc-link" href="https://github.com/TheBluCog/ReactorTheory/issues/7" target="_blank" rel="noreferrer"><strong>Amoy Deployment Issue</strong><small>Testnet deployment checklist and blocker.</small></a></div></div><div className="rt-card"><div className="system-pill">README</div><p className="eyebrow">NEXT STEPS</p><h2>Validation sequence</h2><div className="checklist"><span>1. Rekab pressure-test</span><span>2. Amoy contract deployment</span><span>3. Testnet payout proof</span><span>4. Independent technical review</span><span>5. Mainnet readiness decision</span></div></div></section> }
 
-export default function App(){ const [tab,setTab]=useState<Tab>('overview'); return <main className="app-shell"><header className="topbar"><div><strong>RT11</strong><span>Resonance Economics</span></div><a href="https://github.com/TheBluCog/ReactorTheory" target="_blank" rel="noreferrer">GitHub</a></header><nav className="tabs">{(['overview','simulator','money','wallet','chain','governance','docs'] as Tab[]).map(t=><button key={t} className={tab===t?'active':''} onClick={()=>setTab(t)}>{t}</button>)}</nav><section className="app-content cinematic-tab">{tab==='overview'&&<Overview setTab={setTab}/>} {tab==='simulator'&&<Simulator/>} {tab==='money'&&<RT11Money/>} {tab==='wallet'&&<RT11Wallet/>} {tab==='chain'&&<ChainStatus/>} {tab==='governance'&&<Governance/>} {tab==='docs'&&<Docs/>}</section></main> }
+export default function App(){ const [tab,setTab]=useState<Tab>('start'); return <main className="app-shell"><header className="topbar"><div><strong>RT11</strong><span>Ethical AI Rewards</span></div><a href="https://github.com/TheBluCog/ReactorTheory" target="_blank" rel="noreferrer">GitHub</a></header><nav className="tabs">{(['start','overview','simulator','money','wallet','chain','governance','docs'] as Tab[]).map(t=><button key={t} className={tab===t?'active':''} onClick={()=>setTab(t)}>{t}</button>)}</nav><section className="app-content cinematic-tab">{tab==='start'&&<Start setTab={setTab}/>} {tab==='overview'&&<Overview setTab={setTab}/>} {tab==='simulator'&&<Simulator/>} {tab==='money'&&<RT11Money/>} {tab==='wallet'&&<RT11Wallet/>} {tab==='chain'&&<ChainStatus/>} {tab==='governance'&&<Governance/>} {tab==='docs'&&<Docs/>}</section></main> }
