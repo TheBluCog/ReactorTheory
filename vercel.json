@@ -1,9 +1,10 @@
 {
   "framework": "vite",
   "rewrites": [
-    { "source": "/rt11", "destination": "/docs/rt11/index.html" },
-    { "source": "/rt11/", "destination": "/docs/rt11/index.html" },
-    { "source": "/docs/rt11", "destination": "/docs/rt11/index.html" },
-    { "source": "/docs/rt11/", "destination": "/docs/rt11/index.html" }
+    { "source": "/rt11", "destination": "/" },
+    { "source": "/rt11/", "destination": "/" },
+    { "source": "/docs/rt11", "destination": "/" },
+    { "source": "/docs/rt11/", "destination": "/" },
+    { "source": "/(.*)", "destination": "/" }
   ]
 }
