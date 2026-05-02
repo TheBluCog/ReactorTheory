@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RT11 — Resonance Economics</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <aside class="rail">
+      <div class="brand">RT11</div>
+      <a href="#overview">Overview</a>
+      <a href="#math">Math</a>
+      <a href="#simulation">Simulation</a>
+      <a href="#contracts">Contracts</a>
+      <a href="#deploy">Deploy</a>
+      <a href="#pr">PR UI</a>
+    </aside>
+
+    <section class="content">
+      <header class="hero" id="overview">
+        <p class="eyebrow">REACTOR THEORY / ETHIC VAULT</p>
+        <h1>RT11 — Resonance Economics & Universal Contribution Infrastructure</h1>
+        <p class="lede">A full-stack theory documentation site for the RT11 system: math, UI, contracts, deployment pipeline, payout safety, and productization path.</p>
+        <div class="actions">
+          <a class="button primary" href="#math">Open Math</a>
+          <a class="button" href="#pr">Review PR UI</a>
+        </div>
+      </header>
+
+      <section class="cards">
+        <article><span>01</span><h2>Math</h2><p>UAP, Resonance, and Civilization Stability formulas define contribution value.</p></article>
+        <article><span>02</span><h2>UI</h2><p>Dashboard layer turns RT11 into a live explainable economic simulator.</p></article>
+        <article><span>03</span><h2>Contracts</h2><p>CredNFT, ResonanceEngine, and TreasuryRouter convert theory into programmable state.</p></article>
+        <article><span>04</span><h2>Deploy</h2><p>Hardhat + Amoy pipeline prepares the protocol for safe testnet execution.</p></article>
+      </section>
+
+      <section class="panel" id="math">
+        <p class="eyebrow">CORE MATH</p>
+        <h2>Value is not raw activity. Value is coherent contribution.</h2>
+        <pre>UAP = (E × I × C) / D
+
+R = ((E × I × C) × NetworkImpact) / (Drift × Entropy)
+
+Civilization Stability = (Trust × Cooperation × Alignment) / Entropy</pre>
+      </section>
+
+      <section class="panel" id="simulation">
+        <p class="eyebrow">SIMULATION</p>
+        <h2>Executable Proof-of-Concept</h2>
+        <p>The Python simulation models agents, resonance scoring, Cred-NFT-like reputation, dynamic UBI allocation, and civilization stability.</p>
+        <ul>
+          <li>TeacherNode, CareNode, BuilderNode, SafetyNode, MediatorNode, NoiseNode</li>
+          <li>80/20 treasury routing</li>
+          <li>Baseline + resonance-weighted UBI</li>
+          <li>Drift penalty suppresses high-energy bad actors</li>
+        </ul>
+      </section>
+
+      <section class="panel" id="contracts">
+        <p class="eyebrow">CONTRACTS</p>
+        <h2>On-Chain Execution Layer</h2>
+        <div class="grid">
+          <article><h3>CredNFT.sol</h3><p>Reputation and identity state.</p></article>
+          <article><h3>ResonanceEngine.sol</h3><p>Computes UAP and resonance.</p></article>
+          <article><h3>TreasuryRouter.sol</h3><p>Routes 80/20 treasury distribution.</p></article>
+        </div>
+      </section>
+
+      <section class="panel" id="deploy">
+        <p class="eyebrow">DEPLOYMENT</p>
+        <h2>Polygon Amoy First</h2>
+        <pre>npx hardhat run RT11/deploy/deploy-full.ts \
+  --network amoy \
+  --config RT11/deploy/hardhat.config.ts</pre>
+        <p>Mainnet remains blocked until Amoy validation, verified contracts, dry-run payout, allowlist, and multisig approval are complete.</p>
+      </section>
+
+      <section class="panel pr" id="pr">
+        <p class="eyebrow">PR UI</p>
+        <h2>Review Surface</h2>
+        <div class="status pass">READY FOR REVIEW</div>
+        <div class="checklist">
+          <label><input type="checkbox" checked disabled /> Math documented</label>
+          <label><input type="checkbox" checked disabled /> Simulation published</label>
+          <label><input type="checkbox" checked disabled /> Contracts scaffolded</label>
+          <label><input type="checkbox" checked disabled /> Deployment pipeline added</label>
+          <label><input type="checkbox" checked disabled /> Payout safety documented</label>
+          <label><input type="checkbox" disabled /> Amoy deployment completed</label>
+        </div>
+      </section>
+
+      <footer>RT11 / ReactorTheory / Ethic Vault — Documentation site generated for PR review.</footer>
+    </section>
+  </main>
+</body>
+</html>
