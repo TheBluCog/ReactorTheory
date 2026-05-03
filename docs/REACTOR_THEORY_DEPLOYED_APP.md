@@ -2,7 +2,12 @@
 
 ## Purpose
 
-This page documents the deployed Reactor Theory reference app and its alignment to the live Ethic Vault Core / ReactorCore governance diagnostics.
+This page documents the deployed Reactor Theory reference app and its alignment to the live Ethic Vault ReactorCore governance diagnostics.
+
+## Source Repositories
+
+- Reactor Theory repo: https://github.com/TheBluCog/ReactorTheory
+- Proper governance repo: https://github.com/Ethic-Vault/reactorcore
 
 ## Deployed App
 
@@ -10,6 +15,26 @@ This page documents the deployed Reactor Theory reference app and its alignment 
 - ReactorCore app: https://reactorcore.vercel.app
 - EthicsVaultCore app: https://ethicsvaultcore.vercel.app
 - Ethics Vault Core Vercel target: https://ethicsvaultcore-ethics-vault.vercel.app
+
+## ReactorCore Change Scan
+
+Latest scanned ReactorCore commit:
+
+- Commit: https://github.com/Ethic-Vault/reactorcore/commit/fff2b15e2161b64bc2fdce4c0c877f19b47c6c69
+- Message: Update ARCHITECTURE.md
+- File changed: `Wiki/ARCHITECTURE.md`
+
+Confirmed ReactorCore architecture changes:
+
+- added current deployment state
+- added live system links
+- added diagnostics layer
+- added governance model
+- added public governance outcome fields
+- added test commands
+- added primary smoke test
+- added operational interpretation for READY systems
+- clarified ReactorCore as a verifiable governance control plane, not just a UI
 
 ## Live Governance Test Links
 
@@ -45,20 +70,22 @@ The deployed diagnostics confirmed:
 - ethicsvaultcore: READY
 - reactorcore: READY
 
-Observed governance state:
+Observed governance state from ReactorCore diagnostics:
 
 - Decision: AUDIT
 - Policy allowed: true
 - Risk: LOW
-- UAP: 56
+- UAP: 54 to 56
 - E: 92
 - I: 88
 - C: 84
-- D: 0.18
+- D: approximately 0.18 to 0.202
 
 ## Reactor Theory Mapping
 
-The deployed app represents Reactor Theory as an operational reference surface.
+The deployed Reactor Theory app is the public reference surface.
+
+The Ethic Vault ReactorCore repo is the proper operational governance implementation repo.
 
 The live governance systems operationalize the RT9 stack:
 
@@ -105,11 +132,13 @@ curl -L -f "https://ethicsvaultcore-ethics-vault.vercel.app/api/system?action=he
 Public:
 
 - deployed app URLs
+- proper repository URLs
 - endpoint URLs
 - readiness states
 - governance outcomes
 - manual test commands
 - public diagnostics
+- scanned public commit links
 
 Private:
 
@@ -122,5 +151,6 @@ Private:
 ## Canonical Summary
 
 The Reactor Theory deployed app is the public reference layer.
+The proper operational governance repository is `Ethic-Vault/reactorcore`.
 Ethic Vault Core and ReactorCore are the operational governance diagnostics layer.
 Together they show Reactor Theory moving from conceptual model to deployable governance control plane.
