@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2000" viewBox="0 0 1600 2000">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#080b16"/>
+      <stop offset="0.45" stop-color="#101425"/>
+      <stop offset="1" stop-color="#020204"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0a8"/>
+      <stop offset="0.45" stop-color="#d7a72f"/>
+      <stop offset="1" stop-color="#7a4f09"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#58e6ff"/>
+      <stop offset="1" stop-color="#7b5cff"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="2000" fill="url(#bg)"/>
+  <circle cx="1260" cy="260" r="390" fill="#182147" opacity="0.42"/>
+  <circle cx="350" cy="1600" r="520" fill="#2b1506" opacity="0.35"/>
+  <path d="M110 320 C460 140 830 510 1490 270" stroke="#d7a72f" stroke-width="3" opacity="0.35" fill="none"/>
+  <path d="M120 1740 C520 1390 920 1890 1480 1510" stroke="#58e6ff" stroke-width="3" opacity="0.22" fill="none"/>
+
+  <rect x="86" y="78" width="1428" height="1844" rx="38" fill="none" stroke="url(#gold)" stroke-width="6"/>
+  <rect x="118" y="112" width="1364" height="1776" rx="24" fill="#050710" opacity="0.72" stroke="#344065" stroke-width="2"/>
+
+  <text x="140" y="190" fill="#d7a72f" font-family="Georgia, serif" font-size="42" letter-spacing="4">KOTD // ART VALUATION ENGINE</text>
+  <text x="140" y="275" fill="#ffffff" font-family="Arial Black, Impact, sans-serif" font-size="96">SHAUNA LEE LANGE</text>
+  <text x="140" y="350" fill="#58e6ff" font-family="Arial, sans-serif" font-size="42">Provenance × Resonance × Governance</text>
+
+  <rect x="140" y="420" width="1320" height="190" rx="24" fill="#10172d" stroke="#d7a72f" stroke-width="3"/>
+  <text x="190" y="500" fill="#ffffff" font-family="Arial Black, Impact, sans-serif" font-size="52">ART IS BECOMING FINANCE WITH A SOUL.</text>
+  <text x="190" y="570" fill="#e6e6e6" font-family="Arial, sans-serif" font-size="34">The old market priced reputation. The new market prices proof.</text>
+
+  <text x="140" y="710" fill="#d7a72f" font-family="Arial Black, Impact, sans-serif" font-size="48">THE VALUE STACK</text>
+
+  <g font-family="Arial, sans-serif" font-size="34" fill="#fff">
+    <rect x="140" y="760" width="620" height="100" rx="18" fill="#111a32" stroke="#58e6ff"/>
+    <text x="175" y="823">01  Authorship = price engine</text>
+    <rect x="840" y="760" width="620" height="100" rx="18" fill="#111a32" stroke="#58e6ff"/>
+    <text x="875" y="823">02  Provenance = trust layer</text>
+
+    <rect x="140" y="895" width="620" height="100" rx="18" fill="#111a32" stroke="#d7a72f"/>
+    <text x="175" y="958">03  Condition = risk discount</text>
+    <rect x="840" y="895" width="620" height="100" rx="18" fill="#111a32" stroke="#d7a72f"/>
+    <text x="875" y="958">04  Liquidity = exit probability</text>
+
+    <rect x="140" y="1030" width="620" height="100" rx="18" fill="#111a32" stroke="#58e6ff"/>
+    <text x="175" y="1093">05  Geography = price map</text>
+    <rect x="840" y="1030" width="620" height="100" rx="18" fill="#111a32" stroke="#58e6ff"/>
+    <text x="875" y="1093">06  Timing = market coefficient</text>
+
+    <rect x="140" y="1165" width="1320" height="100" rx="18" fill="#111a32" stroke="#d7a72f"/>
+    <text x="175" y="1228">07  Narrative = cultural gravity</text>
+  </g>
+
+  <rect x="140" y="1350" width="1320" height="210" rx="24" fill="#090d18" stroke="url(#cyan)" stroke-width="4" filter="url(#glow)"/>
+  <text x="190" y="1430" fill="#58e6ff" font-family="Arial Black, Impact, sans-serif" font-size="44">RT / AI VALUATION MATH</text>
+  <text x="190" y="1510" fill="#ffffff" font-family="Georgia, serif" font-size="48">Value = (Identity × Evidence × Demand × Control) ÷ Drift</text>
+
+  <rect x="140" y="1635" width="1320" height="150" rx="24" fill="#171005" stroke="url(#gold)" stroke-width="4"/>
+  <text x="190" y="1705" fill="#d7a72f" font-family="Arial Black, Impact, sans-serif" font-size="44">WHY SHAUNA IS RIGHT</text>
+  <text x="190" y="1760" fill="#ffffff" font-family="Arial, sans-serif" font-size="32">Art valuation is no longer less human. It is more provable.</text>
+
+  <text x="140" y="1865" fill="#8fa3c7" font-family="Arial, sans-serif" font-size="26">Created for Shauna Lee Lange • linkedin.com/in/shaunaleelange • ReactorTheory / KOTD Visual</text>
+</svg>
