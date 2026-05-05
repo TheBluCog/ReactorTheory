@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maybe — ARTYMUS 3.0 Art Plates</title>
+  <style>
+    :root {
+      --paper: #e7dfd0;
+      --paper-dark: #cfc5b2;
+      --ink: #151411;
+      --muted: #6f685d;
+      --line: #b8ad9c;
+      --seal: #7f251f;
+      --silver: #aaa59b;
+      --shadow: rgba(0,0,0,.18);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #11100e;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    header {
+      min-height: 72vh;
+      display: grid;
+      place-items: center;
+      padding: 48px 24px;
+      background:
+        radial-gradient(circle at 80% 18%, rgba(255,255,255,.12), transparent 25%),
+        linear-gradient(135deg, #eee6d7 0%, #d7ccba 46%, #b9ad9c 100%);
+      border-bottom: 1px solid rgba(255,255,255,.2);
+    }
+    .intro {
+      width: min(980px, 100%);
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 64px;
+      align-items: end;
+    }
+    .brand {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(58px, 10vw, 126px);
+      line-height: .86;
+      font-weight: 400;
+      letter-spacing: -.04em;
+    }
+    .intro p {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(24px, 4vw, 44px);
+      line-height: 1.12;
+      margin: 0;
+      max-width: 620px;
+    }
+    .subline {
+      color: var(--muted);
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      font-size: 12px;
+      margin-top: 22px;
+    }
+    .plates {
+      padding: 72px 24px 96px;
+      display: grid;
+      gap: 58px;
+      background: #11100e;
+    }
+    .plate {
+      width: min(1180px, 100%);
+      min-height: 660px;
+      margin: 0 auto;
+      background: var(--paper);
+      display: grid;
+      grid-template-columns: .86fr 1.14fr;
+      box-shadow: 0 26px 90px var(--shadow);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.25);
+    }
+    .plate:nth-child(even) { grid-template-columns: 1.14fr .86fr; }
+    .plate:before {
+      content:"";
+      position:absolute;
+      inset:22px;
+      border:1px solid rgba(0,0,0,.12);
+      pointer-events:none;
+    }
+    .copy {
+      padding: 72px 62px;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .num { color: var(--muted); letter-spacing: .2em; font-size: 12px; text-transform: uppercase; }
+    h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(44px, 6vw, 82px);
+      line-height: .95;
+      font-weight: 400;
+      margin: 34px 0 0;
+      letter-spacing: -.04em;
+    }
+    .line {
+      height: 1px;
+      width: 84px;
+      background: var(--ink);
+      margin: 42px 0;
+      opacity: .55;
+    }
+    .statement {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(26px, 3vw, 42px);
+      line-height: 1.12;
+      max-width: 470px;
+      white-space: pre-line;
+    }
+    .caption { color: var(--muted); font-size: 13px; line-height: 1.7; max-width: 420px; }
+    .visual {
+      position: relative;
+      min-height: 660px;
+      overflow: hidden;
+      background: #dad0bf;
+    }
+    .visual:after {
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(circle at 50% 30%, transparent 0, rgba(0,0,0,.12) 70%);
+      pointer-events:none;
+    }
+    .seal {
+      position: absolute;
+      left: 62px;
+      bottom: 54px;
+      width: 54px;
+      height: 54px;
+      border: 2px solid rgba(127,37,31,.75);
+      color: rgba(127,37,31,.9);
+      display: grid;
+      place-items: center;
+      font-family: Georgia, serif;
+      font-size: 25px;
+    }
+    .object-bowl {
+      position:absolute;
+      width: 520px;
+      height: 520px;
+      border-radius: 50%;
+      left: 50%; top: 50%;
+      transform: translate(-50%,-50%);
+      background:
+        radial-gradient(circle at 44% 40%, #f4f0e7 0 12%, #b9b0a2 13% 28%, #1b1a18 29% 31%, #d8d0c1 32% 100%);
+      box-shadow: inset 0 0 60px rgba(0,0,0,.25), 0 40px 90px rgba(0,0,0,.22);
+    }
+    .crack, .crack2, .crack3 {
+      position:absolute;
+      background: linear-gradient(180deg, #a78848, #e4c978, #8f6c2e);
+      width: 5px;
+      border-radius: 9px;
+      transform-origin: top;
+      box-shadow: 0 0 14px rgba(218,183,92,.42);
+    }
+    .crack { height: 260px; left: 52%; top: 18%; transform: rotate(17deg); }
+    .crack2 { height: 180px; left: 58%; top: 40%; transform: rotate(-42deg); }
+    .crack3 { height: 135px; left: 43%; top: 44%; transform: rotate(62deg); }
+    .archive-doc {
+      position:absolute;
+      inset: 74px 86px;
+      background: rgba(246,241,230,.62);
+      border-left: 1px solid rgba(0,0,0,.22);
+      transform: rotate(-2deg);
+      padding: 62px;
+      box-shadow: 0 28px 70px rgba(0,0,0,.14);
+    }
+    .doc-line { height: 1px; background: rgba(0,0,0,.22); margin: 24px 0; width: 82%; }
+    .doc-line.short { width: 47%; }
+    .stamp { margin-top: 54px; width: 118px; height: 118px; border: 3px solid rgba(127,37,31,.65); transform: rotate(8deg); display:grid; place-items:center; color: rgba(127,37,31,.75); font-family: Georgia, serif; font-size: 48px; }
+    .motion-object {
+      position:absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #f8f5ef, #898276 62%, #1a1917 100%);
+      box-shadow: 0 30px 80px rgba(0,0,0,.2);
+    }
+    .m1 { width: 300px; height: 300px; left: 120px; top: 130px; opacity: .95; }
+    .m2 { width: 250px; height: 250px; left: 340px; top: 240px; opacity: .54; filter: blur(1px); }
+    .m3 { width: 190px; height: 190px; left: 540px; top: 360px; opacity: .28; filter: blur(3px); }
+    .surface {
+      position:absolute;
+      inset: 0;
+      background:
+        linear-gradient(115deg, transparent 0 44%, rgba(0,0,0,.18) 45%, transparent 46%),
+        radial-gradient(circle at 35% 35%, #f2eee4, #9f9687 56%, #25231f 100%);
+    }
+    .gold-fracture {
+      position:absolute;
+      left: 48%; top: 12%;
+      width: 6px; height: 520px;
+      background: linear-gradient(#7f632b, #e1c36e, #8d6d2f);
+      transform: rotate(24deg);
+      box-shadow: 0 0 18px rgba(220,185,95,.55);
+    }
+    .gold-fracture:before, .gold-fracture:after { content:""; position:absolute; width:6px; background:inherit; box-shadow:inherit; }
+    .gold-fracture:before { height: 210px; top: 170px; left: 76px; transform: rotate(58deg); }
+    .gold-fracture:after { height: 160px; top: 250px; left: -88px; transform: rotate(-62deg); }
+    .time-field {
+      position:absolute; inset:0;
+      background: linear-gradient(100deg, #0d0d0c 0%, #37332e 28%, #e7dfd0 62%, #f8f4ea 100%);
+    }
+    .time-field:before {
+      content:""; position:absolute; inset:0;
+      background: repeating-linear-gradient(90deg, rgba(0,0,0,.12) 0 1px, transparent 1px 44px);
+      opacity:.55;
+    }
+    .small-meta {
+      position:absolute; right: 44px; bottom: 38px;
+      color: rgba(0,0,0,.42);
+      font-size: 11px; letter-spacing:.16em; text-transform:uppercase;
+    }
+    @media (max-width: 900px) {
+      .intro, .plate, .plate:nth-child(even) { grid-template-columns: 1fr; }
+      .visual { min-height: 430px; }
+      .copy { padding: 48px 32px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="intro">
+      <div>
+        <div class="brand">Maybe</div>
+        <div class="subline">Art Consultancy / Shauna Lee Lange</div>
+      </div>
+      <p>Bespoke advisory for the discerning collector. Surface as art. Intelligence as substrate.</p>
+    </div>
+  </header>
+
+  <section class="plates">
+    <article class="plate">
+      <div class="copy">
+        <div>
+          <div class="num">Plate 01 / Identity</div>
+          <h2>Maybe</h2>
+          <div class="line"></div>
+          <div class="statement">Art Consultancy\n\nFor the discerning collector</div>
+        </div>
+        <div class="caption">Professional Art → <a href="https://www.instagram.com/shaunaleelangeart">shaunaleelangeart</a><br />NPC / Company → <a href="https://www.yourNPC.art">yourNPC.art</a></div>
+      </div>
+      <div class="visual">
+        <div class="object-bowl"><div class="crack"></div><div class="crack2"></div><div class="crack3"></div></div>
+        <div class="small-meta">Identity / Authorship</div>
+      </div>
+      <div class="seal">侘</div>
+    </article>
+
+    <article class="plate">
+      <div class="visual">
+        <div class="archive-doc">
+          <div class="doc-line"></div><div class="doc-line"></div><div class="doc-line short"></div>
+          <div class="doc-line"></div><div class="doc-line short"></div>
+          <div class="stamp">証</div>
+        </div>
+        <div class="small-meta">Evidence / Provenance</div>
+      </div>
+      <div class="copy">
+        <div>
+          <div class="num">Plate 02 / Provenance</div>
+          <h2>Proof</h2>
+          <div class="line"></div>
+          <div class="statement">What can be proven\nis what can be valued</div>
+        </div>
+        <div class="caption">Provenance is not storytelling. It is the evidence layer behind value.</div>
+      </div>
+    </article>
+
+    <article class="plate">
+      <div class="copy">
+        <div>
+          <div class="num">Plate 03 / Liquidity</div>
+          <h2>Movement</h2>
+          <div class="line"></div>
+          <div class="statement">Value is not what it is worth\n\nIt is how it moves</div>
+        </div>
+        <div class="caption">Liquidity turns rarity into strategy. Demand is measured by possible exit.</div>
+      </div>
+      <div class="visual">
+        <div class="motion-object m1"></div><div class="motion-object m2"></div><div class="motion-object m3"></div>
+        <div class="small-meta">Demand / Liquidity</div>
+      </div>
+    </article>
+
+    <article class="plate">
+      <div class="visual">
+        <div class="surface"></div><div class="gold-fracture"></div>
+        <div class="small-meta">Control / Condition</div>
+      </div>
+      <div class="copy">
+        <div>
+          <div class="num">Plate 04 / Condition</div>
+          <h2>Information</h2>
+          <div class="line"></div>
+          <div class="statement">Imperfection is not damage\n\nIt is information</div>
+        </div>
+        <div class="caption">Condition is the physical body of risk. Surface tells the truth before price does.</div>
+      </div>
+    </article>
+
+    <article class="plate">
+      <div class="copy">
+        <div>
+          <div class="num">Plate 05 / Timing</div>
+          <h2>Twice</h2>
+          <div class="line"></div>
+          <div class="statement">The same work\nis not the same value\n\ntwice</div>
+        </div>
+        <div class="caption">Timing is drift. The right object in the wrong moment becomes a different asset.</div>
+      </div>
+      <div class="visual">
+        <div class="time-field"></div>
+        <div class="small-meta">Drift / Timing</div>
+      </div>
+    </article>
+  </section>
+</body>
+</html>
