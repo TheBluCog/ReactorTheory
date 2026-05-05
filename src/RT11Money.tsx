@@ -3,15 +3,22 @@ import { useAccount, useChainId, useWriteContract, useWaitForTransactionReceipt 
 import { TREASURY_ROUTER_ABI } from './contracts/treasuryRouter'
 import { useTxFeed } from './hooks/useTxFeed'
 
-// types
 type Address = `0x${string}`
 
-type Recipient = { name: string; address: Address; payload: { energy:number; intent:number; control:number; drift:number; impact:number; entropy:number } }
+type Recipient = {
+  name: string
+  address: Address
+  payload: {
+    energy: number
+    intent: number
+    control: number
+    drift: number
+    impact: number
+    entropy: number
+  }
+}
 
-type ApiProof = { status:number; ok:boolean; timestamp:string; request:any; response:any } | null
-
-const treasuryWallet: Address = '0x27f780E6d46dF69347f954674bbDF39924e3D644'
-const treasuryRouter = (import.meta.env.VITE_AMOY_TREASURY_ROUTER_ADDRESS || '') as Address
+const treasuryRouter = (import.meta.env.VITE_AMOY_TREASURY_ROUTER_ADDRESS || '0x0000000000000000000000000000000000000000') as Address
 
 const recipients: Recipient[] = [
   { name:'Teacher', address:'0x0000000000000000000000000000000000000001', payload:{ energy:7, intent:.92, control:.88, drift:.45, impact:1.4, entropy:.6 } },
@@ -25,15 +32,15 @@ export default function RT11Money() {
   const { address } = useAccount()
   const chainId = useChainId()
   const { writeContractAsync } = useWriteContract()
-  const { feed, addEvent } = useTxFeed()
+  const { addEvent } = useTxFeed()
 
-  const [amount,setAmount]=useState(1000)
-  const [selected,setSelected]=useState(recipients[0])
-  const [proof,setProof]=useState<ApiProof>(null)
-  const [status,setStatus]=useState<'idle'|'loading'|'success'|'error'>('idle')
-  const [txHash,setTxHash]=useState<Address | undefined>()
+  const [amount] = useState(1000)
+  const [txHash, setTxHash] = useState<Address | undefined>()
 
-  const { data: receipt } = useWaitForTransactionReceipt({ hash: txHash, query: { enabled: !!txHash } })
+  const { data: receipt } = useWaitForTransactionReceipt({
+    hash: txHash,
+    query: { enabled: !!txHash }
+  })
 
   useEffect(() => {
     if (receipt && txHash) {
@@ -44,47 +51,58 @@ export default function RT11Money() {
         detail: 'Transaction confirmed on-chain'
       })
     }
-  }, [receipt, txHash])
+  }, [receipt, txHash, addEvent])
 
-  const rows=useMemo(()=>{
-    const ubiPool=amount*.8
-    const baseline=(ubiPool*.5)/recipients.length
-    const weightedPool=ubiPool*.5
-    const weights=recipients.map(r=>{
-      const p=r.payload
-      const resonance=((p.energy*p.intent*p.control)*p.impact)/Math.max(p.drift*p.entropy,.0001)
-      const weight=Math.max(.25,Math.log1p(resonance))
-      return {...r,resonance,weight}
+  const rows = useMemo(() => {
+    const ubiPool = amount * .8
+    const baseline = (ubiPool * .5) / recipients.length
+    const weightedPool = ubiPool * .5
+    const weights = recipients.map(r => {
+      const p = r.payload
+      const resonance = ((p.energy * p.intent * p.control) * p.impact) / Math.max(p.drift * p.entropy, .0001)
+      const weight = Math.max(.25, Math.log1p(resonance))
+      return { ...r, resonance, weight }
     })
-    const total=weights.reduce((s,r)=>s+r.weight,0)
-    return weights.map(r=>({...r,payout:baseline+weightedPool*(r.weight/total)}))
-  },[amount])
+    const total = weights.reduce((s, r) => s + r.weight, 0)
+    return weights.map(r => ({ ...r, payout: baseline + weightedPool * (r.weight / total) }))
+  }, [amount])
 
-  async function execute(){
-    if(!treasuryRouter){ addEvent({ type:'tx_blocked', network:'local', detail:'Missing TreasuryRouter address' }); return }
-    if(!address){ addEvent({ type:'tx_blocked', network:'local', detail:'Wallet not connected' }); return }
+  async function execute() {
+    if (treasuryRouter === '0x0000000000000000000000000000000000000000') {
+      addEvent({ type:'tx_blocked', network:'local', detail:'Missing TreasuryRouter address' })
+      return
+    }
+    if (!address) {
+      addEvent({ type:'tx_blocked', network:'local', detail:'Wallet not connected' })
+      return
+    }
 
-    try{
+    try {
       addEvent({ type:'tx_signing', network:'Polygon Amoy', detail:'Awaiting wallet signature' })
 
-      const recipientsList = rows.map(r=>r.address) as readonly Address[]
-      const amounts = rows.map(r=>BigInt(Math.floor(r.payout*1e6)))
+      const recipientsList: readonly Address[] = rows.map(r => r.address)
+      const amounts: readonly bigint[] = rows.map(r => BigInt(Math.floor(r.payout * 1e6)))
 
       const hash = await writeContractAsync({
         address: treasuryRouter,
         abi: TREASURY_ROUTER_ABI,
         functionName: 'distribute',
-        args: [recipientsList, amounts]
+        args: [recipientsList, amounts] as const
       })
 
       setTxHash(hash as Address)
-
       addEvent({ type:'tx_submitted', tx: hash, network:'Polygon Amoy', detail:'Transaction submitted' })
-
-    }catch(e:any){ addEvent({ type:'tx_failed', network:'Polygon Amoy', detail:String(e?.message||e) }) }
+    } catch (e: any) {
+      addEvent({ type:'tx_failed', network:'Polygon Amoy', detail:String(e?.message || e) })
+    }
   }
 
   return <section className="sim-layout elite-sim">
-    <div className="rt-card"><div className="system-pill">EXECUTION</div><button className="primary" onClick={execute}>Execute Testnet Payout</button><p>Wallet: {address||'not connected'}</p><p>Chain: {chainId}</p></div>
+    <div className="rt-card">
+      <div className="system-pill">EXECUTION</div>
+      <button className="primary" onClick={execute}>Execute Testnet Payout</button>
+      <p>Wallet: {address || 'not connected'}</p>
+      <p>Chain: {chainId}</p>
+    </div>
   </section>
 }
