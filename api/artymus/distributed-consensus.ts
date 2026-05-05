@@ -6,7 +6,7 @@ export default async function handler(req: any, res: any) {
   const session = await requireRole(req, res, 'advisor');
   if (!session) return;
 
-  const nodes = Array.from(registry.values());
+  const nodes = Array.from(registry.values()) as any[];
 
   let allow = 0;
   let deny = 0;
@@ -25,13 +25,5 @@ export default async function handler(req: any, res: any) {
   if (consensus > 0.66) decision = 'allow';
   else if (deny / total > 0.5) decision = 'deny';
 
-  return res.status(200).json({
-    ok: true,
-    nodes: nodes.length,
-    allow,
-    deny,
-    abstain,
-    consensus,
-    decision,
-  });
+  return res.status(200).json({ ok: true, nodes: nodes.length, allow, deny, abstain, consensus, decision });
 }
