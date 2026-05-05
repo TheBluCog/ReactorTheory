@@ -1,20 +1,114 @@
-import { useState } from 'react'
-import RT11Money from './RT11Money'
-import RT11Wallet from './RT11Wallet'
-import { agents, resonance, clamp } from './data'
-import { useTxFeed } from './hooks/useTxFeed'
+const sections = [
+  { id: 'reactor', label: 'REACTOR', tone: 'orange' },
+  { id: 'artymus', label: 'ARTYMUS', tone: 'violet' },
+  { id: 'rt11', label: 'RT11', tone: 'gold' },
+  { id: 'ethic-vault', label: 'ETHIC VAULT', tone: 'orange' },
+  { id: 'letsbuyspirit', label: 'SPIRIT', tone: 'violet' },
+  { id: 'api', label: 'API', tone: 'orange' },
+  { id: 'docs', label: 'DOCS', tone: 'gold' }
+];
 
-type Tab = 'home'|'earn'|'demo'|'payouts'|'economics'|'math'|'api'|'wallet'|'proof'|'safety'|'good'|'docs'|'rt11'
+const cards = [
+  {
+    id: 'artymus',
+    eyebrow: 'COMMAND LAYER',
+    title: 'ARTYMUS governs the machine room.',
+    body: 'ARTYMUS is the operator interface for governed intelligence: control room, command layer, runtime checks, audit signals, and AI command mode. It turns the Reactor Theory stack into something a human can actually steer.',
+    cta: 'Open ARTYMUS Control Room',
+    href: '/ui/artymus-control-room.html'
+  },
+  {
+    id: 'rt11',
+    eyebrow: 'SAFE AI INCOME SYSTEM',
+    title: 'RT11 rewards useful AI work without shady shit.',
+    body: 'RT11 is the contribution, scoring, payout, and governance layer. Teaching, building, summarizing, reviewing, reducing risk, and improving outcomes can increase payout weight. Spam, scams, fake content, and manipulation get penalized.',
+    cta: 'Open RT11 Dashboard',
+    href: '/ui/rt11-dashboard.html'
+  },
+  {
+    id: 'ethic-vault',
+    eyebrow: 'GOVERNANCE + PROOF',
+    title: 'Ethic Vault keeps the receipts.',
+    body: 'Ethic Vault is the trust, evidence, and governance vault for the stack. It records claims, controls, test outputs, proof artifacts, and audit context so AI systems can be evaluated before they are trusted.',
+    cta: 'View API Health',
+    href: '/api/artymus?action=health'
+  },
+  {
+    id: 'letsbuyspirit',
+    eyebrow: 'PUBLISHED PLAN',
+    title: 'LetsBuySpirit turns support into participation.',
+    body: 'LetsBuySpirit is the public-facing contribution and community acquisition concept: align attention, capital, proof, and governance around a simple plan people can understand. The operating principle is clean: buy in, verify contribution, reward useful participation, and route value through transparent governance.',
+    cta: 'Open Links API',
+    href: '/api/artymus?action=links'
+  }
+];
 
-function Home({ setTab }:{setTab:(t:Tab)=>void}){return <section className="sim-layout"><div className="rt-card hero-card elite-hero" id="rt11-landing"><div className="system-pill">SAFE AI INCOME SYSTEM</div><p className="eyebrow">ETHIC VAULT / RT11</p><h1>Make money with AI — without doing shady shit.</h1><p className="lead">RT11 rewards useful AI work. Teaching, building, summarizing, reviewing, and reducing risk can increase payout weight. Spam, scams, fake content, and manipulation get penalized.</p><div className="action-row"><button className="primary" onClick={()=>setTab('demo')}>Try it → See your payout</button><button onClick={()=>setTab('rt11')}>Open RT11 Dashboard</button></div><div className="proof-row"><span>Demo mode now</span><span>API scoring live</span><span>Testnet payouts next</span></div></div><div className="rt-card"><div className="system-pill">HOW IT WORKS</div><p className="eyebrow">NO JARGON</p><h2>Four steps.</h2><div className="checklist"><span>1. You use AI to do something useful.</span><span>2. The system scores how useful and safe it is.</span><span>3. You get a payout score.</span><span>4. Better work can earn a bigger payout share.</span></div></div><div className="rt-card"><div className="system-pill">WHY CARE</div><p className="eyebrow">THE POINT</p><h2>AI can create value or garbage. RT11 pays for value.</h2><p>Most tools measure output. RT11 measures usefulness. That means a helpful tutoring workflow should score better than a thousand fake posts.</p></div></section>}
-function Earn({setTab}:{setTab:(t:Tab)=>void}){return <section className="sim-layout"><div className="rt-card hero-card"><div className="system-pill">EARN SAFELY</div><p className="eyebrow">FOR AI USERS</p><h1>How to earn more.</h1><p className="lead">Do useful AI work that other people can trust. Check it. Keep it honest. Reduce risk. That is the behavior RT11 is designed to reward.</p><div className="action-row"><button className="primary" onClick={()=>setTab('demo')}>Try payout demo</button><button onClick={()=>setTab('wallet')}>Connect wallet</button></div></div><div className="rt-card"><div className="system-pill">DO MORE OF THIS</div><p className="eyebrow">HIGHER SCORE</p><h2>Useful work that can raise your payout weight.</h2><div className="checklist"><span>Teach something clearly.</span><span>Build tools people actually use.</span><span>Summarize complex information accurately.</span><span>Reduce confusion, risk, or conflict.</span></div></div><div className="rt-card"><div className="system-pill">AVOID THIS</div><p className="eyebrow">LOWER SCORE</p><h2>AI work that should lose weight.</h2><div className="checklist"><span>Spam, bot content, or engagement farming.</span><span>Fake authority, scams, or manipulation.</span><span>Unchecked advice in high-risk areas.</span><span>Harassment, misinformation, impersonation, or abuse.</span></div></div><div className="rt-card"><div className="system-pill">RESULT</div><h2>Better score → bigger payout share.</h2><p>The demo shows how this could work before real testnet payouts go live.</p></div></section>}
-function RT11Dashboard(){return <section className="rt-card hero-card"><div className="system-pill">RT11 DASHBOARD</div><p className="eyebrow">LIVE CONTROL SURFACE</p><h1>ARTYMUS.RT11 Operator Dashboard</h1><p className="lead">The write-enabled RT11 dashboard is deployed as a standalone operator surface for wallet connection, AADST/SRT contract reads, and transfer-agent/issuer write actions.</p><div className="action-row"><a className="button primary" href="/ui/rt11-dashboard.html" target="_blank" rel="noreferrer">Launch RT11 Dashboard</a><a className="button" href="https://github.com/TheBluCog/ReactorTheory/blob/main/docs/ARTYMUS_RT11_OPEN_CORPORATE_FRAMEWORK.md" target="_blank" rel="noreferrer">Open Spec</a></div><div className="checklist"><span>AADST reads and writes enabled.</span><span>SRT reads and writes enabled.</span><span>Wallet signing path enabled.</span><span>UAP + capital stack panel included.</span></div></section>}
-function Demo(){const [treasury,setTreasury]=useState(1000);const [selected,setSelected]=useState(agents[0]);const rows=agents.map(a=>{const R=resonance(a);const weight=clamp(1+Math.log1p(R)-.15*Math.max(0,a.D*(1-a.C)),.25,10);return{...a,R,weight}});const total=rows.reduce((s,a)=>s+a.weight,0);const pool=treasury*.8;const base=(pool*.5)/rows.length;const paid=rows.map(r=>({...r,payout:base+(pool*.5)*(r.weight/total)}));const active=paid.find(r=>r.name===selected.name)||paid[0];return <section className="sim-layout elite-sim"><div className="rt-card"><div className="system-pill">TRY IT</div><p className="eyebrow">PAYOUT DEMO</p><h2>Who should earn more?</h2><p>Pick a type of AI work. See how the payout changes.</p><label className="range"><span>Treasury Amount <b>{treasury}</b></span><input type="range" min="100" max="10000" step="100" value={treasury} onChange={e=>setTreasury(Number(e.target.value))}/></label><div className="kpi-grid"><div><span>Reward Pool</span><b>{Math.round(treasury*.8)}</b></div><div><span>System / Safety Pool</span><b>{Math.round(treasury*.2)}</b></div></div></div><div className="rt-card"><div className="system-pill">AI WORK TYPES</div><p className="eyebrow">CHOOSE ONE</p><div className="agent-list">{paid.map(r=><button key={r.name} className={selected.name===r.name?'active':''} onClick={()=>setSelected(r)}><strong>{r.name}</strong><small>{r.role}</small><span>Score {r.R.toFixed(1)} · Preview payout {r.payout.toFixed(1)}</span></button>)}</div></div><div className="rt-card"><div className="system-pill">WHY THIS PAYOUT</div><p className="eyebrow">PLAIN EXPLANATION</p><h2>{active.name}</h2><p>{active.role}</p><div className="checklist"><span>{active.D>1?'✘ High risk or spam signal':'✔ Low risk signal'}</span><span>{active.R>10?'✔ Strong usefulness score':'• Moderate usefulness score'}</span><span>{active.D>1?'→ Reduced':'→ Rewarded'}</span></div><div className="kpi-grid"><div><span>Usefulness score</span><b>{active.R.toFixed(2)}</b></div><div><span>Risk / drift</span><b>{active.D}</b></div><div><span>Preview payout</span><b>{active.payout.toFixed(2)}</b></div><div><span>Result</span><b>{active.D>1?'Reduced':'Rewarded'}</b></div></div></div></section>}
-function Economics(){return <section className="sim-layout"><div className="rt-card hero-card"><div className="system-pill">ADVANCED ECONOMICS</div><p className="eyebrow">FOR PEOPLE WHO WANT THE MODEL</p><h1>Where the money comes from.</h1><p className="lead">There are two steps: first, work is scored. Second, money is split. Base support goes broadly. Bonus rewards go to better work.</p></div><div className="rt-card"><div className="system-pill">STEP 1</div><h2>Work is scored.</h2><div className="checklist"><span>Useful vs harmful.</span><span>Checked vs careless.</span><span>Helpful vs spammy.</span><span>Low risk vs high risk.</span></div></div><div className="rt-card"><div className="system-pill">STEP 2</div><h2>Money is split.</h2><div className="checklist"><span>Base pool: support for participants.</span><span>Bonus pool: extra share for better work.</span><span>Operations pool: safety, infrastructure, governance.</span><span>Blockchain proof: receipts for payouts.</span></div><p>Better systems reward value, not noise.</p></div></section>}
-function MathModel(){return <section className="sim-layout"><div className="rt-card hero-card"><div className="system-pill">MATH MODEL</div><p className="eyebrow">FOR PEOPLE WHO CARE</p><h1>The score rewards usefulness and penalizes risk.</h1><p className="lead">You do not need the math to use the system. It is here for builders, reviewers, and auditors.</p></div><div className="rt-card"><div className="system-pill">UAP</div><h2>UAP = (E × I × C) / D</h2><div className="checklist"><span>E = useful work effort</span><span>I = good purpose</span><span>C = quality and checking</span><span>D = risk, harm, spam, confusion</span></div></div><div className="rt-card"><div className="system-pill">RESONANCE</div><h2>R = ((E × I × C) × Impact) / (Drift × Entropy)</h2><p>This adds downstream impact. Teaching ten people safely should score better than generating ten useless posts.</p></div></section>}
-function ApiTest(){const [payload,setPayload]=useState({energy:7,intent:.9,control:.85,drift:.5,impact:1.5,entropy:.6});const [status,setStatus]=useState('idle');const [json,setJson]=useState<any>(null);async function run(){setStatus('loading');try{const res=await fetch('/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await res.json();setJson({status:res.status,ok:res.ok,data});setStatus(res.ok?'success':'error')}catch(e:any){setJson({error:String(e?.message||e)});setStatus('error')}}const set=(k:keyof typeof payload,v:number)=>setPayload(p=>({...p,[k]:v}));return <section className="sim-layout"><div className="rt-card hero-card"><div className="system-pill">LIVE API TEST</div><p className="eyebrow">/api/score</p><h1>This is the engine behind payouts.</h1><p className="lead">Every score you see should come from this API. This is what makes the system consistent and verifiable.</p><div className="action-row"><button className="primary" onClick={run}>{status==='loading'?'Calling API…':'Run API Test'}</button><a className="button" href="/api/score" target="_blank" rel="noreferrer">Open GET Endpoint</a></div></div><div className="rt-card"><div className="system-pill">INPUTS</div>{Object.entries(payload).map(([k,v])=><label className="range" key={k}><span>{k} <b>{v}</b></span><input type="range" min="0" max={k==='energy'?10:k==='drift'?3:2} step="0.05" value={v} onChange={e=>set(k as keyof typeof payload,Number(e.target.value))}/></label>)}</div><div className="rt-card"><div className="system-pill">RESPONSE</div><p className="eyebrow">STATUS: {status.toUpperCase()}</p><pre>{json?JSON.stringify(json,null,2):'Click Run API Test to see live JSON here.'}</pre></div></section>}
-function ChainProof(){const {feed,clearFeed}=useTxFeed();return <section className="sim-layout"><div className="rt-card hero-card"><div className="system-pill">PROOF</div><p className="eyebrow">BLOCKCHAIN RECEIPTS</p><h1>Proof this system works.</h1><p className="lead">Every payout creates a blockchain receipt. When a payout runs, you will see the transaction hash, timestamp, wallets involved, and public proof on Polygon.</p><div className="action-row"><a className="button primary" href="https://amoy.polygonscan.com" target="_blank" rel="noreferrer">Open Amoy PolygonScan</a><button onClick={clearFeed}>Clear local feed</button></div></div><div className="rt-card"><div className="system-pill">EVENT STREAM</div><p className="eyebrow">LAST EVENTS</p><div className="agent-list">{feed.length===0&&<span>No transaction events yet. Run an API score and execute a testnet payout to populate this feed.</span>}{feed.map(e=><a className="doc-link" key={e.id} href={e.tx?.startsWith('0x')?`https://amoy.polygonscan.com/tx/${e.tx}`:'#'} target="_blank" rel="noreferrer"><strong>{e.type}</strong><small>{e.network} · {e.time}</small><span>{e.detail}</span></a>)}</div></div></section>}
-function Safety(){return <section className="rt-card"><div className="system-pill">SAFETY FIRST</div><p className="eyebrow">WHY PAYOUTS ARE LOCKED</p><h2>Real payouts stay locked until testnet proves the system works.</h2><div className="checklist"><span>✓ Dry-run first</span><span>✓ Testnet before mainnet</span><span>✓ Wallet signature required</span><span>✓ Recipient list must be approved</span><span>□ Real payout after proof</span></div><p>First real testnet payouts are the next milestone.</p></section>}
-function SocialGood(){return <section className="sim-layout"><div className="rt-card hero-card"><div className="system-pill">SOCIAL GOOD</div><p className="eyebrow">WHY THIS MATTERS</p><h1>Pay people for lowering harm before it becomes damage.</h1><p className="lead">Good AI work can reduce confusion, teach skills, support care work, help communities, and make institutions more trustworthy.</p></div><div className="rt-card"><div className="system-pill">WHAT COUNTS</div><div className="checklist"><span>Helping students learn safely.</span><span>Making public information easier to understand.</span><span>Reducing conflict and improving communication.</span><span>Building tools that help small groups do more with less.</span></div></div></section>}
-function Docs(){return <section className="rt-card"><div className="system-pill">DOCS</div><p className="eyebrow">WHO SHOULD READ WHAT</p><h2>Pick your path.</h2><div className="checklist"><span>Want to earn with AI? Read Earn and Demo.</span><span>Care about social good? Read Social Good and Safety.</span><span>Want the money model? Read Economics and Payouts.</span><span>Want proof? Read API Test and Proof.</span></div></section>}
-export default function App(){const [tab,setTab]=useState<Tab>('home');const items:{id:Tab;label:string}[]=[{id:'home',label:'HOME'},{id:'earn',label:'EARN'},{id:'demo',label:'DEMO'},{id:'rt11',label:'RT11'},{id:'payouts',label:'PAYOUTS'},{id:'economics',label:'ECON'},{id:'math',label:'MATH'},{id:'api',label:'API'},{id:'wallet',label:'WALLET'},{id:'proof',label:'PROOF'},{id:'safety',label:'SAFETY'},{id:'good',label:'GOOD'},{id:'docs',label:'DOCS'}];return <main className="app-shell lcars-shell"><header className="topbar lcars-top"><div><strong>RT11</strong><span>System: Demo Mode / Testnet Next</span></div><a href="https://github.com/TheBluCog/ReactorTheory" target="_blank" rel="noreferrer">GitHub</a></header><div className="lcars-layout"><nav className="tabs lcars-nav">{items.map(t=><button key={t.id} className={tab===t.id?'active':''} onClick={()=>setTab(t.id)}>{t.label}</button>)}</nav><section className="app-content cinematic-tab lcars-content">{tab==='home'&&<Home setTab={setTab}/>} {tab==='earn'&&<Earn setTab={setTab}/>} {tab==='demo'&&<Demo/>} {tab==='rt11'&&<RT11Dashboard/>} {tab==='payouts'&&<RT11Money/>} {tab==='economics'&&<Economics/>} {tab==='math'&&<MathModel/>} {tab==='api'&&<ApiTest/>} {tab==='wallet'&&<RT11Wallet/>} {tab==='proof'&&<ChainProof/>} {tab==='safety'&&<Safety/>} {tab==='good'&&<SocialGood/>} {tab==='docs'&&<Docs/>}</section></div></main>}
+const metrics = ['Demo mode now', 'API scoring live', 'Testnet next', 'Proof-first'];
+
+export default function App() {
+  return (
+    <main className="min-h-screen bg-[#090711] text-white overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_70%_10%,rgba(255,137,91,.22),transparent_32%),radial-gradient(circle_at_20%_20%,rgba(174,134,255,.24),transparent_30%)]" />
+
+      <header className="relative z-10 flex items-center justify-between px-5 py-6 border-b border-white/10">
+        <div>
+          <p className="text-3xl font-black tracking-tight">Reactor Theory</p>
+          <p className="text-white/55 font-semibold">System: ARTYMUS / RT11 / Ethic Vault / LetsBuySpirit</p>
+        </div>
+        <a className="rounded-full bg-[#ff8d5c] px-6 py-3 font-black text-black shadow-[0_0_30px_rgba(255,141,92,.35)]" href="https://github.com/TheBluCog/ReactorTheory">GitHub</a>
+      </header>
+
+      <div className="relative z-10 h-3 bg-gradient-to-r from-[#b08cff] via-[#ff8d5c] to-[#ffd966]" />
+
+      <section className="relative z-10 grid grid-cols-[116px_1fr] gap-3 px-2 py-6 md:grid-cols-[160px_1fr] md:px-8">
+        <nav className="sticky top-4 self-start space-y-3">
+          {sections.map((s) => (
+            <a key={s.id} href={`#${s.id}`} className={`block rounded-l-full px-3 py-5 text-center text-xs font-black tracking-widest text-black shadow-lg md:text-sm ${s.tone === 'violet' ? 'bg-[#b08cff]' : s.tone === 'gold' ? 'bg-[#ffd966]' : 'bg-[#ff8d5c]'}`}>
+              {s.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="space-y-6">
+          <section id="reactor" className="relative overflow-hidden rounded-[2rem] border border-[#ff8d5c]/35 bg-white/[.07] p-7 shadow-[0_0_60px_rgba(255,141,92,.16)] md:p-12">
+            <div className="absolute left-0 top-0 h-4 w-1/3 rounded-br-full bg-[#ff8d5c]" />
+            <div className="absolute left-1/4 top-0 h-4 w-1/4 rounded-br-full bg-[#b08cff]" />
+            <p className="inline-flex rounded-full bg-[#ffd966] px-5 py-3 text-xs font-black tracking-widest text-black">GOVERNED INTELLIGENCE STACK</p>
+            <p className="mt-7 text-sm font-black tracking-[.35em] text-[#9cc7ff]">REACTOR THEORY</p>
+            <h1 className="mt-5 max-w-4xl text-5xl font-black leading-[.95] tracking-[-.06em] md:text-7xl">Govern intelligence before it governs you.</h1>
+            <p className="mt-8 max-w-3xl text-xl font-semibold leading-relaxed text-white/70">Reactor Theory is the system architecture for alignment, drift control, contribution scoring, and proof-based AI governance. ARTYMUS gives it a control room. RT11 gives it economics. Ethic Vault gives it evidence. LetsBuySpirit gives it a public participation rail.</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              {metrics.map((m) => <span key={m} className="rounded-full border border-[#9cc7ff]/30 bg-[#142036] px-4 py-3 font-black text-[#bcdcff]">{m}</span>)}
+            </div>
+          </section>
+
+          {cards.map((card) => (
+            <section key={card.id} id={card.id} className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#191421]/90 p-7 shadow-[0_0_40px_rgba(176,140,255,.10)] md:p-10">
+              <div className="absolute left-0 top-0 h-4 w-1/3 rounded-br-full bg-[#ff8d5c]" />
+              <p className="mt-4 inline-flex rounded-full bg-[#ffd966] px-5 py-3 text-xs font-black tracking-widest text-black">{card.eyebrow}</p>
+              <h2 className="mt-7 max-w-3xl text-4xl font-black leading-none tracking-[-.05em] md:text-6xl">{card.title}</h2>
+              <p className="mt-6 max-w-3xl text-lg font-semibold leading-relaxed text-white/68">{card.body}</p>
+              <a className="mt-8 inline-flex rounded-full bg-[#b08cff] px-7 py-4 font-black text-black" href={card.href}>{card.cta}</a>
+            </section>
+          ))}
+
+          <section id="api" className="rounded-[2rem] border border-white/10 bg-white/[.06] p-7 md:p-10">
+            <p className="text-sm font-black tracking-[.35em] text-[#9cc7ff]">API / JSON</p>
+            <h2 className="mt-4 text-4xl font-black tracking-[-.05em]">Proof links that should return JSON.</h2>
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              {[['Root','/api/artymus'],['Health','/api/artymus?action=health'],['Links','/api/artymus?action=links']].map(([label, href]) => (
+                <a key={href} className="rounded-2xl border border-white/10 bg-black/30 p-5 font-black text-[#ffd966]" href={href}>{label}<br/><span className="text-xs text-white/50">{href}</span></a>
+              ))}
+            </div>
+          </section>
+
+          <section id="docs" className="rounded-[2rem] border border-white/10 bg-[#120f18] p-7 md:p-10">
+            <p className="text-sm font-black tracking-[.35em] text-[#9cc7ff]">DOCS</p>
+            <h2 className="mt-4 text-4xl font-black tracking-[-.05em]">One stack. Four public faces.</h2>
+            <p className="mt-5 text-lg font-semibold leading-relaxed text-white/65">Reactor Theory is the architecture. ARTYMUS is the operator system. RT11 is the economic engine. Ethic Vault is the proof layer. LetsBuySpirit is the public participation plan.</p>
+          </section>
+        </div>
+      </section>
+    </main>
+  );
+}
