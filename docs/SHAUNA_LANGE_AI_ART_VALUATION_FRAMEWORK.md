@@ -2,8 +2,23 @@
 
 **Purpose:** Public-facing framework page for Shauna Lee Lange’s art valuation model.  
 **LinkedIn:** https://www.linkedin.com/in/shaunaleelange  
+**Professional Art:** https://www.instagram.com/shaunaleelangeart  
+**NPC / Company:** https://www.yourNPC.art  
 **Framework:** Provenance + Resonance + Governance  
 **Date:** May 2026
+
+---
+
+## Link Anchor Rule
+
+Use **Professional Art** for fine art, art consultancy, art valuation, provenance, collectors, exhibitions, advisory, and Shauna Lee Lange’s public art identity.
+
+Use **NPC / Company** only for yourNPC.art, company-facing references, NPC-related projects, commercial platform identity, and separate brand-system contexts.
+
+```text
+Professional Art → https://www.instagram.com/shaunaleelangeart
+NPC / Company    → https://www.yourNPC.art
+```
 
 ---
 
@@ -325,4 +340,6 @@ More provable.
 
 Framework inspired by Shauna Lee Lange’s valuation parameters and public art-market analysis.
 
-Profile: https://www.linkedin.com/in/shaunaleelange
+Profile: https://www.linkedin.com/in/shaunaleelange  
+Professional Art: https://www.instagram.com/shaunaleelangeart  
+NPC / Company: https://www.yourNPC.art
