@@ -1,7 +1,7 @@
 # ARTYMUS 3.0 Specification
 
 **Status:** Published canonical specification  
-**Version:** 3.0  
+**Version:** 3.0.1  
 **Date:** May 2026  
 **Repository:** TheBluCog/ReactorTheory
 
@@ -158,11 +158,11 @@ ARTYMUS 3.0 uses role-aware session logic with short-lived sessions and contextu
 
 Security features:
 
-- signed session token;
+- signed/session-scoped access token or cookie depending on runtime profile;
 - role and access level;
 - session expiration;
-- session binding to request context;
-- nonce support;
+- session binding to request context when enabled;
+- nonce support when enabled;
 - role hierarchy;
 - adaptive permissions.
 
@@ -178,68 +178,74 @@ collector < advisor < operator
 
 ### Audit
 
-```text
-/api/artymus/_audit.ts
-```
-
 Tracks who did what, when, where, and with what result.
 
 ### Alerts
-
-```text
-/api/artymus/_alerts.ts
-```
 
 Triggers warning/critical notifications.
 
 ### Anomaly Detection
 
-```text
-/api/artymus/_anomaly.ts
-```
-
 Detects repeated denied access and operator-level events.
 
 ### Behavior Model
-
-```text
-/api/artymus/_behavior.ts
-```
 
 Builds user behavior profiles.
 
 ### Trust Engine
 
-```text
-/api/artymus/_trust.ts
-```
-
 Converts role, behavior, anomaly, and session health into dynamic trust.
 
 ### Risk Engine
-
-```text
-/api/artymus/_risk.ts
-```
 
 Evaluates intent before action.
 
 ### Auto Defense
 
-```text
-/api/artymus/_defense.ts
-```
-
 Enforces allow, restrict, reauth, or quarantine.
 
 ---
 
-## 8. Command and Autonomous System
+## 8. Consolidated API Runtime
+
+ARTYMUS 3.0.1 consolidates the runtime API into a single Hobby-plan-safe Vercel serverless function:
+
+```text
+/api/artymus
+```
+
+Actions are selected by query string or body field:
+
+```text
+/api/artymus?action=auth
+/api/artymus?action=protected-example
+/api/artymus?action=command
+/api/artymus?action=autonomous
+/api/artymus?action=governor
+/api/artymus?action=runtime-state
+/api/artymus?action=runtime-loop
+/api/artymus?action=governance-loop
+/api/artymus?action=live-loop
+/api/artymus?action=distributed-node
+/api/artymus?action=distributed-consensus
+/api/artymus?action=global-node
+/api/artymus?action=global-sync
+```
+
+This consolidation prevents exceeding the Vercel Hobby plan limit of 12 serverless functions while retaining the same logical runtime capabilities.
+
+Legacy route files under `/api/artymus/*` are considered implementation archive / migration artifacts and should not be treated as the canonical public API surface.
+
+---
+
+## 9. Command and Autonomous System
 
 ### Command Engine
 
+Canonical route:
+
 ```text
-/api/artymus/command
+/api/artymus?action=command
 ```
 
 Processes explicit commands and natural-language-style inputs into system actions.
@@ -257,8 +263,10 @@ SESSION.LOCK
 
 ### Autonomous Engine
 
+Canonical route:
+
 ```text
-/api/artymus/autonomous
+/api/artymus?action=autonomous
 ```
 
 Modes:
@@ -273,20 +281,22 @@ The system may execute only when trust is sufficient, risk is acceptable, reauth
 
 ### Governor
 
+Canonical route:
+
 ```text
-/api/artymus/governor
+/api/artymus?action=governor
 ```
 
 Final decision authority for intent, trust, risk, and directives.
 
 ---
 
-## 9. Runtime Loop
+## 10. Runtime Loop
 
 ### Runtime State
 
 ```text
-/api/artymus/runtime-state
+/api/artymus?action=runtime-state
 ```
 
 Maintains serverless-safe runtime state snapshots.
@@ -294,7 +304,7 @@ Maintains serverless-safe runtime state snapshots.
 ### Runtime Loop
 
 ```text
-/api/artymus/runtime-loop
+/api/artymus?action=runtime-loop
 ```
 
 Runs iterative trust/risk/decision cycles.
@@ -302,7 +312,7 @@ Runs iterative trust/risk/decision cycles.
 ### Governance Loop
 
 ```text
-/api/artymus/governance-loop
+/api/artymus?action=governance-loop
 ```
 
 Simulates continuous system decision evolution.
@@ -310,19 +320,19 @@ Simulates continuous system decision evolution.
 ### Live Loop
 
 ```text
-/api/artymus/live-loop
+/api/artymus?action=live-loop
 ```
 
 Runs a serverless-safe loop simulation with trust and risk evolution.
 
 ---
 
-## 10. Distributed Governance
+## 11. Distributed Governance
 
 ### Distributed Node Registry
 
 ```text
-/api/artymus/distributed-node
+/api/artymus?action=distributed-node
 ```
 
 Allows independent nodes to submit signals, trust, risk, and votes.
@@ -330,7 +340,7 @@ Allows independent nodes to submit signals, trust, risk, and votes.
 ### Distributed Consensus
 
 ```text
-/api/artymus/distributed-consensus
+/api/artymus?action=distributed-consensus
 ```
 
 Calculates network-level allow/deny/abstain consensus.
@@ -338,7 +348,7 @@ Calculates network-level allow/deny/abstain consensus.
 ### Global Node Registry
 
 ```text
-/api/artymus/global-node
+/api/artymus?action=global-node
 ```
 
 Registers global governance nodes across systems, regions, and organizations.
@@ -346,14 +356,14 @@ Registers global governance nodes across systems, regions, and organizations.
 ### Global Sync
 
 ```text
-/api/artymus/global-sync
+/api/artymus?action=global-sync
 ```
 
 Aggregates global network trust, risk, and health.
 
 ---
 
-## 11. Operating Principles
+## 12. Operating Principles
 
 1. Beauty first, mechanics later.
 2. No execution without trust.
@@ -362,10 +372,11 @@ Aggregates global network trust, risk, and health.
 5. No autonomy without risk evaluation.
 6. No governance without visibility.
 7. No distributed system without consensus.
+8. No serverless sprawl when a consolidated runtime router is sufficient.
 
 ---
 
-## 12. Deployment Target
+## 13. Deployment Target
 
 Primary target:
 
@@ -381,7 +392,7 @@ https://reactor-theory-5d2j6wahn-theblucogs-projects.vercel.app
 
 ---
 
-## 13. Current Status
+## 14. Current Status
 
 ```text
 Surface UI             COMPLETE
@@ -389,25 +400,26 @@ Operator login         COMPLETE
 Operator app           COMPLETE
 Control room           COMPLETE
 Command layer          COMPLETE
-Auth                   IN PROGRESS / EDGE MIGRATION
-Audit                  COMPLETE
-Alerts                 COMPLETE
-Anomaly detection      COMPLETE
-Behavior model         COMPLETE
-Trust scoring          COMPLETE
-Risk engine            COMPLETE
-Auto defense           COMPLETE
-Autonomous engine      COMPLETE
-Governor               COMPLETE
-Runtime state          COMPLETE
-Runtime loop           COMPLETE
-Distributed governance COMPLETE
-Global network         COMPLETE
+Consolidated API       COMPLETE
+Auth                   DEPLOY-SAFE / CONSOLIDATED
+Audit                  CONSOLIDATED
+Alerts                 CONSOLIDATED LOGIC
+Anomaly detection      CONSOLIDATED LOGIC
+Behavior model         CONSOLIDATED LOGIC
+Trust scoring          CONSOLIDATED LOGIC
+Risk engine            CONSOLIDATED LOGIC
+Auto defense           CONSOLIDATED LOGIC
+Autonomous engine      CONSOLIDATED
+Governor               CONSOLIDATED
+Runtime state          CONSOLIDATED
+Runtime loop           CONSOLIDATED
+Distributed governance CONSOLIDATED
+Global network         CONSOLIDATED
 ```
 
 ---
 
-## 14. Canonical Summary
+## 15. Canonical Summary
 
 ARTYMUS 3.0 is not a dashboard.
 
@@ -421,3 +433,5 @@ Defense is the boundary.
 Runtime is the memory.
 Consensus is the network.
 ```
+
+ARTYMUS 3.0.1 adds a deploy-safe consolidated API architecture for Vercel Hobby compatibility while preserving the full logical system model.
