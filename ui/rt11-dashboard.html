@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ARTYMUS RT11 Live Dashboard</title>
+  <title>ARTYMUS RT11 Wired Dashboard</title>
   <style>
     :root { --green:#00ff66; --amber:#ffd166; --red:#ff4d4d; --cyan:#33ccff; --bg:#020403; --panel:#07110b; }
     * { box-sizing:border-box; }
@@ -19,28 +19,48 @@
     input { width:100%; padding:9px; background:#000; border:1px solid #185c32; color:var(--green); font-family:inherit; }
     button { margin-top:10px; padding:10px 12px; background:#001f0d; border:1px solid var(--green); color:var(--green); cursor:pointer; font-family:inherit; text-transform:uppercase; }
     button:hover { background:#043d1b; }
-    .metric { font-size:34px; color:#fff; margin:10px 0; }
+    .metric { font-size:28px; color:#fff; margin:10px 0; word-break:break-all; }
     .ok { color:var(--green); } .warn { color:var(--amber); } .bad { color:var(--red); }
     table { width:100%; border-collapse:collapse; font-size:13px; }
     th,td { border-bottom:1px solid #12401f; padding:8px; text-align:left; }
     th { color:var(--cyan); }
-    .bar { height:12px; background:#001f0d; border:1px solid #185c32; overflow:hidden; }
+    .bar { height:12px; background:#001f0d; border:1px solid #185c32; overflow:hidden; margin-bottom:8px; }
     .fill { height:100%; background:linear-gradient(90deg,var(--green),var(--cyan)); width:0%; transition:width .4s; }
-    .terminal { white-space:pre-wrap; color:#b8ffd0; line-height:1.4; background:#000; padding:12px; border:1px solid #12401f; min-height:140px; }
+    .terminal { white-space:pre-wrap; color:#b8ffd0; line-height:1.4; background:#000; padding:12px; border:1px solid #12401f; min-height:160px; max-height:320px; overflow:auto; }
     a { color:var(--cyan); }
+    .small { font-size:12px; color:#b8ffd0; }
   </style>
 </head>
 <body>
 <header>
-  <h1>ARTYMUS.RT11 // LIVE OPERATOR DASHBOARD</h1>
-  <div class="sub">Acquisition Infrastructure Layer • Capital → Control → Execution • Wallet-ready</div>
+  <h1>ARTYMUS.RT11 // WIRED OPERATOR DASHBOARD</h1>
+  <div class="sub">Acquisition Infrastructure Layer • wallet + contract-read scaffold • capital → control → execution</div>
 </header>
 <main>
   <section class="panel">
     <h2>Wallet Connection</h2>
     <button onclick="connectWallet()">Connect Wallet</button>
+    <button onclick="refreshContractReads()">Refresh Reads</button>
     <div id="wallet" class="metric">OFFLINE</div>
     <div id="chain">No provider connected.</div>
+  </section>
+
+  <section class="panel">
+    <h2>Contract Wiring</h2>
+    <label>AADST Contract</label><input id="aadstAddress" placeholder="0x..." />
+    <label>SRT Contract</label><input id="srtAddress" placeholder="0x..." />
+    <p class="small">Paste deployed contract addresses, connect wallet, then refresh reads.</p>
+  </section>
+
+  <section class="panel">
+    <h2>On-Chain Account State</h2>
+    <table>
+      <tr><th>Read</th><th>Value</th></tr>
+      <tr><td>AADST balance</td><td id="aadstBalance">—</td></tr>
+      <tr><td>AADST whitelisted</td><td id="aadstWhitelist">—</td></tr>
+      <tr><td>SRT identity</td><td id="srtState">—</td></tr>
+      <tr><td>AADST total supply</td><td id="aadstSupply">—</td></tr>
+    </table>
   </section>
 
   <section class="panel">
@@ -96,8 +116,8 @@
   <section class="panel wide">
     <h2>Live System Log</h2>
     <div id="log" class="terminal">RT11.LOAD();
-AIL.STATUS = ONLINE;
-CAPITAL_STACK = 900M;
+AIL.STATUS = WIRED;
+CONTRACT_READS = READY;
 AADST = REGULATED_SECURITY;
 SRT = POST_CLOSE_LOYALTY_SIGNAL;
 BOARD_CONTROL = REQUIRED;
@@ -110,6 +130,16 @@ SYSTEM_VERDICT = BUILD_PHASE;</div>
   </section>
 </main>
 <script>
+const AADST_ABI = [
+  'function balanceOf(address account) view returns (uint256)',
+  'function whitelisted(address account) view returns (bool)',
+  'function totalSupply() view returns (uint256)'
+];
+const SRT_ABI = [
+  'function hasToken(address user) view returns (bool)'
+];
+let signerAddress = null;
+
 function calc(){
  const e=parseFloat(document.getElementById('e').value)||0;
  const i=parseFloat(document.getElementById('i').value)||0;
@@ -131,15 +161,43 @@ async function connectWallet(){
  try{
    const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
    const chain=await window.ethereum.request({method:'eth_chainId'});
-   const acct=accounts[0];
-   document.getElementById('wallet').innerText=acct.slice(0,6)+'...'+acct.slice(-4);
+   signerAddress=accounts[0];
+   document.getElementById('wallet').innerText=signerAddress.slice(0,6)+'...'+signerAddress.slice(-4);
    document.getElementById('wallet').className='metric ok';
    document.getElementById('chain').innerText='Chain: '+chain;
-   log('WALLET.CONNECTED = '+acct+' / CHAIN '+chain);
+   log('WALLET.CONNECTED = '+signerAddress+' / CHAIN '+chain);
+   await refreshContractReads();
  }catch(err){
    document.getElementById('wallet').innerText='DECLINED';
    document.getElementById('wallet').className='metric bad';
    log('WALLET.ERROR = '+err.message);
+ }
+}
+async function refreshContractReads(){
+ if(!window.ethereum || !signerAddress){ log('READ.SKIP = CONNECT_WALLET_FIRST'); return; }
+ if(!window.ethers){ log('READ.ERROR = ETHERS_NOT_LOADED'); return; }
+ const provider = new ethers.BrowserProvider(window.ethereum);
+ const aadstAddr = document.getElementById('aadstAddress').value.trim();
+ const srtAddr = document.getElementById('srtAddress').value.trim();
+ try{
+   if(aadstAddr){
+     const aadst = new ethers.Contract(aadstAddr, AADST_ABI, provider);
+     const bal = await aadst.balanceOf(signerAddress);
+     const white = await aadst.whitelisted(signerAddress);
+     const supply = await aadst.totalSupply();
+     document.getElementById('aadstBalance').innerText = bal.toString();
+     document.getElementById('aadstWhitelist').innerText = white ? 'YES' : 'NO';
+     document.getElementById('aadstSupply').innerText = supply.toString();
+     log('AADST.READ = BALANCE '+bal.toString()+' / WHITELIST '+white+' / SUPPLY '+supply.toString());
+   }
+   if(srtAddr){
+     const srt = new ethers.Contract(srtAddr, SRT_ABI, provider);
+     const has = await srt.hasToken(signerAddress);
+     document.getElementById('srtState').innerText = has ? 'ACTIVE' : 'NONE';
+     log('SRT.READ = '+(has?'ACTIVE':'NONE'));
+   }
+ }catch(err){
+   log('READ.ERROR = '+err.message);
  }
 }
 function log(line){
@@ -147,7 +205,15 @@ function log(line){
  el.textContent += '\n'+new Date().toISOString()+' :: '+line;
  el.scrollTop=el.scrollHeight;
 }
+function loadEthers(){
+ const s=document.createElement('script');
+ s.src='https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js';
+ s.onload=()=>log('ETHERS.LOAD = OK');
+ s.onerror=()=>log('ETHERS.LOAD = FAILED');
+ document.head.appendChild(s);
+}
 calc();
+loadEthers();
 </script>
 </body>
 </html>
