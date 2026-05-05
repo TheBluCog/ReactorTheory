@@ -1,31 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>RT11 Dashboard</title>
-<style>
-body { background:black; color:#0f0; font-family:monospace; }
-.panel { border:1px solid #0f0; padding:10px; margin:10px; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARTYMUS RT11 Live Dashboard</title>
+  <style>
+    :root { --green:#00ff66; --amber:#ffd166; --red:#ff4d4d; --cyan:#33ccff; --bg:#020403; --panel:#07110b; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:radial-gradient(circle at top,#102015 0,#020403 45%,#000 100%); color:var(--green); font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; }
+    header { padding:22px; border-bottom:1px solid var(--green); background:rgba(0,0,0,.72); position:sticky; top:0; z-index:5; }
+    h1 { margin:0; letter-spacing:.08em; font-size:24px; }
+    .sub { color:var(--cyan); margin-top:6px; }
+    main { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:14px; padding:14px; }
+    .panel { border:1px solid var(--green); background:rgba(7,17,11,.9); padding:16px; box-shadow:0 0 18px rgba(0,255,102,.12); min-height:190px; }
+    .wide { grid-column:1/-1; }
+    h2 { margin:0 0 12px; color:#fff; font-size:16px; text-transform:uppercase; }
+    label { display:block; margin:8px 0 4px; color:var(--cyan); }
+    input { width:100%; padding:9px; background:#000; border:1px solid #185c32; color:var(--green); font-family:inherit; }
+    button { margin-top:10px; padding:10px 12px; background:#001f0d; border:1px solid var(--green); color:var(--green); cursor:pointer; font-family:inherit; text-transform:uppercase; }
+    button:hover { background:#043d1b; }
+    .metric { font-size:34px; color:#fff; margin:10px 0; }
+    .ok { color:var(--green); } .warn { color:var(--amber); } .bad { color:var(--red); }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th,td { border-bottom:1px solid #12401f; padding:8px; text-align:left; }
+    th { color:var(--cyan); }
+    .bar { height:12px; background:#001f0d; border:1px solid #185c32; overflow:hidden; }
+    .fill { height:100%; background:linear-gradient(90deg,var(--green),var(--cyan)); width:0%; transition:width .4s; }
+    .terminal { white-space:pre-wrap; color:#b8ffd0; line-height:1.4; background:#000; padding:12px; border:1px solid #12401f; min-height:140px; }
+    a { color:var(--cyan); }
+  </style>
 </head>
 <body>
-<h1>ARTYMUS RT11 Dashboard</h1>
-<div class='panel'>
-<h2>UAP Calculator</h2>
-E:<input id='e'><br>
-I:<input id='i'><br>
-C:<input id='c'><br>
-D:<input id='d'><br>
-<button onclick='calc()'>Compute</button>
-<div id='out'></div>
-</div>
+<header>
+  <h1>ARTYMUS.RT11 // LIVE OPERATOR DASHBOARD</h1>
+  <div class="sub">Acquisition Infrastructure Layer • Capital → Control → Execution • Wallet-ready</div>
+</header>
+<main>
+  <section class="panel">
+    <h2>Wallet Connection</h2>
+    <button onclick="connectWallet()">Connect Wallet</button>
+    <div id="wallet" class="metric">OFFLINE</div>
+    <div id="chain">No provider connected.</div>
+  </section>
+
+  <section class="panel">
+    <h2>UAP Calculator</h2>
+    <label>Energy / Capital</label><input id="e" type="number" value="900" />
+    <label>Intent Alignment</label><input id="i" type="number" value="0.92" step="0.01" />
+    <label>Control / Coherence</label><input id="c" type="number" value="0.88" step="0.01" />
+    <label>Drift</label><input id="d" type="number" value="0.24" step="0.01" />
+    <button onclick="calc()">Compute UAP</button>
+    <div id="out" class="metric">—</div>
+  </section>
+
+  <section class="panel">
+    <h2>Capital Stack</h2>
+    <table>
+      <tr><th>Source</th><th>US$M</th></tr>
+      <tr><td>ARTYMUS Sponsor</td><td>225</td></tr>
+      <tr><td>Institutional</td><td>150</td></tr>
+      <tr><td>AADST Reg D</td><td>125</td></tr>
+      <tr><td>AADST Reg S</td><td>75</td></tr>
+      <tr><td>Debt / ABL / ABS</td><td>325</td></tr>
+      <tr><th>Total</th><th>900</th></tr>
+    </table>
+  </section>
+
+  <section class="panel">
+    <h2>Drift Monitor</h2>
+    <div>Regulatory Drift</div><div class="bar"><div class="fill" style="width:24%"></div></div>
+    <div>Capital Drift</div><div class="bar"><div class="fill" style="width:31%"></div></div>
+    <div>Operational Drift</div><div class="bar"><div class="fill" style="width:42%"></div></div>
+    <p class="warn">Mode: WATCH / GOVERNANCE REQUIRED</p>
+  </section>
+
+  <section class="panel">
+    <h2>Token Layer</h2>
+    <table>
+      <tr><th>Token</th><th>Status</th><th>Purpose</th></tr>
+      <tr><td>AADST</td><td class="warn">SECURITY</td><td>Capital rights</td></tr>
+      <tr><td>SRT</td><td class="ok">SOULBOUND</td><td>Loyalty / signal</td></tr>
+    </table>
+  </section>
+
+  <section class="panel">
+    <h2>Governance Signal</h2>
+    <table>
+      <tr><th>Proposal</th><th>SRT</th><th>AADST</th></tr>
+      <tr><td>Route Relaunch Priority</td><td>72%</td><td>61%</td></tr>
+      <tr><td>Capital Reserve Lock</td><td>64%</td><td>88%</td></tr>
+      <tr><td>Employee Pool Expansion</td><td>91%</td><td>54%</td></tr>
+    </table>
+  </section>
+
+  <section class="panel wide">
+    <h2>Live System Log</h2>
+    <div id="log" class="terminal">RT11.LOAD();
+AIL.STATUS = ONLINE;
+CAPITAL_STACK = 900M;
+AADST = REGULATED_SECURITY;
+SRT = POST_CLOSE_LOYALTY_SIGNAL;
+BOARD_CONTROL = REQUIRED;
+SYSTEM_VERDICT = BUILD_PHASE;</div>
+  </section>
+
+  <section class="panel wide">
+    <h2>Canonical Spec</h2>
+    <p>Published spec: <a href="../docs/ARTYMUS_RT11_OPEN_CORPORATE_FRAMEWORK.md">ARTYMUS_RT11_OPEN_CORPORATE_FRAMEWORK.md</a></p>
+  </section>
+</main>
 <script>
 function calc(){
- let e=+document.getElementById('e').value;
- let i=+document.getElementById('i').value;
- let c=+document.getElementById('c').value;
- let d=+document.getElementById('d').value;
- document.getElementById('out').innerText=(e*i*c)/d;
+ const e=parseFloat(document.getElementById('e').value)||0;
+ const i=parseFloat(document.getElementById('i').value)||0;
+ const c=parseFloat(document.getElementById('c').value)||0;
+ const d=parseFloat(document.getElementById('d').value)||1;
+ const score=(e*i*c)/d;
+ const out=document.getElementById('out');
+ out.innerText=score.toFixed(2);
+ out.className='metric '+(score>2500?'ok':score>1000?'warn':'bad');
+ log('UAP.COMPUTE = '+score.toFixed(2));
 }
+async function connectWallet(){
+ if(!window.ethereum){
+   document.getElementById('wallet').innerText='NO PROVIDER';
+   document.getElementById('wallet').className='metric bad';
+   log('WALLET.ERROR = NO_ETHEREUM_PROVIDER');
+   return;
+ }
+ try{
+   const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
+   const chain=await window.ethereum.request({method:'eth_chainId'});
+   const acct=accounts[0];
+   document.getElementById('wallet').innerText=acct.slice(0,6)+'...'+acct.slice(-4);
+   document.getElementById('wallet').className='metric ok';
+   document.getElementById('chain').innerText='Chain: '+chain;
+   log('WALLET.CONNECTED = '+acct+' / CHAIN '+chain);
+ }catch(err){
+   document.getElementById('wallet').innerText='DECLINED';
+   document.getElementById('wallet').className='metric bad';
+   log('WALLET.ERROR = '+err.message);
+ }
+}
+function log(line){
+ const el=document.getElementById('log');
+ el.textContent += '\n'+new Date().toISOString()+' :: '+line;
+ el.scrollTop=el.scrollHeight;
+}
+calc();
 </script>
 </body>
 </html>
