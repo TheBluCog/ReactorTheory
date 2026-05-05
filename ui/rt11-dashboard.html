@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ARTYMUS RT11 Wired Dashboard</title>
+  <title>ARTYMUS RT11 Write Dashboard</title>
   <style>
     :root { --green:#00ff66; --amber:#ffd166; --red:#ff4d4d; --cyan:#33ccff; --bg:#020403; --panel:#07110b; }
     * { box-sizing:border-box; }
@@ -19,6 +19,7 @@
     input { width:100%; padding:9px; background:#000; border:1px solid #185c32; color:var(--green); font-family:inherit; }
     button { margin-top:10px; padding:10px 12px; background:#001f0d; border:1px solid var(--green); color:var(--green); cursor:pointer; font-family:inherit; text-transform:uppercase; }
     button:hover { background:#043d1b; }
+    .danger { border-color:var(--red); color:var(--red); }
     .metric { font-size:28px; color:#fff; margin:10px 0; word-break:break-all; }
     .ok { color:var(--green); } .warn { color:var(--amber); } .bad { color:var(--red); }
     table { width:100%; border-collapse:collapse; font-size:13px; }
@@ -33,8 +34,8 @@
 </head>
 <body>
 <header>
-  <h1>ARTYMUS.RT11 // WIRED OPERATOR DASHBOARD</h1>
-  <div class="sub">Acquisition Infrastructure Layer • wallet + contract-read scaffold • capital → control → execution</div>
+  <h1>ARTYMUS.RT11 // WRITE ENABLED OPERATOR DASHBOARD</h1>
+  <div class="sub">Acquisition Infrastructure Layer • wallet + contract reads/writes • capital → control → execution</div>
 </header>
 <main>
   <section class="panel">
@@ -49,7 +50,7 @@
     <h2>Contract Wiring</h2>
     <label>AADST Contract</label><input id="aadstAddress" placeholder="0x..." />
     <label>SRT Contract</label><input id="srtAddress" placeholder="0x..." />
-    <p class="small">Paste deployed contract addresses, connect wallet, then refresh reads.</p>
+    <p class="small">Paste deployed contract addresses, connect wallet, then refresh reads or submit writes.</p>
   </section>
 
   <section class="panel">
@@ -61,6 +62,26 @@
       <tr><td>SRT identity</td><td id="srtState">—</td></tr>
       <tr><td>AADST total supply</td><td id="aadstSupply">—</td></tr>
     </table>
+  </section>
+
+  <section class="panel">
+    <h2>AADST Write Actions</h2>
+    <label>Investor / Recipient</label><input id="aadstInvestor" placeholder="0x..." />
+    <label>Amount</label><input id="aadstAmount" type="number" value="1" />
+    <label>Jurisdiction</label><input id="aadstJurisdiction" value="US" />
+    <label>Exemption</label><input id="aadstExemption" value="RegD-506c" />
+    <button onclick="aadstWhitelistUser()">Whitelist Investor</button>
+    <button onclick="aadstMint()">Mint AADST</button>
+    <button class="danger" onclick="aadstForceTransfer()">Forced Transfer To Connected Wallet</button>
+    <p class="small">Requires transfer-agent authority on the AADST contract.</p>
+  </section>
+
+  <section class="panel">
+    <h2>SRT Write Actions</h2>
+    <label>User</label><input id="srtUser" placeholder="0x..." />
+    <button onclick="srtMint()">Mint SRT</button>
+    <button class="danger" onclick="srtRevoke()">Revoke SRT</button>
+    <p class="small">Requires issuer authority on the SRT contract.</p>
   </section>
 
   <section class="panel">
@@ -94,34 +115,15 @@
     <p class="warn">Mode: WATCH / GOVERNANCE REQUIRED</p>
   </section>
 
-  <section class="panel">
-    <h2>Token Layer</h2>
-    <table>
-      <tr><th>Token</th><th>Status</th><th>Purpose</th></tr>
-      <tr><td>AADST</td><td class="warn">SECURITY</td><td>Capital rights</td></tr>
-      <tr><td>SRT</td><td class="ok">SOULBOUND</td><td>Loyalty / signal</td></tr>
-    </table>
-  </section>
-
-  <section class="panel">
-    <h2>Governance Signal</h2>
-    <table>
-      <tr><th>Proposal</th><th>SRT</th><th>AADST</th></tr>
-      <tr><td>Route Relaunch Priority</td><td>72%</td><td>61%</td></tr>
-      <tr><td>Capital Reserve Lock</td><td>64%</td><td>88%</td></tr>
-      <tr><td>Employee Pool Expansion</td><td>91%</td><td>54%</td></tr>
-    </table>
-  </section>
-
   <section class="panel wide">
     <h2>Live System Log</h2>
     <div id="log" class="terminal">RT11.LOAD();
-AIL.STATUS = WIRED;
+AIL.STATUS = WRITE_ENABLED;
 CONTRACT_READS = READY;
+CONTRACT_WRITES = ENABLED;
 AADST = REGULATED_SECURITY;
 SRT = POST_CLOSE_LOYALTY_SIGNAL;
-BOARD_CONTROL = REQUIRED;
-SYSTEM_VERDICT = BUILD_PHASE;</div>
+BOARD_CONTROL = REQUIRED;</div>
   </section>
 
   <section class="panel wide">
@@ -133,10 +135,15 @@ SYSTEM_VERDICT = BUILD_PHASE;</div>
 const AADST_ABI = [
   'function balanceOf(address account) view returns (uint256)',
   'function whitelisted(address account) view returns (bool)',
-  'function totalSupply() view returns (uint256)'
+  'function totalSupply() view returns (uint256)',
+  'function setWhitelist(address account,bool status,string jurisdiction,string exemption)',
+  'function mint(address investor,uint256 amount)',
+  'function forcedTransfer(address from,address to,uint256 amount,string reason)'
 ];
 const SRT_ABI = [
-  'function hasToken(address user) view returns (bool)'
+  'function hasToken(address user) view returns (bool)',
+  'function mint(address user)',
+  'function revoke(address user)'
 ];
 let signerAddress = null;
 
@@ -150,6 +157,12 @@ function calc(){
  out.innerText=score.toFixed(2);
  out.className='metric '+(score>2500?'ok':score>1000?'warn':'bad');
  log('UAP.COMPUTE = '+score.toFixed(2));
+}
+async function getSigner(){
+ if(!window.ethereum) throw new Error('NO_ETHEREUM_PROVIDER');
+ if(!window.ethers) throw new Error('ETHERS_NOT_LOADED');
+ const provider = new ethers.BrowserProvider(window.ethereum);
+ return await provider.getSigner();
 }
 async function connectWallet(){
  if(!window.ethereum){
@@ -199,6 +212,77 @@ async function refreshContractReads(){
  }catch(err){
    log('READ.ERROR = '+err.message);
  }
+}
+async function aadstContractWrite(){
+ const addr=document.getElementById('aadstAddress').value.trim();
+ if(!addr) throw new Error('AADST_ADDRESS_REQUIRED');
+ const signer=await getSigner();
+ return new ethers.Contract(addr,AADST_ABI,signer);
+}
+async function srtContractWrite(){
+ const addr=document.getElementById('srtAddress').value.trim();
+ if(!addr) throw new Error('SRT_ADDRESS_REQUIRED');
+ const signer=await getSigner();
+ return new ethers.Contract(addr,SRT_ABI,signer);
+}
+async function aadstWhitelistUser(){
+ try{
+  const c=await aadstContractWrite();
+  const user=document.getElementById('aadstInvestor').value.trim();
+  const jurisdiction=document.getElementById('aadstJurisdiction').value.trim();
+  const exemption=document.getElementById('aadstExemption').value.trim();
+  const tx=await c.setWhitelist(user,true,jurisdiction,exemption);
+  log('AADST.WHITELIST.TX = '+tx.hash);
+  await tx.wait();
+  log('AADST.WHITELIST.CONFIRMED');
+  await refreshContractReads();
+ }catch(err){ log('AADST.WHITELIST.ERROR = '+err.message); }
+}
+async function aadstMint(){
+ try{
+  const c=await aadstContractWrite();
+  const user=document.getElementById('aadstInvestor').value.trim();
+  const amount=document.getElementById('aadstAmount').value.trim();
+  const tx=await c.mint(user,amount);
+  log('AADST.MINT.TX = '+tx.hash);
+  await tx.wait();
+  log('AADST.MINT.CONFIRMED');
+  await refreshContractReads();
+ }catch(err){ log('AADST.MINT.ERROR = '+err.message); }
+}
+async function aadstForceTransfer(){
+ try{
+  const c=await aadstContractWrite();
+  const from=document.getElementById('aadstInvestor').value.trim();
+  const amount=document.getElementById('aadstAmount').value.trim();
+  const tx=await c.forcedTransfer(from,signerAddress,amount,'RT11_COMPLIANCE_OPERATOR_ACTION');
+  log('AADST.FORCED_TRANSFER.TX = '+tx.hash);
+  await tx.wait();
+  log('AADST.FORCED_TRANSFER.CONFIRMED');
+  await refreshContractReads();
+ }catch(err){ log('AADST.FORCED_TRANSFER.ERROR = '+err.message); }
+}
+async function srtMint(){
+ try{
+  const c=await srtContractWrite();
+  const user=document.getElementById('srtUser').value.trim();
+  const tx=await c.mint(user);
+  log('SRT.MINT.TX = '+tx.hash);
+  await tx.wait();
+  log('SRT.MINT.CONFIRMED');
+  await refreshContractReads();
+ }catch(err){ log('SRT.MINT.ERROR = '+err.message); }
+}
+async function srtRevoke(){
+ try{
+  const c=await srtContractWrite();
+  const user=document.getElementById('srtUser').value.trim();
+  const tx=await c.revoke(user);
+  log('SRT.REVOKE.TX = '+tx.hash);
+  await tx.wait();
+  log('SRT.REVOKE.CONFIRMED');
+  await refreshContractReads();
+ }catch(err){ log('SRT.REVOKE.ERROR = '+err.message); }
 }
 function log(line){
  const el=document.getElementById('log');
