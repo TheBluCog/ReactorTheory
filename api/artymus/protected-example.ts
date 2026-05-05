@@ -1,7 +1,8 @@
 import { requireRole } from './_auth';
 import { writeAudit } from './_audit';
+import { alertDeniedAccess, alertOperatorAccess } from './_alerts';
 
-export default function handler(req: any, res: any) {
+export default async function handler(req: any, res: any) {
   const session = requireRole(req, res, 'advisor');
 
   if (!session) {
@@ -10,6 +11,11 @@ export default function handler(req: any, res: any) {
       result: 'deny',
       reason: 'INSUFFICIENT_ROLE_OR_NO_SESSION',
     });
+
+    await alertDeniedAccess(req, 'Advisor-level endpoint denied', {
+      endpoint: req.url,
+    });
+
     return;
   }
 
@@ -20,6 +26,12 @@ export default function handler(req: any, res: any) {
     level: session.level,
     result: 'allow',
   });
+
+  if (session.role === 'operator') {
+    await alertOperatorAccess(req, session.sub, session.role, {
+      endpoint: req.url,
+    });
+  }
 
   return res.status(200).json({
     ok: true,
