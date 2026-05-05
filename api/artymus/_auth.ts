@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import { base64UrlEncode, base64UrlDecode, signHmac, timingSafeEqual } from './_crypto';
 
 export type ArtymusRole = 'collector' | 'advisor' | 'operator';
 
@@ -23,30 +23,24 @@ export const ROLE_ACCESS: Record<ArtymusRole, string[]> = {
   operator: ['plates', 'intelligence-read', 'execution-links', 'rt11-console'],
 };
 
-function b64url(input: Buffer | string) {
-  return Buffer.from(input).toString('base64url');
-}
-
 function secret() {
-  return process.env.ARTYMUS_AUTH_SECRET || 'dev-only-change-me';
+  return globalThis.process?.env?.ARTYMUS_AUTH_SECRET || 'dev-only-change-me';
 }
 
-export function signSession(payload: ArtymusSession) {
-  const header = b64url(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-  const body = b64url(JSON.stringify(payload));
-  const signature = crypto.createHmac('sha256', secret()).update(`${header}.${body}`).digest('base64url');
+export async function signSession(payload: ArtymusSession): Promise<string> {
+  const header = base64UrlEncode(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const body = base64UrlEncode(JSON.stringify(payload));
+  const signature = await signHmac(`${header}.${body}`, secret());
   return `${header}.${body}.${signature}`;
 }
 
-export function verifySession(token?: string | null): ArtymusSession | null {
+export async function verifySession(token?: string | null): Promise<ArtymusSession | null> {
   if (!token) return null;
   const [header, body, sig] = token.split('.');
   if (!header || !body || !sig) return null;
-  const expected = crypto.createHmac('sha256', secret()).update(`${header}.${body}`).digest('base64url');
-  const a = Buffer.from(sig);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return null;
-  const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as ArtymusSession;
+  const expected = await signHmac(`${header}.${body}`, secret());
+  if (!(await timingSafeEqual(sig, expected))) return null;
+  const payload = JSON.parse(base64UrlDecode(body)) as ArtymusSession;
   if (!payload.exp || Date.now() > payload.exp * 1000) return null;
   return payload;
 }
@@ -64,13 +58,13 @@ export function parseCookies(cookieHeader = ''): Record<string, string> {
   );
 }
 
-export function getSessionFromRequest(req: any): ArtymusSession | null {
+export async function getSessionFromRequest(req: any): Promise<ArtymusSession | null> {
   const cookies = parseCookies(req.headers.cookie || '');
   return verifySession(cookies.artymus_session);
 }
 
-export function requireRole(req: any, res: any, minimumRole: ArtymusRole): ArtymusSession | null {
-  const session = getSessionFromRequest(req);
+export async function requireRole(req: any, res: any, minimumRole: ArtymusRole): Promise<ArtymusSession | null> {
+  const session = await getSessionFromRequest(req);
   if (!session) {
     res.status(401).json({ ok: false, error: 'NO_VALID_SESSION' });
     return null;
