@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ARTYMUS RT11 Write Dashboard</title>
+  <title>ARTYMUS RT11 Secure Dashboard</title>
   <style>
     :root { --green:#00ff66; --amber:#ffd166; --red:#ff4d4d; --cyan:#33ccff; --bg:#020403; --panel:#07110b; }
     * { box-sizing:border-box; }
@@ -19,6 +19,7 @@
     input { width:100%; padding:9px; background:#000; border:1px solid #185c32; color:var(--green); font-family:inherit; }
     button { margin-top:10px; padding:10px 12px; background:#001f0d; border:1px solid var(--green); color:var(--green); cursor:pointer; font-family:inherit; text-transform:uppercase; }
     button:hover { background:#043d1b; }
+    button:disabled { opacity:.35; cursor:not-allowed; border-color:#333; color:#777; }
     .danger { border-color:var(--red); color:var(--red); }
     .metric { font-size:28px; color:#fff; margin:10px 0; word-break:break-all; }
     .ok { color:var(--green); } .warn { color:var(--amber); } .bad { color:var(--red); }
@@ -34,23 +35,33 @@
 </head>
 <body>
 <header>
-  <h1>ARTYMUS.RT11 // WRITE ENABLED OPERATOR DASHBOARD</h1>
-  <div class="sub">Acquisition Infrastructure Layer • wallet + contract reads/writes • capital → control → execution</div>
+  <h1>ARTYMUS.RT11 // SECURE WRITE DASHBOARD</h1>
+  <div class="sub">Role-gated wallet execution • contract reads/writes • API-published control layer</div>
 </header>
 <main>
   <section class="panel">
     <h2>Wallet Connection</h2>
     <button onclick="connectWallet()">Connect Wallet</button>
     <button onclick="refreshContractReads()">Refresh Reads</button>
+    <button onclick="detectRoles()">Detect Roles</button>
     <div id="wallet" class="metric">OFFLINE</div>
     <div id="chain">No provider connected.</div>
+    <div id="roles" class="small">Roles: unknown</div>
   </section>
 
   <section class="panel">
     <h2>Contract Wiring</h2>
     <label>AADST Contract</label><input id="aadstAddress" placeholder="0x..." />
     <label>SRT Contract</label><input id="srtAddress" placeholder="0x..." />
-    <p class="small">Paste deployed contract addresses, connect wallet, then refresh reads or submit writes.</p>
+    <p class="small">Writes are disabled until wallet role detection confirms transfer-agent or issuer authority.</p>
+  </section>
+
+  <section class="panel">
+    <h2>RT11 API</h2>
+    <button onclick="fetchApiState()">GET /api/rt11/state</button>
+    <button onclick="fetchApiScore()">POST /api/rt11/score</button>
+    <button onclick="fetchApiSimulate()">GET /api/rt11/simulate</button>
+    <div id="apiStatus" class="small">API not queried.</div>
   </section>
 
   <section class="panel">
@@ -70,17 +81,17 @@
     <label>Amount</label><input id="aadstAmount" type="number" value="1" />
     <label>Jurisdiction</label><input id="aadstJurisdiction" value="US" />
     <label>Exemption</label><input id="aadstExemption" value="RegD-506c" />
-    <button onclick="aadstWhitelistUser()">Whitelist Investor</button>
-    <button onclick="aadstMint()">Mint AADST</button>
-    <button class="danger" onclick="aadstForceTransfer()">Forced Transfer To Connected Wallet</button>
+    <button data-role="aadst" onclick="aadstWhitelistUser()" disabled>Whitelist Investor</button>
+    <button data-role="aadst" onclick="aadstMint()" disabled>Mint AADST</button>
+    <button data-role="aadst" class="danger" onclick="aadstForceTransfer()" disabled>Forced Transfer To Connected Wallet</button>
     <p class="small">Requires transfer-agent authority on the AADST contract.</p>
   </section>
 
   <section class="panel">
     <h2>SRT Write Actions</h2>
     <label>User</label><input id="srtUser" placeholder="0x..." />
-    <button onclick="srtMint()">Mint SRT</button>
-    <button class="danger" onclick="srtRevoke()">Revoke SRT</button>
+    <button data-role="srt" onclick="srtMint()" disabled>Mint SRT</button>
+    <button data-role="srt" class="danger" onclick="srtRevoke()" disabled>Revoke SRT</button>
     <p class="small">Requires issuer authority on the SRT contract.</p>
   </section>
 
@@ -107,23 +118,13 @@
     </table>
   </section>
 
-  <section class="panel">
-    <h2>Drift Monitor</h2>
-    <div>Regulatory Drift</div><div class="bar"><div class="fill" style="width:24%"></div></div>
-    <div>Capital Drift</div><div class="bar"><div class="fill" style="width:31%"></div></div>
-    <div>Operational Drift</div><div class="bar"><div class="fill" style="width:42%"></div></div>
-    <p class="warn">Mode: WATCH / GOVERNANCE REQUIRED</p>
-  </section>
-
   <section class="panel wide">
     <h2>Live System Log</h2>
     <div id="log" class="terminal">RT11.LOAD();
-AIL.STATUS = WRITE_ENABLED;
-CONTRACT_READS = READY;
-CONTRACT_WRITES = ENABLED;
-AADST = REGULATED_SECURITY;
-SRT = POST_CLOSE_LOYALTY_SIGNAL;
-BOARD_CONTROL = REQUIRED;</div>
+AIL.STATUS = SECURE_WRITE_ENABLED;
+ROLE_GATING = ENABLED;
+CONFIRMATION_LAYER = ENABLED;
+API_LAYER = PUBLISHED;</div>
   </section>
 
   <section class="panel wide">
@@ -136,17 +137,26 @@ const AADST_ABI = [
   'function balanceOf(address account) view returns (uint256)',
   'function whitelisted(address account) view returns (bool)',
   'function totalSupply() view returns (uint256)',
+  'function transferAgent() view returns (address)',
   'function setWhitelist(address account,bool status,string jurisdiction,string exemption)',
   'function mint(address investor,uint256 amount)',
   'function forcedTransfer(address from,address to,uint256 amount,string reason)'
 ];
 const SRT_ABI = [
   'function hasToken(address user) view returns (bool)',
+  'function issuer() view returns (address)',
   'function mint(address user)',
   'function revoke(address user)'
 ];
 let signerAddress = null;
-
+let roleState = { isTransferAgent:false, isIssuer:false };
+function setPermissions(isTA,isIssuer){
+ roleState = { isTransferAgent:isTA, isIssuer:isIssuer };
+ document.querySelectorAll('[data-role="aadst"]').forEach(btn=>btn.disabled=!isTA);
+ document.querySelectorAll('[data-role="srt"]').forEach(btn=>btn.disabled=!isIssuer);
+ document.getElementById('roles').innerText = 'Roles: TRANSFER_AGENT='+isTA+' / ISSUER='+isIssuer;
+ log('ROLE = TA:'+isTA+' / ISSUER:'+isIssuer);
+}
 function calc(){
  const e=parseFloat(document.getElementById('e').value)||0;
  const i=parseFloat(document.getElementById('i').value)||0;
@@ -180,11 +190,32 @@ async function connectWallet(){
    document.getElementById('chain').innerText='Chain: '+chain;
    log('WALLET.CONNECTED = '+signerAddress+' / CHAIN '+chain);
    await refreshContractReads();
+   await detectRoles();
  }catch(err){
    document.getElementById('wallet').innerText='DECLINED';
    document.getElementById('wallet').className='metric bad';
    log('WALLET.ERROR = '+err.message);
  }
+}
+async function detectRoles(){
+ if(!window.ethereum || !signerAddress || !window.ethers){ log('ROLE.SKIP = CONNECT_WALLET_FIRST'); return; }
+ const provider = new ethers.BrowserProvider(window.ethereum);
+ const aadstAddr = document.getElementById('aadstAddress').value.trim();
+ const srtAddr = document.getElementById('srtAddress').value.trim();
+ let isTA=false, isIssuer=false;
+ try{
+  if(aadstAddr){
+   const aadst = new ethers.Contract(aadstAddr,AADST_ABI,provider);
+   const ta = await aadst.transferAgent();
+   isTA = signerAddress.toLowerCase() === ta.toLowerCase();
+  }
+  if(srtAddr){
+   const srt = new ethers.Contract(srtAddr,SRT_ABI,provider);
+   const issuer = await srt.issuer();
+   isIssuer = signerAddress.toLowerCase() === issuer.toLowerCase();
+  }
+  setPermissions(isTA,isIssuer);
+ }catch(err){ log('ROLE.DETECT.ERROR = '+err.message); setPermissions(false,false); }
 }
 async function refreshContractReads(){
  if(!window.ethereum || !signerAddress){ log('READ.SKIP = CONNECT_WALLET_FIRST'); return; }
@@ -209,95 +240,57 @@ async function refreshContractReads(){
      document.getElementById('srtState').innerText = has ? 'ACTIVE' : 'NONE';
      log('SRT.READ = '+(has?'ACTIVE':'NONE'));
    }
- }catch(err){
-   log('READ.ERROR = '+err.message);
- }
+ }catch(err){ log('READ.ERROR = '+err.message); }
+}
+function confirmAction(label){
+ return window.confirm('CONFIRM ACTION:\n\n'+label+'\n\nThis will send a real blockchain transaction. Continue?');
 }
 async function aadstContractWrite(){
  const addr=document.getElementById('aadstAddress').value.trim();
  if(!addr) throw new Error('AADST_ADDRESS_REQUIRED');
+ if(!roleState.isTransferAgent) throw new Error('TRANSFER_AGENT_ROLE_REQUIRED');
  const signer=await getSigner();
  return new ethers.Contract(addr,AADST_ABI,signer);
 }
 async function srtContractWrite(){
  const addr=document.getElementById('srtAddress').value.trim();
  if(!addr) throw new Error('SRT_ADDRESS_REQUIRED');
+ if(!roleState.isIssuer) throw new Error('ISSUER_ROLE_REQUIRED');
  const signer=await getSigner();
  return new ethers.Contract(addr,SRT_ABI,signer);
 }
 async function aadstWhitelistUser(){
- try{
-  const c=await aadstContractWrite();
-  const user=document.getElementById('aadstInvestor').value.trim();
-  const jurisdiction=document.getElementById('aadstJurisdiction').value.trim();
-  const exemption=document.getElementById('aadstExemption').value.trim();
-  const tx=await c.setWhitelist(user,true,jurisdiction,exemption);
-  log('AADST.WHITELIST.TX = '+tx.hash);
-  await tx.wait();
-  log('AADST.WHITELIST.CONFIRMED');
-  await refreshContractReads();
- }catch(err){ log('AADST.WHITELIST.ERROR = '+err.message); }
+ if(!confirmAction('AADST whitelist investor')) return;
+ try{ const c=await aadstContractWrite(); const user=document.getElementById('aadstInvestor').value.trim(); const jurisdiction=document.getElementById('aadstJurisdiction').value.trim(); const exemption=document.getElementById('aadstExemption').value.trim(); const tx=await c.setWhitelist(user,true,jurisdiction,exemption); log('AADST.WHITELIST.TX = '+tx.hash); await tx.wait(); log('AADST.WHITELIST.CONFIRMED'); await refreshContractReads(); }catch(err){ log('AADST.WHITELIST.ERROR = '+err.message); }
 }
 async function aadstMint(){
- try{
-  const c=await aadstContractWrite();
-  const user=document.getElementById('aadstInvestor').value.trim();
-  const amount=document.getElementById('aadstAmount').value.trim();
-  const tx=await c.mint(user,amount);
-  log('AADST.MINT.TX = '+tx.hash);
-  await tx.wait();
-  log('AADST.MINT.CONFIRMED');
-  await refreshContractReads();
- }catch(err){ log('AADST.MINT.ERROR = '+err.message); }
+ if(!confirmAction('AADST mint')) return;
+ try{ const c=await aadstContractWrite(); const user=document.getElementById('aadstInvestor').value.trim(); const amount=document.getElementById('aadstAmount').value.trim(); const tx=await c.mint(user,amount); log('AADST.MINT.TX = '+tx.hash); await tx.wait(); log('AADST.MINT.CONFIRMED'); await refreshContractReads(); }catch(err){ log('AADST.MINT.ERROR = '+err.message); }
 }
 async function aadstForceTransfer(){
- try{
-  const c=await aadstContractWrite();
-  const from=document.getElementById('aadstInvestor').value.trim();
-  const amount=document.getElementById('aadstAmount').value.trim();
-  const tx=await c.forcedTransfer(from,signerAddress,amount,'RT11_COMPLIANCE_OPERATOR_ACTION');
-  log('AADST.FORCED_TRANSFER.TX = '+tx.hash);
-  await tx.wait();
-  log('AADST.FORCED_TRANSFER.CONFIRMED');
-  await refreshContractReads();
- }catch(err){ log('AADST.FORCED_TRANSFER.ERROR = '+err.message); }
+ if(!confirmAction('AADST forced transfer compliance action')) return;
+ try{ const c=await aadstContractWrite(); const from=document.getElementById('aadstInvestor').value.trim(); const amount=document.getElementById('aadstAmount').value.trim(); const tx=await c.forcedTransfer(from,signerAddress,amount,'RT11_COMPLIANCE_OPERATOR_ACTION'); log('AADST.FORCED_TRANSFER.TX = '+tx.hash); await tx.wait(); log('AADST.FORCED_TRANSFER.CONFIRMED'); await refreshContractReads(); }catch(err){ log('AADST.FORCED_TRANSFER.ERROR = '+err.message); }
 }
 async function srtMint(){
- try{
-  const c=await srtContractWrite();
-  const user=document.getElementById('srtUser').value.trim();
-  const tx=await c.mint(user);
-  log('SRT.MINT.TX = '+tx.hash);
-  await tx.wait();
-  log('SRT.MINT.CONFIRMED');
-  await refreshContractReads();
- }catch(err){ log('SRT.MINT.ERROR = '+err.message); }
+ if(!confirmAction('SRT mint identity token')) return;
+ try{ const c=await srtContractWrite(); const user=document.getElementById('srtUser').value.trim(); const tx=await c.mint(user); log('SRT.MINT.TX = '+tx.hash); await tx.wait(); log('SRT.MINT.CONFIRMED'); await refreshContractReads(); }catch(err){ log('SRT.MINT.ERROR = '+err.message); }
 }
 async function srtRevoke(){
- try{
-  const c=await srtContractWrite();
-  const user=document.getElementById('srtUser').value.trim();
-  const tx=await c.revoke(user);
-  log('SRT.REVOKE.TX = '+tx.hash);
-  await tx.wait();
-  log('SRT.REVOKE.CONFIRMED');
-  await refreshContractReads();
- }catch(err){ log('SRT.REVOKE.ERROR = '+err.message); }
+ if(!confirmAction('SRT revoke identity token')) return;
+ try{ const c=await srtContractWrite(); const user=document.getElementById('srtUser').value.trim(); const tx=await c.revoke(user); log('SRT.REVOKE.TX = '+tx.hash); await tx.wait(); log('SRT.REVOKE.CONFIRMED'); await refreshContractReads(); }catch(err){ log('SRT.REVOKE.ERROR = '+err.message); }
 }
-function log(line){
- const el=document.getElementById('log');
- el.textContent += '\n'+new Date().toISOString()+' :: '+line;
- el.scrollTop=el.scrollHeight;
+async function fetchApiState(){
+ try{ const res=await fetch('/api/rt11/state'); const data=await res.json(); document.getElementById('apiStatus').innerText=JSON.stringify(data); log('API.STATE = '+JSON.stringify(data)); }catch(err){ log('API.STATE.ERROR = '+err.message); }
 }
-function loadEthers(){
- const s=document.createElement('script');
- s.src='https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js';
- s.onload=()=>log('ETHERS.LOAD = OK');
- s.onerror=()=>log('ETHERS.LOAD = FAILED');
- document.head.appendChild(s);
+async function fetchApiScore(){
+ try{ const res=await fetch('/api/rt11/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({E:+document.getElementById('e').value,I:+document.getElementById('i').value,C:+document.getElementById('c').value,D:+document.getElementById('d').value})}); const data=await res.json(); document.getElementById('apiStatus').innerText=JSON.stringify(data); log('API.SCORE = '+JSON.stringify(data)); }catch(err){ log('API.SCORE.ERROR = '+err.message); }
 }
-calc();
-loadEthers();
+async function fetchApiSimulate(){
+ try{ const res=await fetch('/api/rt11/simulate'); const data=await res.json(); document.getElementById('apiStatus').innerText=JSON.stringify(data); log('API.SIMULATE = '+JSON.stringify(data)); }catch(err){ log('API.SIMULATE.ERROR = '+err.message); }
+}
+function log(line){ const el=document.getElementById('log'); el.textContent += '\n'+new Date().toISOString()+' :: '+line; el.scrollTop=el.scrollHeight; }
+function loadEthers(){ const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js'; s.onload=()=>log('ETHERS.LOAD = OK'); s.onerror=()=>log('ETHERS.LOAD = FAILED'); document.head.appendChild(s); }
+calc(); loadEthers(); setPermissions(false,false);
 </script>
 </body>
 </html>
