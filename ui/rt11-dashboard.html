@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RT11 Dashboard</title>
+<style>
+body { background:black; color:#0f0; font-family:monospace; }
+.panel { border:1px solid #0f0; padding:10px; margin:10px; }
+</style>
+</head>
+<body>
+<h1>ARTYMUS RT11 Dashboard</h1>
+<div class='panel'>
+<h2>UAP Calculator</h2>
+E:<input id='e'><br>
+I:<input id='i'><br>
+C:<input id='c'><br>
+D:<input id='d'><br>
+<button onclick='calc()'>Compute</button>
+<div id='out'></div>
+</div>
+<script>
+function calc(){
+ let e=+document.getElementById('e').value;
+ let i=+document.getElementById('i').value;
+ let c=+document.getElementById('c').value;
+ let d=+document.getElementById('d').value;
+ document.getElementById('out').innerText=(e*i*c)/d;
+}
+</script>
+</body>
+</html>
