@@ -13,17 +13,30 @@ export type ArtymusSession = {
   binding?: string;
 };
 
-export const ROLE_LEVEL: Record<ArtymusRole, number> = { collector: 1, advisor: 2, operator: 3 };
+export const ROLE_LEVEL: Record<ArtymusRole, number> = {
+  collector: 1,
+  advisor: 2,
+  operator: 3,
+};
+
 export const ROLE_ACCESS: Record<ArtymusRole, string[]> = {
   collector: ['plates'],
   advisor: ['plates', 'intelligence-read'],
   operator: ['plates', 'intelligence-read', 'execution-links', 'rt11-console'],
 };
 
-function secret() { return globalThis.process?.env?.ARTYMUS_AUTH_SECRET || 'dev-only-change-me'; }
+function secret() {
+  const env = (globalThis as any).process?.env || {};
+  return env.ARTYMUS_AUTH_SECRET || 'dev-only-change-me';
+}
 
-function clientIp(req: any) { return String(req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0].trim(); }
-function userAgent(req: any) { return String(req.headers['user-agent'] || 'unknown'); }
+function clientIp(req: any) {
+  return String(req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0].trim();
+}
+
+function userAgent(req: any) {
+  return String(req.headers['user-agent'] || 'unknown');
+}
 
 export async function requestBinding(req: any): Promise<string> {
   return signHmac(`${clientIp(req)}|${userAgent(req)}`, secret());
