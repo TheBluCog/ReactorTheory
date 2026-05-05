@@ -3,14 +3,15 @@ import { useAccount, useChainId, useWriteContract, useWaitForTransactionReceipt 
 import { TREASURY_ROUTER_ABI } from './contracts/treasuryRouter'
 import { useTxFeed } from './hooks/useTxFeed'
 
-// ...existing types remain
+// types
+type Address = `0x${string}`
 
-type Recipient = { name: string; address: string; payload: { energy:number; intent:number; control:number; drift:number; impact:number; entropy:number } }
+type Recipient = { name: string; address: Address; payload: { energy:number; intent:number; control:number; drift:number; impact:number; entropy:number } }
 
 type ApiProof = { status:number; ok:boolean; timestamp:string; request:any; response:any } | null
 
-const treasuryWallet = '0x27f780E6d46dF69347f954674bbDF39924e3D644'
-const treasuryRouter = import.meta.env.VITE_AMOY_TREASURY_ROUTER_ADDRESS || ''
+const treasuryWallet: Address = '0x27f780E6d46dF69347f954674bbDF39924e3D644'
+const treasuryRouter = (import.meta.env.VITE_AMOY_TREASURY_ROUTER_ADDRESS || '') as Address
 
 const recipients: Recipient[] = [
   { name:'Teacher', address:'0x0000000000000000000000000000000000000001', payload:{ energy:7, intent:.92, control:.88, drift:.45, impact:1.4, entropy:.6 } },
@@ -30,7 +31,7 @@ export default function RT11Money() {
   const [selected,setSelected]=useState(recipients[0])
   const [proof,setProof]=useState<ApiProof>(null)
   const [status,setStatus]=useState<'idle'|'loading'|'success'|'error'>('idle')
-  const [txHash,setTxHash]=useState<`0x${string}` | undefined>()
+  const [txHash,setTxHash]=useState<Address | undefined>()
 
   const { data: receipt } = useWaitForTransactionReceipt({ hash: txHash, query: { enabled: !!txHash } })
 
@@ -59,29 +60,14 @@ export default function RT11Money() {
     return weights.map(r=>({...r,payout:baseline+weightedPool*(r.weight/total)}))
   },[amount])
 
-  async function runApiScore(){
-    setStatus('loading')
-    const res=await fetch('/api/rt11/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(selected.payload)})
-    const data=await res.json()
-    setProof({status:res.status,ok:res.ok,timestamp:new Date().toISOString(),request:selected.payload,response:data})
-    setStatus(res.ok?'success':'error')
-    addEvent({ type:'api_score_ready', network:'local', detail:'API score computed' })
-  }
-
   async function execute(){
-    if(!treasuryRouter){
-      addEvent({ type:'tx_blocked', network:'local', detail:'Missing TreasuryRouter address' })
-      return
-    }
-    if(!address){
-      addEvent({ type:'tx_blocked', network:'local', detail:'Wallet not connected' })
-      return
-    }
+    if(!treasuryRouter){ addEvent({ type:'tx_blocked', network:'local', detail:'Missing TreasuryRouter address' }); return }
+    if(!address){ addEvent({ type:'tx_blocked', network:'local', detail:'Wallet not connected' }); return }
 
     try{
       addEvent({ type:'tx_signing', network:'Polygon Amoy', detail:'Awaiting wallet signature' })
 
-      const recipientsList = rows.map(r=>r.address)
+      const recipientsList = rows.map(r=>r.address) as readonly Address[]
       const amounts = rows.map(r=>BigInt(Math.floor(r.payout*1e6)))
 
       const hash = await writeContractAsync({
@@ -91,18 +77,11 @@ export default function RT11Money() {
         args: [recipientsList, amounts]
       })
 
-      setTxHash(hash)
+      setTxHash(hash as Address)
 
-      addEvent({
-        type:'tx_submitted',
-        tx: hash,
-        network:'Polygon Amoy',
-        detail:'Transaction submitted'
-      })
+      addEvent({ type:'tx_submitted', tx: hash, network:'Polygon Amoy', detail:'Transaction submitted' })
 
-    }catch(e:any){
-      addEvent({ type:'tx_failed', network:'Polygon Amoy', detail:String(e?.message||e) })
-    }
+    }catch(e:any){ addEvent({ type:'tx_failed', network:'Polygon Amoy', detail:String(e?.message||e) }) }
   }
 
   return <section className="sim-layout elite-sim">
