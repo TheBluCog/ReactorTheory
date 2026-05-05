@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARTYMUS 3.0 — Connected Flow</title>
+  <style>
+    :root {
+      --paper: #e7dfd0;
+      --ink: #151411;
+      --muted: #6f685d;
+      --line: #b8ad9c;
+      --deep: #11100e;
+      --white: #f4efe5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--deep);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: inherit; }
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: .82fr 1.18fr;
+      background: linear-gradient(135deg, #eee6d7, #cec3b0 58%, #a89d8e);
+    }
+    .left {
+      padding: 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 1px solid rgba(0,0,0,.16);
+    }
+    .brand {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(70px, 10vw, 150px);
+      line-height: .83;
+      letter-spacing: -.06em;
+    }
+    .sub { margin-top: 26px; letter-spacing: .16em; text-transform: uppercase; font-size: 12px; color: var(--muted); }
+    .thesis {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 4vw, 62px);
+      line-height: 1.04;
+      max-width: 700px;
+    }
+    .right {
+      padding: 64px;
+      display: grid;
+      align-content: center;
+      gap: 26px;
+    }
+    .route {
+      display: grid;
+      grid-template-columns: 110px 1fr auto;
+      gap: 28px;
+      align-items: center;
+      padding: 32px 0;
+      border-bottom: 1px solid rgba(0,0,0,.18);
+      text-decoration: none;
+    }
+    .route:first-child { border-top: 1px solid rgba(0,0,0,.18); }
+    .num { color: var(--muted); letter-spacing: .2em; font-size: 12px; text-transform: uppercase; }
+    h2 { margin:0; font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: clamp(34px, 4vw, 62px); letter-spacing: -.04em; }
+    p { margin: 10px 0 0; color: var(--muted); max-width: 680px; line-height: 1.65; }
+    .arrow { font-size: 28px; color: var(--muted); }
+    .anchors { color: var(--muted); font-size: 12px; line-height: 1.8; }
+    @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .left, .right { padding: 38px 26px; } .route { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="hero">
+    <section class="left">
+      <div>
+        <div class="brand">Maybe</div>
+        <div class="sub">ARTYMUS 3.0 / Connected Flow</div>
+      </div>
+      <div>
+        <div class="thesis">Surface as art. Intelligence as substrate. Execution as ARTYMUS.</div>
+        <div class="anchors">
+          Professional Art → https://www.instagram.com/shaunaleelangeart<br />
+          NPC / Company → https://www.yourNPC.art
+        </div>
+      </div>
+    </section>
+    <section class="right">
+      <a class="route" href="/ui/artymus-3-plates.html">
+        <div class="num">01 / Surface</div>
+        <div><h2>Art Plates</h2><p>The public perception layer: identity, provenance, liquidity, condition, and timing expressed as archival art objects.</p></div>
+        <div class="arrow">→</div>
+      </a>
+      <a class="route" href="/ui/artymus-3-intelligence.html">
+        <div class="num">02 / Substrate</div>
+        <div><h2>Private Intelligence</h2><p>The hidden valuation layer: Identity × Evidence × Demand × Control measured against Drift.</p></div>
+        <div class="arrow">→</div>
+      </a>
+      <a class="route" href="/ui/rt11-dashboard.html">
+        <div class="num">03 / Execution</div>
+        <div><h2>ARTYMUS Console</h2><p>The execution surface for RT11, Resonance Engine, capital, governance, and operator workflows.</p></div>
+        <div class="arrow">→</div>
+      </a>
+    </section>
+  </main>
+</body>
+</html>
