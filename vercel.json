@@ -1,10 +1,32 @@
 {
-  "framework": "vite",
   "rewrites": [
-    { "source": "/rt11", "destination": "/" },
-    { "source": "/rt11/", "destination": "/" },
-    { "source": "/docs/rt11", "destination": "/" },
-    { "source": "/docs/rt11/", "destination": "/" },
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/ui/(.*)",
+      "destination": "/ui/$1"
+    },
+    {
+      "source": "/assets/(.*)",
+      "destination": "/assets/$1"
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "destination": "/manifest.webmanifest"
+    },
+    {
+      "source": "/sw.js",
+      "destination": "/sw.js"
+    },
+    {
+      "source": "/workbox-:path*",
+      "destination": "/workbox-:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
