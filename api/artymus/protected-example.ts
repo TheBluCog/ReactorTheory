@@ -11,10 +11,23 @@ export default async function handler(req: any, res: any) {
   const session = await requireRole(req, res, 'advisor');
 
   if (!session) {
-    writeAudit(req, { event: 'ACCESS_DENIED', result: 'deny', reason: 'NO_SESSION' });
+    writeAudit(req, {
+      event: 'ACCESS_DENIED',
+      result: 'deny',
+      reason: 'NO_SESSION',
+    });
+
     await alertDeniedAccess(req, 'Advisor endpoint denied');
-    await detectAnomaly(req, { event: 'ACCESS_DENIED', result: 'deny' });
-    await updateBehaviorModel(req, { event: 'ACCESS_DENIED', result: 'deny' });
+
+    await detectAnomaly(req, {
+      event: 'ACCESS_DENIED',
+      result: 'deny',
+    });
+
+    await updateBehaviorModel(req, {
+      result: 'deny',
+    });
+
     return;
   }
 
@@ -22,8 +35,7 @@ export default async function handler(req: any, res: any) {
     actor: session.sub,
     role: session.role,
     level: session.level,
-    event: 'ACCESS_GRANTED',
-    result: 'allow'
+    result: 'allow',
   });
 
   const trust = calculateTrust({
@@ -33,7 +45,7 @@ export default async function handler(req: any, res: any) {
     operatorEvents: behavior.operator_events,
     anomalyRisk: behavior.risk_score,
     sessionBound: true,
-    recentSuccesses: 3
+    recentSuccesses: 3,
   });
 
   const defense = await enforceTrust(req, res, trust, 'intelligence-read');
@@ -44,16 +56,29 @@ export default async function handler(req: any, res: any) {
     trust,
     role: session.role,
     level: session.level,
-    anomalyRisk: behavior.risk_score
+    anomalyRisk: behavior.risk_score,
   });
 
   if (!risk.allow) {
-    writeAudit(req, { event: 'RISK_BLOCK', result: 'deny', metadata: { risk } });
-    return res.status(403).json({ ok: false, error: 'RISK_BLOCKED', risk });
+    writeAudit(req, {
+      event: 'RISK_BLOCK',
+      result: 'deny',
+      metadata: { risk },
+    });
+
+    return res.status(403).json({
+      ok: false,
+      error: 'RISK_BLOCKED',
+      risk,
+    });
   }
 
   if (risk.requireReauth) {
-    return res.status(401).json({ ok: false, error: 'REAUTH_REQUIRED', risk });
+    return res.status(401).json({
+      ok: false,
+      error: 'REAUTH_REQUIRED',
+      risk,
+    });
   }
 
   writeAudit(req, {
@@ -61,13 +86,23 @@ export default async function handler(req: any, res: any) {
     actor: session.sub,
     role: session.role,
     level: session.level,
-    result: 'allow'
+    result: 'allow',
   });
 
   if (session.role === 'operator') {
     await alertOperatorAccess(req, session.sub, session.role);
-    await detectAnomaly(req, { event: 'OPERATOR_ACCESS', actor: session.sub, role: session.role });
+
+    await detectAnomaly(req, {
+      event: 'OPERATOR_ACCESS',
+      actor: session.sub,
+      role: session.role,
+    });
   }
 
-  return res.status(200).json({ ok: true, role: session.role, trust, risk });
+  return res.status(200).json({
+    ok: true,
+    role: session.role,
+    trust,
+    risk,
+  });
 }
