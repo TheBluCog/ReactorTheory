@@ -2,6 +2,9 @@ import { useMemo, useState, useEffect } from 'react'
 import { useAccount, useChainId, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { TREASURY_ROUTER_ABI } from './contracts/treasuryRouter'
 import { useTxFeed } from './hooks/useTxFeed'
+import { rt11Config } from './config/rt11.config'
+import { contractExecutor } from './services/rt11/contractExecutor'
+import { useRT11State } from './hooks/useRT11State'
 
 type Address = `0x${string}`
 
@@ -33,25 +36,26 @@ export default function RT11Money() {
   const chainId = useChainId()
   const { writeContractAsync } = useWriteContract()
   const { addEvent } = useTxFeed()
+  const [rt11State, dispatch] = useRT11State()
 
   const [amount] = useState(1000)
-  const [txHash, setTxHash] = useState<Address | undefined>()
 
   const { data: receipt } = useWaitForTransactionReceipt({
-    hash: txHash,
-    query: { enabled: !!txHash }
+    hash: rt11State.txHash as Address,
+    query: { enabled: !!rt11State.txHash }
   })
 
   useEffect(() => {
-    if (receipt && txHash) {
+    if (receipt && rt11State.txHash && rt11State.status === 'TX_SUBMITTED') {
+      dispatch({ type: 'TX_CONFIRMED' })
       addEvent({
         type: 'tx_confirmed',
-        tx: txHash,
+        tx: rt11State.txHash as Address,
         network: 'Polygon Amoy',
         detail: 'Transaction confirmed on-chain'
       })
     }
-  }, [receipt, txHash, addEvent])
+  }, [receipt, rt11State.txHash, rt11State.status, addEvent, dispatch])
 
   const rows = useMemo(() => {
     const ubiPool = amount * .8
@@ -68,19 +72,29 @@ export default function RT11Money() {
   }, [amount])
 
   async function execute() {
-    if (treasuryRouter === '0x0000000000000000000000000000000000000000') {
-      addEvent({ type:'tx_blocked', network:'local', detail:'Missing TreasuryRouter address' })
-      return
-    }
-    if (!address) {
-      addEvent({ type:'tx_blocked', network:'local', detail:'Wallet not connected' })
-      return
-    }
-
     try {
+      const recipientsList: readonly Address[] = rows.map(r => r.address)
+
+      // Validate addresses before execution mode check
+      contractExecutor.validateAddresses(recipientsList)
+
+      // Hard check for execution mode
+      contractExecutor.verifyExecutionMode()
+
+      if (treasuryRouter === '0x0000000000000000000000000000000000000000') {
+        dispatch({ type: 'TX_BLOCKED', reason: 'Missing TreasuryRouter address' })
+        addEvent({ type:'tx_blocked', network:'local', detail:'Missing TreasuryRouter address' })
+        return
+      }
+      if (!address) {
+        dispatch({ type: 'TX_BLOCKED', reason: 'Wallet not connected' })
+        addEvent({ type:'tx_blocked', network:'local', detail:'Wallet not connected' })
+        return
+      }
+
+      dispatch({ type: 'TX_SIGNING' })
       addEvent({ type:'tx_signing', network:'Polygon Amoy', detail:'Awaiting wallet signature' })
 
-      const recipientsList: readonly Address[] = rows.map(r => r.address)
       const amounts: readonly bigint[] = rows.map(r => BigInt(Math.floor(r.payout * 1e6)))
 
       const hash = await writeContractAsync({
@@ -90,9 +104,10 @@ export default function RT11Money() {
         args: [recipientsList, amounts] as const
       })
 
-      setTxHash(hash as Address)
-      addEvent({ type:'tx_submitted', tx: hash, network:'Polygon Amoy', detail:'Transaction submitted' })
+      dispatch({ type: 'TX_SUBMITTED', hash: hash as string })
+      addEvent({ type:'tx_submitted', tx: hash as Address, network:'Polygon Amoy', detail:'Transaction submitted' })
     } catch (e: any) {
+      dispatch({ type: 'TX_FAILED', error: String(e?.message || e) })
       addEvent({ type:'tx_failed', network:'Polygon Amoy', detail:String(e?.message || e) })
     }
   }
