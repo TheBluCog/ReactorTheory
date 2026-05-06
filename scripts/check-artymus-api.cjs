@@ -1,61 +1,143 @@
+const http = require('http');
 const https = require('https');
 
+const baseUrl = (process.env.ARTYMUS_BASE_URL || 'https://reactor-theory.vercel.app').replace(/\/$/, '');
+
 const targets = [
-  process.env.ARTYMUS_API_URL || 'https://reactor-theory.vercel.app/api/artymus',
-  process.env.ARTYMUS_HEALTH_URL || 'https://reactor-theory.vercel.app/api/artymus?action=health',
+  {
+    name: 'ARTYMUS root',
+    url: process.env.ARTYMUS_API_URL || `${baseUrl}/api/artymus`,
+    service: 'ARTYMUS',
+    required: ['ok', 'service', 'version', 'stack', 'status'],
+  },
+  {
+    name: 'ARTYMUS health',
+    url: process.env.ARTYMUS_HEALTH_URL || `${baseUrl}/api/artymus?action=health`,
+    service: 'ARTYMUS',
+    required: ['ok', 'service', 'health'],
+  },
+  {
+    name: 'ARTYMUS links',
+    url: process.env.ARTYMUS_LINKS_URL || `${baseUrl}/api/artymus?action=links`,
+    service: 'ARTYMUS',
+    required: ['ok', 'service', 'links'],
+  },
+  {
+    name: 'Debug root',
+    url: process.env.ARTYMUS_DEBUG_URL || `${baseUrl}/api/debug`,
+    service: 'ARTYMUS-DEBUG',
+    required: ['ok', 'service', 'endpoints'],
+  },
+  {
+    name: 'Debug diagnostics',
+    url: process.env.ARTYMUS_DEBUG_DIAGNOSTICS_URL || `${baseUrl}/api/debug?action=diagnostics`,
+    service: 'ARTYMUS-DEBUG',
+    required: ['ok', 'service', 'checks'],
+  },
+  {
+    name: 'Debug repair plan',
+    url: process.env.ARTYMUS_DEBUG_REPAIR_URL || `${baseUrl}/api/debug?action=repair-plan`,
+    service: 'ARTYMUS-DEBUG',
+    required: ['ok', 'service', 'repairPlan'],
+  },
 ];
 
-function get(url) {
+function request(url) {
   return new Promise((resolve, reject) => {
-    const req = https.get(url, { headers: { Accept: 'application/json' } }, (res) => {
+    const client = url.startsWith('https:') ? https : http;
+    const startedAt = Date.now();
+    const req = client.get(url, { headers: { Accept: 'application/json' } }, (res) => {
       let body = '';
       res.on('data', (chunk) => { body += chunk; });
-      res.on('end', () => resolve({ url, statusCode: res.statusCode, headers: res.headers, body }));
+      res.on('end', () => resolve({
+        url,
+        statusCode: res.statusCode,
+        headers: res.headers,
+        body,
+        latencyMs: Date.now() - startedAt,
+      }));
     });
     req.on('error', reject);
-    req.setTimeout(15000, () => {
-      req.destroy(new Error(`Timeout checking ${url}`));
-    });
+    req.setTimeout(20000, () => req.destroy(new Error(`Timeout checking ${url}`)));
   });
+}
+
+function validateJsonContract(target, result) {
+  const failures = [];
+  const type = String(result.headers['content-type'] || '');
+
+  let parsed;
+  try {
+    parsed = JSON.parse(result.body);
+  } catch (error) {
+    failures.push(`${target.name}: did not return valid JSON. status=${result.statusCode} content-type=${type} body-start=${result.body.slice(0, 160)}`);
+    return { failures, parsed: null };
+  }
+
+  if (result.statusCode < 200 || result.statusCode >= 300) {
+    failures.push(`${target.name}: returned non-2xx status ${result.statusCode}`);
+  }
+
+  if (!type.includes('application/json')) {
+    failures.push(`${target.name}: returned JSON body but content-type was not application/json: ${type}`);
+  }
+
+  if (!parsed || parsed.ok !== true) {
+    failures.push(`${target.name}: expected ok=true, got ${JSON.stringify(parsed)}`);
+  }
+
+  if (!parsed || parsed.service !== target.service) {
+    failures.push(`${target.name}: expected service=${target.service}, got ${parsed && parsed.service}`);
+  }
+
+  for (const key of target.required) {
+    if (!(key in parsed)) {
+      failures.push(`${target.name}: missing required key '${key}'`);
+    }
+  }
+
+  if (result.body.trim().startsWith('<!doctype') || result.body.trim().startsWith('<html')) {
+    failures.push(`${target.name}: received HTML shell instead of JSON`);
+  }
+
+  return { failures, parsed };
 }
 
 (async () => {
   const failures = [];
+  const report = [];
 
   for (const target of targets) {
-    const result = await get(target);
-    const type = String(result.headers['content-type'] || '');
+    const result = await request(target.url);
+    const validation = validateJsonContract(target, result);
+    failures.push(...validation.failures);
 
-    let parsed;
-    try {
-      parsed = JSON.parse(result.body);
-    } catch (error) {
-      failures.push(`${target} did not return valid JSON. status=${result.statusCode} content-type=${type} body-start=${result.body.slice(0, 120)}`);
-      continue;
+    report.push({
+      name: target.name,
+      url: target.url,
+      statusCode: result.statusCode,
+      contentType: result.headers['content-type'] || null,
+      latencyMs: result.latencyMs,
+      ok: validation.failures.length === 0,
+    });
+
+    if (validation.failures.length === 0) {
+      console.log(`[PASS] ${target.name} ${target.url} (${result.latencyMs}ms)`);
+    } else {
+      console.error(`[FAIL] ${target.name} ${target.url}`);
     }
-
-    if (result.statusCode < 200 || result.statusCode >= 300) {
-      failures.push(`${target} returned non-2xx status ${result.statusCode}`);
-    }
-
-    if (!parsed || parsed.ok !== true || parsed.service !== 'ARTYMUS') {
-      failures.push(`${target} returned JSON but failed contract: ${JSON.stringify(parsed)}`);
-    }
-
-    if (!type.includes('application/json')) {
-      failures.push(`${target} returned JSON body but content-type was not application/json: ${type}`);
-    }
-
-    console.log(`[PASS] ${target}`);
   }
 
+  console.log('\nARTYMUS smoke report:');
+  console.log(JSON.stringify(report, null, 2));
+
   if (failures.length) {
-    console.error('\nARTYMUS API JSON verification failed:');
+    console.error('\nARTYMUS smoke / verification failed:');
     for (const failure of failures) console.error(`- ${failure}`);
     process.exit(1);
   }
 
-  console.log('\nARTYMUS API JSON verification passed.');
+  console.log('\nARTYMUS smoke / verification passed.');
 })().catch((error) => {
   console.error(error);
   process.exit(1);
