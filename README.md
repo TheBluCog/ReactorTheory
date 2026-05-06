@@ -1,28 +1,32 @@
-![License](https://img.shields.io/badge/license-GPLv3-blue.svg)
+![License](https://img.shields.io/badge/license-Ethic%20Vault%20Agentic%20License-blue.svg)
 ![Vercel](https://vercelbadge.vercel.app/api/TheBluCog/ReactorTheory)
 ![Status](https://img.shields.io/badge/status-Active-brightgreen)
-![Visitors](https://komarev.com/ghpvc/?username=TheBluCog&color=orange)
+![Stack](https://img.shields.io/badge/stack-RT11%20%2F%20ARTYMUS%203.0.1-purple)
 ![Built With Love](https://img.shields.io/badge/Built%20With-%E2%9D%A4-red)
 
-# 🧠 Reactor Theory
+# Reactor Theory
 
-**Reactor Theory** is an open systems framework for emotional intelligence, governance, execution control, and real-world infrastructure design.
+**Reactor Theory** is a governance-first systems framework for emotional intelligence, agentic execution control, RT11 contribution economics, and real-world infrastructure design.
 
-It began as an emotional AI and resonance architecture. It is now evolving into a broader operating model for agentic systems, corporate governance, tokenized capital, and regulated acquisition infrastructure.
+The current production branch is aligned around **RT11 / ARTYMUS 3.0.1** and the **Ethic Vault Agentic License / Open Agentic Framework agreement**.
 
-Live site: **https://reactorcore.vercel.app**
+Live site: **https://reactor-theory.vercel.app**
+
+Branch deploy: **https://reactor-theory-git-main-theblucogs-projects.vercel.app**
 
 ---
 
-## 🚀 Current Canonical Stack
+## Current Canonical Stack
 
 | Layer | Description |
 |---|---|
 | **RT8** | State / intent modeling |
 | **RT9** | Unified system framework |
 | **UAP** | Unified Alignment Performance dynamics |
-| **RT11** | Open corporate framework for asset-backed acquisition infrastructure |
-| **ARTYMUS AIR** | Aviation deployment vertical for RT11 |
+| **RT11** | Contribution, payout, proof, and governed execution layer |
+| **ARTYMUS 3.0.1** | Operator interface and agentic control surface |
+| **Ethic Vault** | Governance control plane, proof, audit, and non-bypass execution constraints |
+| **Open Agentic Framework** | Licensing and governance agreement for agentic deployment surfaces |
 
 Core performance equation:
 
@@ -32,104 +36,253 @@ UAP = (E * I * C) / D
 
 Where:
 
-- **E** = Energy / activation / capital / effort
+- **E** = Energy / activation / capability / capital / effort
 - **I** = Intent alignment
 - **C** = Control / coherence
 - **D** = Drift / entropy / misalignment
 
-RT11 applies this to companies:
+RT11 applies this to contribution and execution systems:
 
 ```text
-Corporate Performance = (Capital * Intent * Control) / Drift
+Contribution Performance = (Energy * Intent * Control) / Drift
 ```
 
 ---
 
-## 🏛️ RT11 — Acquisition Infrastructure Layer
+## RT11 — Safe AI Income and Contribution Infrastructure
 
-RT11 defines an **Acquisition Infrastructure Layer (AIL)** for acquiring, funding, governing, and operating regulated real-world assets.
+RT11 defines a governed contribution economy for useful AI work.
 
-The core idea:
+The current public positioning:
 
-> **Do not decentralize regulated control. Instrument participation around lawful control.**
+> **Make money with AI — without doing shady shit.**
 
-RT11 separates:
+RT11 rewards constructive AI work such as:
 
-1. **Capital rights** — ownership, dividends, exit participation.
-2. **Participation rights** — loyalty, identity, advisory signaling.
-3. **Operational authority** — board control, legal governance, regulator-facing execution.
+- teaching
+- building
+- summarizing
+- reviewing
+- reducing risk
+- improving outcomes
+- producing verifiable contribution records
 
-### Published Specification
+RT11 penalizes:
 
-📄 [ARTYMUS.RT11 Open Corporate Framework](docs/ARTYMUS_RT11_OPEN_CORPORATE_FRAMEWORK.md)
+- spam
+- scams
+- fake content
+- manipulation
+- unverifiable claims
+- unsafe execution paths
 
----
+### RT11 Execution Model
 
-## ✈️ ARTYMUS AIR
+The current RT11 execution architecture is moving toward:
 
-ARTYMUS AIR is the aviation deployment vertical for RT11.
+1. API scoring
+2. payout engine
+3. wallet gate
+4. testnet execution
+5. transaction lifecycle tracking
+6. persistent proof panel
+7. audit-ready verification trail
 
-It is designed for compliant acquisition and relaunch of distressed aviation assets through structures such as:
-
-- Section 363 selected-asset purchases
-- U.S.-controlled HoldCo / OpCo architecture
-- Regulated security-token capital stacks
-- Post-close loyalty and participation programs
-- DOT / FAA compatible governance controls
-
-This is not a crypto airline.
-
-It is a regulated corporate operating system for aviation assets.
-
----
-
-## 🪙 Token Architecture
-
-RT11 separates money from voice.
-
-| Token | Layer | Purpose | Legal Posture |
-|---|---|---|---|
-| **AADST** | Capital | Tokenized equity / preferred equity / security entitlement | Regulated security |
-| **SRT** | Participation | Identity-bound loyalty, advisory signaling, customer coordination | Non-investment loyalty / utility instrument |
-
-AADST is treated as a security from day one.
-
-SRT is designed as post-close participation infrastructure, not acquisition currency.
+Any executable RT11 path must preserve safe defaults, proof capture, and governed execution constraints.
 
 ---
 
-## 🧱 Repository Contents
+## ARTYMUS 3.0.1
 
-- `index.html` — Main UI
-- `styles/` — Synthwave / interface styling
-- `assets/` — Token, scroll, and visual assets
-- `vault/` — Legacy / inheritance artifacts
-- `mint/` — NFT drop mechanics
+ARTYMUS is the operator interface for Reactor Theory and RT11.
+
+It exposes:
+
+- operator control state
+- runtime checks
+- decision posture
+- API proof status
+- human-in-the-loop execution control
+- agentic governance context
+- RT11 contribution and payout surfaces
+
+The current site has been refactored into a compact, mobile-friendly command center with sections for:
+
+- Overview
+- ARTYMUS
+- RT11
+- Ethic Vault
+- Shauna / Maybe
+- LetsBuySpirit
+- API proof links
+
+---
+
+## Ethic Vault
+
+Ethic Vault is the governance control plane for agentic systems.
+
+It anchors:
+
+- values as constraints
+- alignment as code
+- runtime governance
+- decision gates
+- audit and memory
+- verification layer
+- observability
+- non-bypass execution controls
+
+The operating posture is:
+
+> **Governance in the execution path. Not after.**
+
+---
+
+## ARTYMUS API
+
+The canonical JSON endpoint is:
+
+```text
+https://reactor-theory.vercel.app/api/artymus
+```
+
+Health check:
+
+```text
+https://reactor-theory.vercel.app/api/artymus?action=health
+```
+
+Links endpoint:
+
+```text
+https://reactor-theory.vercel.app/api/artymus?action=links
+```
+
+The current canonical Vercel API route is:
+
+```text
+api/artymus.ts
+```
+
+The previous nested route was removed to avoid route ambiguity:
+
+```text
+api/artymus/index.ts
+```
+
+Expected health response:
+
+```json
+{
+  "ok": true,
+  "service": "ARTYMUS",
+  "version": "3.0.1",
+  "stack": "RT11",
+  "mode": "demo/testnet-next",
+  "status": "LIVE",
+  "health": "green"
+}
+```
+
+---
+
+## Current Deployment / CI Notes
+
+Production deployment:
+
+```text
+https://reactor-theory.vercel.app
+```
+
+Branch deployment:
+
+```text
+https://reactor-theory-git-main-theblucogs-projects.vercel.app
+```
+
+Current runtime alignment:
+
+```text
+Node: 24.x
+TypeScript: 5.9.3
+React: 18.3.1
+Vite: 5.4.21
+```
+
+Recent fixes include:
+
+- Node engine aligned to `24.x`
+- React type declarations restored
+- `@types/node` added for CI type-check
+- Reown / Wagmi peer conflict removed
+- ARTYMUS API route flattened to `api/artymus.ts`
+- conflicting `/api/artymus` rewrites removed from `vercel.json`
+- duplicate nested ARTYMUS API route removed
+- homepage refactored into compact interactive command-center layout
+
+Recommended clean deploy:
+
+```text
+Vercel Redeploy -> Use existing Build Cache: OFF
+```
+
+or:
+
+```text
+vercel --prod --force
+```
+
+---
+
+## Repository Contents
+
+- `src/App.tsx` — Main compact Reactor Theory command-center UI
+- `src/index.css` — Mobile and desktop visual system
+- `api/artymus.ts` — Canonical ARTYMUS JSON API route
+- `vercel.json` — SPA fallback rules while preserving `/api/*`
 - `docs/` — Reactor Theory, RT11, and ARTYMUS specifications
+- `tests/` — Playwright smoke tests
 
 ---
 
-## 🔥 Deployment
+## License
 
-Live on Vercel:
+This repository is governed under the **Ethic Vault Agentic License** and the **Open Agentic Framework agreement**.
 
-🌐 **https://reactorcore.vercel.app**
+All RT11, ARTYMUS, wallet, payout, proof, API, governance, and agentic execution surfaces must preserve:
+
+- governance-first use
+- auditability
+- attribution
+- safe deployment constraints
+- non-bypass execution controls
+- proof continuity
+- human-operable governance review
+
+Commercial implementations, regulated deployments, tokenized systems, payout systems, financial integrations, aviation-specific structures, or corporate operating systems may require separate legal, securities, tax, aviation, bankruptcy, compliance, or licensing review.
 
 ---
 
-## 🪪 License
+## Pull Request Safety Rule
 
-This project is licensed under the **GNU General Public License v3.0**.
+Any PR touching execution, wallet behavior, payout logic, proof handling, API routing, dependencies, TypeScript configuration, or deployment configuration must preserve current production stability.
 
-📄 https://www.gnu.org/licenses/gpl-3.0.en.html
+Before merge, verify:
 
-Commercial implementations of ARTYMUS, RT11, aviation-specific structures, tokenized security deployments, or regulated corporate operating systems may require separate legal review and licensing.
+1. branch is rebased onto latest `main`
+2. `package.json`, `tsconfig.json`, `vercel.json`, and `api/artymus.ts` fixes are preserved
+3. `package-lock.json` is regenerated from a clean install
+4. execution mode defaults to demo
+5. placeholder addresses cannot execute transactions
+6. proof UI follows the site design system
+7. Ethic Vault Agentic License continuity is preserved
 
 ---
 
-## 🧱 Contributing
+## Contributing
 
-Open source contributions are welcome.
+Open source contributions are welcome when they preserve the governance model.
 
 Pull requests, issues, forks, and structured critique are encouraged.
 
@@ -137,14 +290,14 @@ For regulated deployments, consult qualified legal, securities, aviation, bankru
 
 ---
 
-## ✨ Manifesto
+## Manifesto
 
 > “Don’t be a thing. Be a thing that makes a thing — or makes another thing better.”
 
 Reactor Theory is about restoring coherence to systems under drift.
 
-ARTYMUS RT11 extends that mission into capital, control, and execution.
+ARTYMUS and RT11 extend that mission into governed contribution, execution, proof, and real-world impact.
 
 ---
 
-Made with ⚡ by George & Chuck — WOPR Mode.
+Made with governance-first energy by George & Chuck — WOPR Mode.
