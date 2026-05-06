@@ -49,8 +49,8 @@ jobs:
 
       - name: Start local Vercel runtime
         run: |
-          npx vercel dev --yes --listen 127.0.0.1:4173 > vercel-dev.log 2>&1 &
-          for i in {1..45}; do
+          ./node_modules/.bin/vercel dev --listen 127.0.0.1:4173 > vercel-dev.log 2>&1 &
+          for i in {1..60}; do
             if curl -fsS http://127.0.0.1:4173/api/artymus >/dev/null; then
               echo "Vercel runtime ready"
               exit 0
