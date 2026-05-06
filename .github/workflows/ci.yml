@@ -50,14 +50,16 @@ jobs:
       - name: Start local Vercel runtime
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TELEMETRY_DISABLED: "1"
+          NO_COLOR: "1"
         run: |
           if [ -z "$VERCEL_TOKEN" ]; then
             echo "Missing VERCEL_TOKEN secret. Add it under GitHub repo Settings -> Secrets and variables -> Actions."
             exit 1
           fi
           ./node_modules/.bin/vercel dev --yes --listen 127.0.0.1:4173 --token "$VERCEL_TOKEN" > vercel-dev.log 2>&1 &
-          for i in {1..60}; do
-            if curl -fsS http://127.0.0.1:4173/api/artymus >/dev/null; then
+          for i in {1..90}; do
+            if curl --silent --show-error --fail http://127.0.0.1:4173/api/artymus >/dev/null 2>&1; then
               echo "Vercel runtime ready"
               exit 0
             fi
