@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/artymus",
+      "destination": "/api/artymus/index"
+    },
+    {
+      "source": "/api/artymus/",
+      "destination": "/api/artymus/index"
+    },
+    {
       "source": "/ui/(.*)",
       "destination": "/ui/$1"
     },
