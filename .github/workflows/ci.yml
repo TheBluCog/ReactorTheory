@@ -47,31 +47,32 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Start local preview server
+      - name: Start local Vercel runtime
         run: |
-          npm run preview -- --host 127.0.0.1 --port 4173 > preview.log 2>&1 &
-          for i in {1..20}; do
-            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
-              echo "Preview server ready"
+          npx vercel dev --yes --listen 127.0.0.1:4173 > vercel-dev.log 2>&1 &
+          for i in {1..45}; do
+            if curl -fsS http://127.0.0.1:4173/api/artymus >/dev/null; then
+              echo "Vercel runtime ready"
               exit 0
             fi
             sleep 1
           done
-          echo "Preview server failed to start"
-          cat preview.log
+          echo "Vercel runtime failed to start"
+          cat vercel-dev.log
           exit 1
 
-      - name: Local ARTYMUS smoke verification
+      - name: Local strict ARTYMUS API verification
         env:
           ARTYMUS_BASE_URL: http://127.0.0.1:4173
+          ARTYMUS_STRICT_LOCAL: "true"
         run: node scripts/check-artymus-api.cjs
 
-      - name: Upload preview logs
+      - name: Upload Vercel dev logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: preview-server-logs
-          path: preview.log
+          name: vercel-dev-logs
+          path: vercel-dev.log
 
   playwright:
     runs-on: ubuntu-latest
