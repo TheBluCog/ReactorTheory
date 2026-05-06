@@ -2,7 +2,9 @@ const http = require('http');
 const https = require('https');
 
 const baseUrl = (process.env.ARTYMUS_BASE_URL || 'https://reactor-theory.vercel.app').replace(/\/$/, '');
-const isLocalPreview = /127\.0\.0\.1|localhost/.test(baseUrl);
+const isLocalhost = /127\.0\.0\.1|localhost/.test(baseUrl);
+const strictLocal = process.env.ARTYMUS_STRICT_LOCAL === 'true';
+const allowStaticFallback = isLocalhost && !strictLocal;
 
 const targets = [
   {
@@ -10,42 +12,56 @@ const targets = [
     url: process.env.ARTYMUS_API_URL || `${baseUrl}/api/artymus`,
     service: 'ARTYMUS',
     required: ['ok', 'service', 'version', 'stack', 'status'],
-    localPreview: true,
+    staticCompatible: true,
   },
   {
     name: 'ARTYMUS health',
     url: process.env.ARTYMUS_HEALTH_URL || `${baseUrl}/api/artymus?action=health`,
     service: 'ARTYMUS',
-    required: ['ok', 'service'],
-    localPreview: true,
+    required: strictLocal || !isLocalhost ? ['ok', 'service', 'health'] : ['ok', 'service'],
+    staticCompatible: true,
   },
   {
     name: 'ARTYMUS links',
     url: process.env.ARTYMUS_LINKS_URL || `${baseUrl}/api/artymus?action=links`,
     service: 'ARTYMUS',
-    required: ['ok', 'service'],
-    localPreview: true,
+    required: strictLocal || !isLocalhost ? ['ok', 'service', 'links'] : ['ok', 'service'],
+    staticCompatible: true,
+  },
+  {
+    name: 'ARTYMUS governance',
+    url: process.env.ARTYMUS_GOVERNANCE_URL || `${baseUrl}/api/artymus?action=governance`,
+    service: 'ARTYMUS',
+    required: ['ok', 'service', 'governance'],
+    staticCompatible: false,
+  },
+  {
+    name: 'ARTYMUS resonance',
+    url: process.env.ARTYMUS_RESONANCE_URL || `${baseUrl}/api/artymus?action=resonance`,
+    service: 'ARTYMUS',
+    required: ['ok', 'service', 'resonance'],
+    staticCompatible: false,
   },
   {
     name: 'Debug root',
     url: process.env.ARTYMUS_DEBUG_URL || `${baseUrl}/api/debug`,
     service: 'ARTYMUS-DEBUG',
     required: ['ok', 'service', 'endpoints'],
-    localPreview: false,
+    staticCompatible: false,
   },
   {
     name: 'Debug diagnostics',
     url: process.env.ARTYMUS_DEBUG_DIAGNOSTICS_URL || `${baseUrl}/api/debug?action=diagnostics`,
     service: 'ARTYMUS-DEBUG',
     required: ['ok', 'service', 'checks'],
-    localPreview: false,
+    staticCompatible: false,
   },
   {
     name: 'Debug repair plan',
     url: process.env.ARTYMUS_DEBUG_REPAIR_URL || `${baseUrl}/api/debug?action=repair-plan`,
     service: 'ARTYMUS-DEBUG',
     required: ['ok', 'service', 'repairPlan'],
-    localPreview: false,
+    staticCompatible: false,
   },
 ];
 
@@ -88,7 +104,7 @@ function validateJsonContract(target, result) {
 
   if (!type.includes('application/json')) {
     const message = `${target.name}: returned JSON body but content-type was not application/json: ${type}`;
-    if (isLocalPreview && target.localPreview) warnings.push(message);
+    if (allowStaticFallback && target.staticCompatible) warnings.push(message);
     else failures.push(message);
   }
 
@@ -117,10 +133,14 @@ function validateJsonContract(target, result) {
   const failures = [];
   const warnings = [];
   const report = [];
-  const effectiveTargets = isLocalPreview ? targets.filter((target) => target.localPreview) : targets;
+  const effectiveTargets = allowStaticFallback ? targets.filter((target) => target.staticCompatible) : targets;
 
-  if (isLocalPreview) {
-    console.log('Local Vite preview detected. Verifying static ARTYMUS JSON fallback only; serverless debug endpoints are production-only.');
+  if (allowStaticFallback) {
+    console.log('Local static preview detected. Verifying static ARTYMUS JSON fallback only. Use ARTYMUS_STRICT_LOCAL=true with vercel dev for serverless API verification.');
+  }
+
+  if (strictLocal) {
+    console.log('Strict local Vercel runtime verification enabled. Serverless API behavior and content-type headers are enforced.');
   }
 
   for (const target of effectiveTargets) {
