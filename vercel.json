@@ -1,6 +1,18 @@
 {
   "rewrites": [
     {
+      "source": "/api/artymus",
+      "destination": "/api/artymus.ts"
+    },
+    {
+      "source": "/api/artymus/",
+      "destination": "/api/artymus.ts"
+    },
+    {
+      "source": "/api/artymus/:path*",
+      "destination": "/api/artymus.ts"
+    },
+    {
       "source": "/ui/(.*)",
       "destination": "/ui/$1"
     },
