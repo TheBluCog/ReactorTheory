@@ -463,6 +463,9 @@ vercel --prod --force
 - `public/api/artymus` — static JSON fallback for the ARTYMUS API root
 - `scripts/check-artymus-api.cjs` — smoke and verification test framework
 - `CDL.md` — Canonical Deployment Ledger
+- `LICENSE` — Apache License 2.0 primary license under the Ethic Vault licensing stack
+- `LICENSE-AGENTIC-RT9.1.md` — supplemental RT9.1 / Resonance Engine governance, attribution, safety, and commercial-use terms
+- `NOTICE` — Ethic Vault master license ownership, attribution, patent notice, and trademark notice
 - `vercel.json` — API-first routing / SPA fallback rules
 - `tests/` — Playwright smoke tests
 
@@ -470,9 +473,30 @@ vercel --prod --force
 
 ## License
 
-This repository is governed under the **Ethic Vault Agentic License** and the **Open Agentic Framework agreement**.
+This repository is governed by the **Ethic Vault licensing stack**.
 
-It is aligned with Ethic Vault ReactorCore's governance-first posture.
+The licensing structure is:
+
+| File | Purpose |
+|---|---|
+| `LICENSE` | Primary Apache License 2.0 terms governing source-code usage |
+| `LICENSE-AGENTIC-RT9.1.md` | Supplemental governance, attribution, safety, patent-related, commercial-use, and agentic deployment terms |
+| `NOTICE` | Ethic Vault master license ownership, attribution, patent notice, trademark notice, and provenance declaration |
+
+**Master License Owner:** Ethic Vault.
+
+Apache 2.0 governs source-code usage. Supplemental terms govern system-level usage, branding, attribution, commercial deployment, agentic governance concepts, and patent-pending methods.
+
+Required attribution:
+
+```text
+Based on Reactor Theory 9.1 and Resonance Engine agentic governance concepts.
+Lead Inventor: Dr. Abdelhalim Rekab.
+Co-Inventor / Reactor Theory Architect: George Dunphy.
+Master License Owner: Ethic Vault.
+```
+
+This repository is aligned with Ethic Vault ReactorCore's governance-first posture.
 
 All RT11, ARTYMUS, wallet, payout, proof, API, governance, and agentic execution surfaces must preserve:
 
@@ -485,7 +509,7 @@ All RT11, ARTYMUS, wallet, payout, proof, API, governance, and agentic execution
 - proof continuity
 - human-operable governance review
 
-Commercial implementations, regulated deployments, tokenized systems, payout systems, financial integrations, aviation-specific structures, or corporate operating systems may require separate legal, securities, tax, aviation, bankruptcy, compliance, or licensing review.
+Commercial implementations, regulated deployments, tokenized systems, payout systems, financial integrations, aviation-specific structures, corporate operating systems, agent platforms, governance products, compliance systems, security systems, blockchain infrastructure, hosted software-as-a-service products, or paid consulting/integration/managed services may require a separate written license or commercial agreement from the rights holders.
 
 ---
 
