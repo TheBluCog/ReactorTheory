@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "service": "ARTYMUS",
+  "version": "3.0.1",
+  "stack": "RT11",
+  "mode": "demo/testnet-next",
+  "status": "LIVE",
+  "route": "/api/artymus",
+  "source": "public-static-json-fallback",
+  "message": "ARTYMUS API root online."
+}
