@@ -48,8 +48,14 @@ jobs:
         run: npm run build
 
       - name: Start local Vercel runtime
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          ./node_modules/.bin/vercel dev --listen 127.0.0.1:4173 > vercel-dev.log 2>&1 &
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "Missing VERCEL_TOKEN secret. Add it under GitHub repo Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+          ./node_modules/.bin/vercel dev --listen 127.0.0.1:4173 --token "$VERCEL_TOKEN" > vercel-dev.log 2>&1 &
           for i in {1..60}; do
             if curl -fsS http://127.0.0.1:4173/api/artymus >/dev/null; then
               echo "Vercel runtime ready"
