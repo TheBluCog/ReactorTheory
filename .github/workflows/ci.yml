@@ -41,3 +41,18 @@ jobs:
           npm run preview &
           sleep 5
           npx playwright test || true
+
+  api-verification:
+    runs-on: ubuntu-latest
+    needs: e2e
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm install
+
+      - name: Verify ARTYMUS API JSON responses
+        run: node scripts/check-artymus-api.cjs
