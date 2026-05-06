@@ -1,0 +1,37 @@
+Ethic Vault / ReactorTheory / ReactorCore
+
+Copyright 2026 Ethic Vault.
+
+Ethic Vault is the master license owner for the Ethic Vault licensing stack,
+including the primary Apache 2.0 license notice, supplemental RT9.1 / Resonance
+Engine governance license, and related commercial deployment boundaries used by
+this repository.
+
+Licensed under the Apache License, Version 2.0, subject to the supplemental
+terms referenced in LICENSE-AGENTIC-RT9.1.md.
+
+This repository includes Reactor Theory materials, governance, diagnostic,
+deployment-control, audit logging, drift detection, WORM verification,
+agentic execution gating, and autonomous control concepts for agentic AI systems.
+
+Patent Notice:
+Certain systems, methods, claims, architectures, and workflows implemented in
+Ethic Vault, ReactorTheory, ReactorCore, Reactor Theory 9.1, FENIX, GOVERN,
+and Resonance Engine may be subject to pending patent applications and future
+patent rights, including governance-driven deployment control, drift detection,
+autonomous control loops, WORM audit validation, agentic execution gating,
+truth verification, staking/slashing governance, weighted governance, and
+resonance-based decision support.
+
+The Apache 2.0 patent grant applies as defined in the Apache License 2.0.
+No trademark rights are granted.
+
+Names including Ethic Vault, ReactorCore, ReactorTheory, Reactor Theory,
+FENIX, GOVERN, Resonance Engine, and related marks may be subject to separate
+trademark, branding, attribution, or commercial-use restrictions.
+
+Required Attribution:
+Based on Reactor Theory 9.1 and Resonance Engine agentic governance concepts.
+Lead Inventor: Dr. Abdelhalim Rekab.
+Co-Inventor / Reactor Theory Architect: George Dunphy.
+Master License Owner: Ethic Vault.
