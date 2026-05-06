@@ -1,40 +1,28 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/artymus",
-      "destination": "/api/artymus.ts"
+      "src": "/api/(.*)",
+      "continue": true
     },
     {
-      "source": "/api/artymus/",
-      "destination": "/api/artymus.ts"
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
     },
     {
-      "source": "/api/artymus/:path*",
-      "destination": "/api/artymus.ts"
+      "src": "/manifest.webmanifest",
+      "dest": "/manifest.webmanifest"
     },
     {
-      "source": "/ui/(.*)",
-      "destination": "/ui/$1"
+      "src": "/sw.js",
+      "dest": "/sw.js"
     },
     {
-      "source": "/assets/(.*)",
-      "destination": "/assets/$1"
+      "src": "/workbox-(.*)",
+      "dest": "/workbox-$1"
     },
     {
-      "source": "/manifest.webmanifest",
-      "destination": "/manifest.webmanifest"
-    },
-    {
-      "source": "/sw.js",
-      "destination": "/sw.js"
-    },
-    {
-      "source": "/workbox-:path*",
-      "destination": "/workbox-:path*"
-    },
-    {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
