@@ -47,10 +47,19 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Start preview server
+      - name: Start local preview server
         run: |
-          npm run preview -- --host 0.0.0.0 > preview.log 2>&1 &
-          sleep 10
+          npm run preview -- --host 127.0.0.1 --port 4173 > preview.log 2>&1 &
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
+              echo "Preview server ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Preview server failed to start"
+          cat preview.log
+          exit 1
 
       - name: Local ARTYMUS smoke verification
         env:
