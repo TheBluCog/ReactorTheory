@@ -51,14 +51,13 @@ jobs:
         with:
           node-version: 20
 
-      - name: Configure npm network resilience
+      - name: Configure npm resilience
         run: |
           npm config set registry https://registry.npmjs.org/
           npm config set fetch-retries 5
           npm config set fetch-retry-factor 2
           npm config set fetch-retry-mintimeout 20000
           npm config set fetch-retry-maxtimeout 120000
-          npm config set network-timeout 300000
           npm config set audit false
           npm config set fund false
 
@@ -66,9 +65,9 @@ jobs:
         shell: bash
         run: |
           if [ -f package-lock.json ]; then
-            INSTALL_CMD="npm ci"
+            INSTALL_CMD="npm ci --prefer-online --no-audit --fund=false"
           else
-            INSTALL_CMD="npm install"
+            INSTALL_CMD="npm install --prefer-online --no-audit --fund=false"
           fi
 
           for attempt in 1 2 3; do
