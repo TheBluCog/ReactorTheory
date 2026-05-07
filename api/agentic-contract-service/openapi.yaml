@@ -1,0 +1,355 @@
+openapi: 3.1.0
+info:
+  title: Agentic Contract Service API
+  version: 0.1.0
+  description: >
+    Public API surface for deterministic, auditable, policy-bound agentic execution.
+    No valid contract, no policy decision, no audit path, no execution.
+servers:
+  - url: https://api.example.com
+    description: Production placeholder
+  - url: http://localhost:8787
+    description: Local development
+security:
+  - bearerAuth: []
+paths:
+  /v1/health:
+    get:
+      operationId: healthCheck
+      summary: Health check
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /v1/agentic/contracts:
+    post:
+      operationId: createContract
+      summary: Create an agentic contract
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContractRequest'
+      responses:
+        '201':
+          description: Contract created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+  /v1/agentic/contracts/{contract_id}:
+    get:
+      operationId: getContract
+      summary: Retrieve contract state
+      parameters:
+        - $ref: '#/components/parameters/ContractId'
+      responses:
+        '200':
+          description: Contract state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/agentic/contracts/{contract_id}/validate:
+    post:
+      operationId: validateContract
+      summary: Validate authority, scope, policy, and controls
+      parameters:
+        - $ref: '#/components/parameters/ContractId'
+      responses:
+        '200':
+          description: Validation decision
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResponse'
+  /v1/agentic/contracts/{contract_id}/execute:
+    post:
+      operationId: executeContractAction
+      summary: Execute an action under a validated contract
+      parameters:
+        - $ref: '#/components/parameters/ContractId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecuteRequest'
+      responses:
+        '200':
+          description: Execution result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResponse'
+        '403':
+          $ref: '#/components/responses/PolicyBlocked'
+  /v1/agentic/contracts/{contract_id}/decision:
+    post:
+      operationId: recordDecision
+      summary: Record a refusal, escalation, or conditional approval
+      parameters:
+        - $ref: '#/components/parameters/ContractId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecisionRequest'
+      responses:
+        '200':
+          description: Decision recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DecisionResponse'
+  /v1/agentic/contracts/{contract_id}/revoke:
+    post:
+      operationId: revokeContract
+      summary: Revoke delegated authority
+      parameters:
+        - $ref: '#/components/parameters/ContractId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeRequest'
+      responses:
+        '200':
+          description: Contract revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokeResponse'
+  /v1/agentic/audit/events:
+    post:
+      operationId: appendAuditEvent
+      summary: Append an audit event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditEventRequest'
+      responses:
+        '201':
+          description: Audit event appended
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditEventResponse'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    ContractId:
+      name: contract_id
+      in: path
+      required: true
+      schema:
+        type: string
+      example: ac_000001
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    PolicyBlocked:
+      description: Policy blocked execution
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    HealthResponse:
+      type: object
+      required: [ok, service, version]
+      properties:
+        ok:
+          type: boolean
+        service:
+          type: string
+          example: agentic-contract-service
+        version:
+          type: string
+          example: 0.1.0
+    CreateContractRequest:
+      type: object
+      required: [principal_id, agent_id, requested_scope, purpose]
+      properties:
+        principal_id:
+          type: string
+        agent_id:
+          type: string
+        requested_scope:
+          type: array
+          items:
+            enum: [read, write, execute, transact, publish]
+        purpose:
+          type: string
+        constraints:
+          $ref: '#/components/schemas/Constraints'
+    Constraints:
+      type: object
+      properties:
+        requires_human_approval:
+          type: boolean
+          default: false
+        max_value_at_risk:
+          type: number
+          default: 0
+        allowed_tools:
+          type: array
+          items:
+            type: string
+        prohibited_actions:
+          type: array
+          items:
+            type: string
+    ContractResponse:
+      type: object
+      required: [contract_id, status, policy_state]
+      properties:
+        contract_id:
+          type: string
+        status:
+          enum: [created, active, revoked, closed]
+        policy_state:
+          enum: [pending_validation, allowed, allowed_with_constraints, denied, escalated, simulated, revoked]
+        validated:
+          type: boolean
+        executions:
+          type: integer
+        audit_events:
+          type: integer
+    ValidationResponse:
+      type: object
+      required: [contract_id, valid, decision]
+      properties:
+        contract_id:
+          type: string
+        valid:
+          type: boolean
+        decision:
+          enum: [allowed, allowed_with_constraints, denied, escalated, simulated]
+        required_controls:
+          type: array
+          items:
+            type: string
+    ExecuteRequest:
+      type: object
+      required: [action, target]
+      properties:
+        action:
+          type: string
+        target:
+          type: string
+        input:
+          type: object
+          additionalProperties: true
+    ExecutionResponse:
+      type: object
+      required: [execution_id, contract_id, status, policy_decision, audit_event_id]
+      properties:
+        execution_id:
+          type: string
+        contract_id:
+          type: string
+        status:
+          enum: [completed, blocked, escalated, simulated]
+        policy_decision:
+          enum: [allowed, allowed_with_constraints, denied, escalated, simulated]
+        audit_event_id:
+          type: string
+        result:
+          type: object
+          additionalProperties: true
+    DecisionRequest:
+      type: object
+      required: [decision, reason]
+      properties:
+        decision:
+          enum: [allowed, allowed_with_constraints, denied, escalated, simulated]
+        reason:
+          type: string
+        required_reviewer:
+          type: string
+    DecisionResponse:
+      type: object
+      required: [contract_id, decision, execution_blocked]
+      properties:
+        contract_id:
+          type: string
+        decision:
+          type: string
+        execution_blocked:
+          type: boolean
+    RevokeRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+        effective_immediately:
+          type: boolean
+          default: true
+    RevokeResponse:
+      type: object
+      required: [contract_id, status, future_execution_blocked]
+      properties:
+        contract_id:
+          type: string
+        status:
+          enum: [revoked]
+        future_execution_blocked:
+          type: boolean
+    AuditEventRequest:
+      type: object
+      required: [contract_id, event_type, summary]
+      properties:
+        contract_id:
+          type: string
+        execution_id:
+          type: string
+        event_type:
+          enum: [policy_decision, execution, refusal, approval, evidence, revocation]
+        summary:
+          type: string
+        evidence:
+          type: object
+          properties:
+            hash:
+              type: string
+            uri:
+              type: string
+    AuditEventResponse:
+      type: object
+      required: [audit_event_id, append_only, timestamp]
+      properties:
+        audit_event_id:
+          type: string
+        append_only:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+        message:
+          type: string
