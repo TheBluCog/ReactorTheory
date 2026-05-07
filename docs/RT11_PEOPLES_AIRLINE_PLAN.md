@@ -1,16 +1,60 @@
-# RT11 Plan: Buy the People’s Airline
+# Ethic Vault / RT11 Plan: Buy the People’s Airline
 
+**Brand:** Ethic Vault  
 **Public concept:** https://letsbuyspiritair.com  
 **Framework:** ARTYMUS.RT11 / Acquisition Infrastructure Layer  
 **Status:** Investor-ready concept architecture / regulatory-safe public draft  
 **Reference basis:** Legally Compliant Acquisition Plan for ARTYMUS to Acquire Spirit Airlines  
+**Agentic Contract API:** [docs/AGENTIC_CONTRACT_SERVICE_API.md](./AGENTIC_CONTRACT_SERVICE_API.md)  
+**OpenAPI / YAML:** [api/agentic-contract-service/openapi.yaml](../api/agentic-contract-service/openapi.yaml)  
+**License:** [LICENSE-AGENTIC-RT9.1.md](../LICENSE-AGENTIC-RT9.1.md)  
 **Objective:** Create a compliant path to acquire selected distressed airline assets and relaunch them as a people-aligned airline without confusing public participation with securities ownership.
+
+---
+
+## Ethic Vault Control Plane References
+
+The People's Airline plan is governed as an **Ethic Vault infrastructure governance artifact**. The acquisition concept, token architecture, public signal layer, and operational execution model should be interpreted through the Ethic Vault control-plane stack:
+
+| Reference | Purpose |
+|---|---|
+| [Agentic Contract Service API](./AGENTIC_CONTRACT_SERVICE_API.md) | Human / agent / policy / audit contract model for governed execution |
+| [OpenAPI YAML](../api/agentic-contract-service/openapi.yaml) | Machine-readable API surface for contract creation, validation, execution, escalation, revocation, and audit events |
+| [Agentic License](../LICENSE-AGENTIC-RT9.1.md) | Supplemental license terms governing RT9.1, RT11, Agentic Contract API, ARTYMUS AIR, AADST, SRT, and commercial-use boundaries |
+| [Acquisition Reference](./reference/LEGALLY_COMPLIANT_ARTYMUS_SPIRIT_ACQUISITION_PLAN.md) | Section 363 acquisition, diligence, capital stack, token design, and regulatory reference |
+
+### Ethic Vault Operating Rule
+
+```text
+NO VALID CONTRACT → NO EXECUTION
+NO POLICY DECISION → NO EXECUTION
+NO AUDIT PATH → NO EXECUTION
+```
+
+For the People's Airline plan, this means any material action involving acquisition, capital formation, token issuance, investor communication, regulatory filing, repo publication, or operational execution should be treated as a governed contract event with policy validation and audit traceability.
+
+### YAML Interface
+
+The canonical machine-readable interface for governed execution is:
+
+```text
+api/agentic-contract-service/openapi.yaml
+```
+
+That YAML defines the public service endpoints for:
+
+- creating agentic contracts,
+- validating policy and scope,
+- executing governed actions,
+- recording refusals and escalations,
+- revoking authority,
+- appending audit events.
 
 ---
 
 ## One-Line Thesis
 
-**Capital funds it. Professionals operate it. The people shape it. The system verifies it.**
+**Capital funds it. Professionals operate it. The people shape it. Ethic Vault verifies it.**
 
 RT11 separates those functions so the plan can be credible:
 
@@ -20,7 +64,7 @@ RT11 separates those functions so the plan can be credible:
 | Voice | SRT / loyalty signal | One verified participant, one non-financial signal |
 | Control | U.S. HoldCo + board + OpCo | Legal authority and regulated execution |
 | Operations | Airline OpCo | DOT / FAA / labor / fleet / systems |
-| Verification | RT11 / audit / reporting layer | Makes capital, governance, and execution observable |
+| Verification | Ethic Vault / RT11 / Agentic Contract API | Makes capital, governance, policy, and execution observable |
 
 ---
 
@@ -53,13 +97,16 @@ It is a three-layer infrastructure model:
 2. **Professional operators** run the airline.
 3. **Verified participants** shape the customer and community signal layer.
 
+Ethic Vault provides the policy, contract, and audit control plane around execution.
+
 The core innovation is separation of **economic ownership** from **public voice**.
 
 ```text
-AADST = regulated capital / economic participation
-SRT   = one-human-one-signal loyalty and participation layer
-OpCo  = professional airline operations and legal control
-RT11  = verification, coherence, and governance framework
+AADST        = regulated capital / economic participation
+SRT          = one-human-one-signal loyalty and participation layer
+OpCo         = professional airline operations and legal control
+Ethic Vault  = contract, policy, audit, and governance control plane
+RT11         = verification, coherence, and governance framework
 ```
 
 ---
@@ -100,6 +147,8 @@ RT11 therefore focuses on a court-approved asset acquisition.
 The structure must be simple enough for courts, regulators, lenders, investors, and airline counterparties to understand.
 
 ```text
+ETHIC VAULT GOVERNANCE / AUDIT LAYER
+        ↓
 ARTYMUS HOLDINGS
         ↓
 ARTYMUS AVIATION HOLDCO
@@ -113,6 +162,7 @@ SRT LOYALTY + PARTICIPATION NETWORK
 
 | Entity | Role |
 |---|---|
+| Ethic Vault | Agentic contract, policy, audit, and governance control plane |
 | ARTYMUS Holdings | Sponsor / strategic parent |
 | ARTYMUS Aviation HoldCo | Acquisition vehicle / issuer parent |
 | Airline OpCo | DOT / FAA / labor / fleet / operations |
@@ -251,6 +301,21 @@ Examples:
 
 Final authority stays with the HoldCo board and airline management because airline operations must satisfy DOT, FAA, securities, bankruptcy, labor, antitrust, tax, privacy, consumer-protection, and safety obligations.
 
+### 4. Ethic Vault Contract Control
+
+Material execution events should be governed by the Agentic Contract Service API:
+
+```text
+POST /v1/agentic/contracts
+POST /v1/agentic/contracts/{contract_id}/validate
+POST /v1/agentic/contracts/{contract_id}/execute
+POST /v1/agentic/contracts/{contract_id}/decision
+POST /v1/agentic/contracts/{contract_id}/revoke
+POST /v1/agentic/audit/events
+```
+
+This turns public governance, investor communication, token operations, repo updates, and execution workflows into auditable contract events rather than informal actions.
+
 ---
 
 ## Governance Principle
@@ -273,7 +338,7 @@ That is a regulator-readable public participation architecture.
 
 Smart contracts do not replace legal ownership records.
 
-They mirror, restrict, and enforce the rules defined in securities documents, transfer-agent systems, and governance policies.
+They mirror, restrict, and enforce the rules defined in securities documents, transfer-agent systems, governance policies, and Ethic Vault contract controls.
 
 ### AADST Contract Requirements
 
@@ -300,6 +365,7 @@ They mirror, restrict, and enforce the rules defined in securities documents, tr
 - Board override / legal-control layer
 - Emergency pause
 - Audit event logs
+- Agentic Contract API references where material off-chain execution occurs
 
 ---
 
@@ -363,6 +429,8 @@ The airline wins only if capital, intent, and control exceed drift.
 
 RT11’s role is to reduce drift by making governance, capital, and operations observable.
 
+Ethic Vault’s role is to make material actions contract-bound, policy-validated, and auditable.
+
 ---
 
 ## Execution Sequence
@@ -380,6 +448,8 @@ RT11’s role is to reduce drift by making governance, capital, and operations o
 11. Relaunch phased network.
 12. Launch SRT as post-close loyalty and participation program.
 13. Publish recurring transparency and governance reports.
+14. Register material execution events through the Agentic Contract Service API.
+15. Append policy, execution, refusal, approval, and evidence events to the Ethic Vault audit layer.
 
 ---
 
@@ -424,6 +494,18 @@ The operating company must satisfy:
 - consumer protection rules
 - privacy and customer-data transfer constraints
 
+### Ethic Vault Governance
+
+Ethic Vault does not replace legal, securities, bankruptcy, transportation, or aviation approval.
+
+It provides:
+
+- policy-bound execution records,
+- contract-level authority tracking,
+- refusal and escalation logging,
+- audit-grade evidence trails,
+- deterministic governance artifacts.
+
 ---
 
 ## Due Diligence Checklist
@@ -440,6 +522,7 @@ Before any capital commitment or public announcement is treated as execution-rea
 - Privacy policies and customer-data-transfer constraints
 - Tax attribute study, including NOL preservation analysis
 - ARTYMUS asset package proof: wallet histories, smart-contract code, legal ownership chain, appraisal reports, audit reports, legal opinions, and cash-conversion mechanics
+- Ethic Vault contract records for material public claims, governance changes, API-controlled execution events, and audit artifacts
 
 ---
 
@@ -456,6 +539,7 @@ Before any capital commitment or public announcement is treated as execution-rea
 | Labor restart friction | High | Labor diligence at signing; phased network relaunch |
 | Antitrust / airport concentration issues | Medium-High | Early HSR and competition memo; be ready for carve-outs or hold-separate remedies |
 | Data/privacy transfer obstacles | Medium | Privacy-policy review and, if needed, court approval process |
+| Ungoverned agentic execution | High | Require Agentic Contract API validation, policy decision, and audit event before material execution |
 
 ---
 
@@ -470,7 +554,7 @@ We are building a compliant framework where:
 - real customers help shape the experience,
 - and the public gets a transparent signal layer instead of empty corporate slogans.
 
-**The people do not replace governance. The people become visible to governance.**
+**The people do not replace governance. The people become visible to governance. Ethic Vault makes the execution auditable.**
 
 ---
 
@@ -478,23 +562,24 @@ We are building a compliant framework where:
 
 ARTYMUS AIR is not a crypto airline.
 
-It is a tokenized aviation infrastructure platform.
+It is a tokenized aviation infrastructure platform governed through Ethic Vault-style contract, policy, and audit controls.
 
 The investment thesis is:
 
 ```text
-Distressed aviation assets + regulated capital + transparent governance + customer-aligned data loops = infrastructure upside.
+Distressed aviation assets + regulated capital + transparent governance + customer-aligned data loops + auditable execution = infrastructure upside.
 ```
 
-The blockchain layer exists to improve:
+The blockchain and API layers exist to improve:
 
-- capital formation
-- ownership transparency
-- governance signaling
-- loyalty economics
-- auditability
+- capital formation,
+- ownership transparency,
+- governance signaling,
+- loyalty economics,
+- auditability,
+- policy-bound execution.
 
-It does not replace airline discipline.
+They do not replace airline discipline.
 
 ---
 
@@ -512,6 +597,7 @@ This plan only works if:
 8. Professional airline operators control execution.
 9. Public participation remains advisory unless legally approved otherwise.
 10. Every claim made to investors is evidence-backed.
+11. Material execution events are governed by contract, policy, and audit controls.
 
 ---
 
@@ -523,7 +609,7 @@ RT11 gives the People’s Airline a legally coherent structure:
 Capital funds it.
 Professionals operate it.
 The people shape it.
-The system verifies it.
+Ethic Vault verifies it.
 ```
 
 That is the difference between a slogan and an acquisition plan.
@@ -532,9 +618,9 @@ That is the difference between a slogan and an acquisition plan.
 
 ## Appendix A — Pitch Deck Outline
 
-### Slide 1 — ARTYMUS AIR
+### Slide 1 — Ethic Vault / ARTYMUS AIR
 Tokenized Aviation Capital & Governance System  
-**Own the infrastructure. Shape the experience.**
+**Own the infrastructure. Shape the experience. Verify the execution.**
 
 ### Slide 2 — The Problem
 Airlines are opaque, capital intensive, operationally fragile, and disconnected from customers.
@@ -543,7 +629,7 @@ Airlines are opaque, capital intensive, operationally fragile, and disconnected 
 Distressed aviation assets can be recapitalized through regulated digital infrastructure and professional operations.
 
 ### Slide 4 — The Solution
-AADST funds the deal. SRT gives the public a verified signal layer. OpCo runs the airline.
+AADST funds the deal. SRT gives the public a verified signal layer. Ethic Vault governs execution. OpCo runs the airline.
 
 ### Slide 5 — Acquisition Model
 Section 363 selected-asset purchase or plan-sponsor transaction.
@@ -556,22 +642,25 @@ AADST = security / economics.
 SRT = loyalty / advisory signal.
 
 ### Slide 8 — Governance
-Capital channel + people channel + legal-control layer.
+Capital channel + people channel + legal-control layer + Ethic Vault contract/audit layer.
 
-### Slide 9 — Relaunch Model
+### Slide 9 — API Control Plane
+Agentic Contract Service API and OpenAPI YAML define contract creation, validation, execution, escalation, revocation, and audit.
+
+### Slide 10 — Relaunch Model
 Phased network restart, fleet discipline, liquidity protection, labor stabilization, and customer trust rebuild.
 
-### Slide 10 — Why Now
+### Slide 11 — Why Now
 Aviation needs transparent capital, customers need a voice, and distressed assets need disciplined operators.
 
-### Slide 11 — Compliance
-SEC, DOT, FAA, bankruptcy, antitrust, labor, tax, privacy, and AML compliance are built into the architecture.
+### Slide 12 — Compliance
+SEC, DOT, FAA, bankruptcy, antitrust, labor, tax, privacy, AML, and agentic execution controls are built into the architecture.
 
-### Slide 12 — Risk and Diligence
-The plan is execution-led: ARTYMUS claims must be audited, authorities must be transferable, and restart liquidity must be real.
+### Slide 13 — Risk and Diligence
+The plan is execution-led: ARTYMUS claims must be audited, authorities must be transferable, restart liquidity must be real, and execution must be contract-bound.
 
-### Slide 13 — Vision
-The first digitally governed aviation infrastructure platform.
+### Slide 14 — Vision
+The first digitally governed aviation infrastructure platform with an auditable execution control plane.
 
 ---
 
@@ -579,15 +668,17 @@ The first digitally governed aviation infrastructure platform.
 
 ARTYMUS AIR should be described as:
 
-> a compliant, tokenized aviation capital and governance framework for acquiring and relaunching distressed transport infrastructure.
+> a compliant, tokenized aviation capital and governance framework for acquiring and relaunching distressed transport infrastructure, supported by Ethic Vault contract, policy, API, and audit controls.
 
 It should not be described as:
 
-- a meme coin
-- a DAO takeover
-- a retail investment scheme
-- guaranteed profit sharing
-- public control of airline safety decisions
+- a meme coin,
+- a DAO takeover,
+- a retail investment scheme,
+- guaranteed profit sharing,
+- public control of airline safety decisions,
+- regulatory approval,
+- or autonomous execution without contract, policy, and audit gates.
 
 ---
 
@@ -595,14 +686,17 @@ It should not be described as:
 
 This document supersedes earlier public-facing versions by adding:
 
-- external acquisition-plan reference basis
-- institutional whitepaper framing
-- pitch deck outline
-- clearer corporate structure
-- stronger AADST / SRT separation
-- smart contract logic requirements
-- operating strategy phases
-- due diligence checklist
-- risk matrix
-- investor-safe positioning
-- stronger regulatory guardrails
+- Ethic Vault branding,
+- top-level YAML and Agentic Contract API references,
+- external acquisition-plan reference basis,
+- institutional whitepaper framing,
+- pitch deck outline,
+- clearer corporate structure,
+- stronger AADST / SRT separation,
+- smart contract logic requirements,
+- agentic execution control-plane framing,
+- operating strategy phases,
+- due diligence checklist,
+- risk matrix,
+- investor-safe positioning,
+- stronger regulatory guardrails.
