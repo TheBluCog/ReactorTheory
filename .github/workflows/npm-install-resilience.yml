@@ -1,0 +1,66 @@
+name: NPM Install Resilience
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/**'
+
+jobs:
+  npm-install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Configure npm network resilience
+        run: |
+          npm config set registry https://registry.npmjs.org/
+          npm config set fetch-retries 5
+          npm config set fetch-retry-factor 2
+          npm config set fetch-retry-mintimeout 20000
+          npm config set fetch-retry-maxtimeout 120000
+          npm config set network-timeout 300000
+          npm config set audit false
+          npm config set fund false
+
+      - name: Install dependencies with retry
+        shell: bash
+        run: |
+          if [ -f package-lock.json ]; then
+            INSTALL_CMD="npm ci"
+          else
+            INSTALL_CMD="npm install"
+          fi
+
+          for attempt in 1 2 3; do
+            echo "Running $INSTALL_CMD attempt $attempt..."
+            if $INSTALL_CMD; then
+              echo "Dependency install succeeded."
+              exit 0
+            fi
+
+            echo "Dependency install failed on attempt $attempt."
+            npm cache verify || true
+            sleep $((attempt * 20))
+          done
+
+          echo "Dependency install failed after 3 attempts."
+          exit 1
