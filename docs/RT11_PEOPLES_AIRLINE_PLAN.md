@@ -2,15 +2,16 @@
 
 **Public concept:** https://letsbuyspiritair.com  
 **Framework:** ARTYMUS.RT11 / Acquisition Infrastructure Layer  
+**Status:** Investor-ready concept architecture / regulatory-safe public draft  
 **Objective:** Create a compliant path to acquire selected distressed airline assets and relaunch them as a people-aligned airline without confusing public participation with securities ownership.
 
 ---
 
 ## One-Line Thesis
 
-**The people should help shape the airline. Regulated capital should fund it. Professional operators must run it.**
+**Capital funds it. Professionals operate it. The people shape it. The system verifies it.**
 
-RT11 separates those three functions so the plan can be credible:
+RT11 separates those functions so the plan can be credible:
 
 | Function | Instrument / Layer | Meaning |
 |---|---|---|
@@ -18,6 +19,30 @@ RT11 separates those three functions so the plan can be credible:
 | Voice | SRT / loyalty signal | One verified participant, one non-financial signal |
 | Control | U.S. HoldCo + board + OpCo | Legal authority and regulated execution |
 | Operations | Airline OpCo | DOT / FAA / labor / fleet / systems |
+| Verification | RT11 / audit / reporting layer | Makes capital, governance, and execution observable |
+
+---
+
+## Executive Summary
+
+ARTYMUS AIR is a proposed tokenized aviation capital and governance system designed to acquire, recapitalize, and relaunch selected distressed airline assets through a compliant, regulator-readable structure.
+
+The model is not a meme coin, not an unregistered public securities sale, and not a plan to buy old public stock.
+
+It is a three-layer infrastructure model:
+
+1. **Regulated capital** funds the acquisition.
+2. **Professional operators** run the airline.
+3. **Verified participants** shape the customer and community signal layer.
+
+The core innovation is separation of **economic ownership** from **public voice**.
+
+```text
+AADST = regulated capital / economic participation
+SRT   = one-human-one-signal loyalty and participation layer
+OpCo  = professional airline operations and legal control
+RT11  = verification, coherence, and governance framework
+```
 
 ---
 
@@ -25,7 +50,7 @@ RT11 separates those three functions so the plan can be credible:
 
 This is not a plan to buy old public stock.
 
-The legally coherent path is a **court-supervised Section 363 selected-asset purchase** or near-equivalent plan-sponsor transaction.
+The legally coherent path is a **court-supervised Section 363 selected-asset purchase** or a near-equivalent plan-sponsor transaction.
 
 Target asset package:
 
@@ -49,6 +74,32 @@ Because the old equity is not the deal.
 The Spirit acquisition plan states that the equity is expected to be wiped out, operations had ceased, and any usable airline authority still requires regulator review. Therefore, minority-stock or creeping-control strategies are not meaningful acquisition paths.
 
 RT11 therefore focuses on a court-approved asset acquisition.
+
+---
+
+## Corporate Structure
+
+The structure must be simple enough for courts, regulators, lenders, investors, and airline counterparties to understand.
+
+```text
+ARTYMUS HOLDINGS
+        ↓
+ARTYMUS AVIATION HOLDCO
+        ↓
+AIRLINE OPERATING COMPANY
+        ↓
+SRT LOYALTY + PARTICIPATION NETWORK
+```
+
+### Functional Roles
+
+| Entity | Role |
+|---|---|
+| ARTYMUS Holdings | Sponsor / strategic parent |
+| ARTYMUS Aviation HoldCo | Acquisition vehicle / issuer parent |
+| Airline OpCo | DOT / FAA / labor / fleet / operations |
+| Token Issuer SPV | AADST issuance and investor recordkeeping |
+| SRT Network | Loyalty, participation, and advisory signaling |
 
 ---
 
@@ -83,15 +134,21 @@ Illustrative uses:
 
 ---
 
-## The Token Architecture
+## Token Architecture
+
+RT11 uses a dual-token architecture that prevents the fatal mistake of mixing public participation with securities ownership.
+
+---
 
 ## AADST — Capital Layer
+
+**AADST** means **ARTYMUS Aviation Digital Security Token**.
 
 AADST is a regulated security.
 
 It may represent equity, preferred equity, or a security entitlement in the acquisition vehicle.
 
-Rules:
+### AADST Rules
 
 - Sold only under registration or valid exemptions
 - U.S. accredited tranche under Rule 506(c)
@@ -100,14 +157,41 @@ Rules:
 - Transfer-agent recordkeeping
 - Broker-dealer / ATS pathway for secondary trading
 - No anonymous free-floating trading
+- No public retail sale without appropriate registration or exemption
+
+### AADST Rights
+
+AADST may provide:
+
+- Economic participation
+- Dividend rights, if declared and legally available
+- Exit participation
+- Liquidation preference, depending on class
+- Capital-weighted signaling rights, subject to securities documents
+
+AADST should be described clearly as a security from day one.
+
+---
 
 ## SRT — People’s Airline Signal Layer
+
+**SRT** means **Spirit Rewards Token** or **Signal Rewards Token**, depending on final branding.
 
 SRT is not acquisition currency.
 
 SRT is a post-close loyalty and participation instrument.
 
-It may provide:
+### SRT Rules
+
+- One verified participant, one signal token
+- No profit sharing
+- No dividend rights
+- No residual asset rights
+- No appreciation rights
+- No binding control over airline operations
+- No investment marketing
+
+### SRT May Provide
 
 - Loyalty benefits
 - Travel credits
@@ -115,14 +199,7 @@ It may provide:
 - Route-demand signals
 - Customer preference signals
 - Community participation
-
-It must not provide:
-
-- Profit sharing
-- Dividend rights
-- Residual asset rights
-- Appreciation rights
-- Binding control over airline operations
+- Verified feedback loops
 
 The people get voice.
 
@@ -154,7 +231,57 @@ Examples:
 
 ### 3. Legal Control
 
-Final authority stays with the HoldCo board and airline management because airline operations must satisfy DOT, FAA, securities, bankruptcy, labor, antitrust, and safety obligations.
+Final authority stays with the HoldCo board and airline management because airline operations must satisfy DOT, FAA, securities, bankruptcy, labor, antitrust, tax, privacy, consumer-protection, and safety obligations.
+
+---
+
+## Governance Principle
+
+```text
+Capital concentration must not automatically equal governance domination.
+```
+
+This is the design breakthrough.
+
+The model allows larger investors to receive larger economics while preserving a visible, democratic, one-human-one-signal participation layer.
+
+That is not a DAO airline.
+
+That is a regulator-readable public participation architecture.
+
+---
+
+## Smart Contract Logic
+
+Smart contracts do not replace legal ownership records.
+
+They mirror, restrict, and enforce the rules defined in securities documents, transfer-agent systems, and governance policies.
+
+### AADST Contract Requirements
+
+- Whitelisted wallets only
+- Transfer-agent controlled issuance
+- Transfer restrictions
+- Investor eligibility checks
+- Lockups and legends
+- Event logging for audit trail
+
+### SRT Contract Requirements
+
+- One token per verified participant
+- Non-transferable or transfer-restricted by default
+- No dividend or revenue rights
+- Advisory vote functionality
+- Loyalty integration hooks
+
+### Governance Contract Requirements
+
+- Proposal registry
+- Community vote channel
+- Capital signal channel
+- Board override / legal-control layer
+- Emergency pause
+- Audit event logs
 
 ---
 
@@ -171,19 +298,31 @@ Final authority stays with the HoldCo board and airline management because airli
 
 ---
 
-## Execution Sequence
+## Operating Strategy
 
-1. Form U.S.-controlled acquisition vehicle.
-2. Engage bankruptcy, aviation, securities, transfer-agent, antitrust, labor, and tax counsel.
-3. Seek bankruptcy data-room access.
-4. Negotiate stalking-horse APA or plan-sponsor term sheet.
-5. Secure sponsor and institutional commitments before token marketing.
-6. Prepare AADST securities documents.
-7. File DOT / FAA transfer or substitute authority pathway.
-8. Bid for selected assets.
-9. Close asset purchase.
-10. Relaunch phased network.
-11. Launch SRT as post-close loyalty and participation program.
+### Phase 1 — Stabilization
+
+- Acquire selected viable assets
+- Preserve regulatory pathway
+- Secure day-one liquidity
+- Recall and retrain essential labor
+- Relaunch limited high-confidence routes
+- Protect safety, reliability, and customer trust
+
+### Phase 2 — Digital Optimization
+
+- Launch SRT loyalty and signal layer
+- Build transparent route-demand dashboards
+- Use verified customer signals for route and fee prioritization
+- Improve ancillary revenue without hostile fee design
+- Publish operational transparency metrics where commercially appropriate
+
+### Phase 3 — Expansion
+
+- Expand fleet and route network only after stability
+- Build partner loyalty integrations
+- Explore tokenized travel credits where compliant
+- Develop ARTYMUS AIR as a reusable infrastructure model for distressed transport assets
 
 ---
 
@@ -202,6 +341,69 @@ Applied to the People’s Airline:
 
 The airline wins only if capital, intent, and control exceed drift.
 
+RT11’s role is to reduce drift by making governance, capital, and operations observable.
+
+---
+
+## Execution Sequence
+
+1. Form U.S.-controlled acquisition vehicle.
+2. Engage bankruptcy, aviation, securities, transfer-agent, antitrust, labor, privacy, consumer-protection, and tax counsel.
+3. Seek bankruptcy data-room access.
+4. Negotiate stalking-horse APA or plan-sponsor term sheet.
+5. Secure sponsor and institutional commitments before token marketing.
+6. Prepare AADST securities documents.
+7. Select transfer agent, broker-dealer, and ATS pathway.
+8. File DOT / FAA transfer or substitute authority pathway.
+9. Bid for selected assets.
+10. Close asset purchase.
+11. Relaunch phased network.
+12. Launch SRT as post-close loyalty and participation program.
+13. Publish recurring transparency and governance reports.
+
+---
+
+## Regulatory Positioning
+
+The plan must be built for regulation from inception.
+
+### AADST
+
+AADST is treated as a security.
+
+It requires:
+
+- securities counsel
+- valid exemption or registration
+- transfer-agent infrastructure
+- broker-dealer / ATS pathway for secondary trading
+- KYC / AML
+- investor eligibility controls
+
+### SRT
+
+SRT is treated as loyalty and participation infrastructure.
+
+It must avoid:
+
+- profit expectation
+- dividend language
+- revenue share
+- asset backing claims
+- speculative investment marketing
+
+### Airline Operations
+
+The operating company must satisfy:
+
+- DOT authority
+- FAA safety authority
+- U.S. citizen control rules
+- labor obligations
+- airport / slot / gate consents
+- consumer protection rules
+- privacy and customer-data transfer constraints
+
 ---
 
 ## Public Message
@@ -219,6 +421,30 @@ We are building a compliant framework where:
 
 ---
 
+## Investor Message
+
+ARTYMUS AIR is not a crypto airline.
+
+It is a tokenized aviation infrastructure platform.
+
+The investment thesis is:
+
+```text
+Distressed aviation assets + regulated capital + transparent governance + customer-aligned data loops = infrastructure upside.
+```
+
+The blockchain layer exists to improve:
+
+- capital formation
+- ownership transparency
+- governance signaling
+- loyalty economics
+- auditability
+
+It does not replace airline discipline.
+
+---
+
 ## Reality Check
 
 This plan only works if:
@@ -230,6 +456,9 @@ This plan only works if:
 5. DOT and FAA approval paths are filed early.
 6. U.S. citizen control requirements are preserved.
 7. The acquisition targets selected assets, not old common stock.
+8. Professional airline operators control execution.
+9. Public participation remains advisory unless legally approved otherwise.
+10. Every claim made to investors is evidence-backed.
 
 ---
 
@@ -245,3 +474,76 @@ The system verifies it.
 ```
 
 That is the difference between a slogan and an acquisition plan.
+
+---
+
+## Appendix A — Pitch Deck Outline
+
+### Slide 1 — ARTYMUS AIR
+Tokenized Aviation Capital & Governance System  
+**Own the infrastructure. Shape the experience.**
+
+### Slide 2 — The Problem
+Airlines are opaque, capital intensive, operationally fragile, and disconnected from customers.
+
+### Slide 3 — The Opportunity
+Distressed aviation assets can be recapitalized through regulated digital infrastructure and professional operations.
+
+### Slide 4 — The Solution
+AADST funds the deal. SRT gives the public a verified signal layer. OpCo runs the airline.
+
+### Slide 5 — Acquisition Model
+Section 363 selected-asset purchase or plan-sponsor transaction.
+
+### Slide 6 — Capital Stack
+Sponsor equity, institutional preferred equity, AADST security token tranches, secured debt, and asset-backed financing.
+
+### Slide 7 — Token Architecture
+AADST = security / economics.  
+SRT = loyalty / advisory signal.
+
+### Slide 8 — Governance
+Capital channel + people channel + legal-control layer.
+
+### Slide 9 — Relaunch Model
+Phased network restart, fleet discipline, liquidity protection, labor stabilization, and customer trust rebuild.
+
+### Slide 10 — Why Now
+Aviation needs transparent capital, customers need a voice, and distressed assets need disciplined operators.
+
+### Slide 11 — Compliance
+SEC, DOT, FAA, bankruptcy, antitrust, labor, tax, privacy, and AML compliance are built into the architecture.
+
+### Slide 12 — Vision
+The first digitally governed aviation infrastructure platform.
+
+---
+
+## Appendix B — Whitepaper Positioning
+
+ARTYMUS AIR should be described as:
+
+> a compliant, tokenized aviation capital and governance framework for acquiring and relaunching distressed transport infrastructure.
+
+It should not be described as:
+
+- a meme coin
+- a DAO takeover
+- a retail investment scheme
+- guaranteed profit sharing
+- public control of airline safety decisions
+
+---
+
+## Appendix C — Repo Update Notes
+
+This document supersedes earlier public-facing versions by adding:
+
+- institutional whitepaper framing
+- pitch deck outline
+- clearer corporate structure
+- stronger AADST / SRT separation
+- smart contract logic requirements
+- operating strategy phases
+- investor-safe positioning
+- stronger regulatory guardrails
