@@ -1,18 +1,18 @@
-# ARTYMUS 3.0
+# Ethic Vault
 
 ## Short Description
 
-Governed agentic artificial intelligence infrastructure for contract-bound execution, auditability, boundary enforcement, and trust control.
+Ethic Vault is governed agentic artificial intelligence infrastructure for contract-bound execution, auditability, boundary enforcement, and trust control, powered by ARTYMUS 3.0.
 
 ## Full Description
 
-ARTYMUS 3.0 is a governed agentic artificial intelligence platform designed to make autonomous systems safer, more auditable, and more accountable.
+Ethic Vault is a governed artificial intelligence platform designed to make autonomous and agentic systems safer, more auditable, and more accountable.
 
-ARTYMUS provides a callable governance surface for agentic systems that need to execute actions under defined authority, policy, contract, and audit constraints.
+Ethic Vault provides a callable governance surface for agentic systems that need to execute actions under defined authority, policy, contract, and audit constraints.
 
-The platform defines OpenAPI-based interfaces for agent registration, agentic contracts, governance validation, deterministic boundary checks, governed execution, audit event creation, memory references, Resonance Engine scoring, and Unified Alignment Performance telemetry.
+The platform is powered by ARTYMUS 3.0, the underlying agentic governance engine that defines OpenAPI-based interfaces for agent registration, agentic contracts, governance validation, deterministic boundary checks, governed execution, audit event creation, memory references, Resonance Engine scoring, and Unified Alignment Performance telemetry.
 
-ARTYMUS is built for organizations that need artificial intelligence systems to do more than generate outputs. It is for systems that act, execute, call services, and interact with real-world infrastructure.
+Ethic Vault is built for organizations that need artificial intelligence systems to do more than generate outputs. It is for systems that act, execute, call services, and interact with real-world infrastructure.
 
 Core principle:
 
@@ -75,9 +75,8 @@ https://github.com/TheBluCog/ReactorTheory/blob/main/docs/ARTYMUS_3_0_BUILD_SPEC
 
 ## Publisher
 
-George Dunphy  
-Chief Technology Officer, Ethic Vault  
-King of the Dudes™  
+Ethic Vault  
+Chief Technology Officer: George Dunphy  
 Reactor Theory / ARTYMUS / Resonance Engine
 
 ## Tagline
