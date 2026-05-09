@@ -1,0 +1,75 @@
+{
+  "name": "ARTYMUS 3.0",
+  "slug": "artymus-3-governed-agentic-ai",
+  "version": "3.0.0",
+  "publisher": {
+    "name": "George Dunphy",
+    "organization": "Ethic Vault",
+    "role": "Chief Technology Officer",
+    "repository": "https://github.com/TheBluCog/ReactorTheory"
+  },
+  "summary": "Governed agentic artificial intelligence infrastructure for contract-bound execution, auditability, boundary enforcement, and trust control.",
+  "description": "ARTYMUS 3.0 provides a callable governance surface for agentic artificial intelligence systems. It defines OpenAPI-based interfaces for agent registration, agentic contracts, governance validation, deterministic boundary checks, governed execution, audit event creation, memory references, Resonance Engine scoring, and Unified Alignment Performance telemetry.",
+  "category": [
+    "AI Governance",
+    "Agentic AI",
+    "Developer Tools",
+    "Compliance",
+    "Trust Infrastructure",
+    "Enterprise Automation"
+  ],
+  "tags": [
+    "ARTYMUS",
+    "Reactor Theory",
+    "Ethic Vault",
+    "Resonance Engine",
+    "OpenAPI",
+    "Agentic AI",
+    "AI Governance",
+    "Auditability",
+    "Trust Infrastructure",
+    "Governed Intelligence"
+  ],
+  "license": {
+    "name": "Reactor Theory / ARTYMUS Governance License",
+    "url": "https://github.com/TheBluCog/ReactorTheory"
+  },
+  "links": {
+    "repository": "https://github.com/TheBluCog/ReactorTheory",
+    "openapi_spec": "https://github.com/TheBluCog/ReactorTheory/blob/main/docs/ARTYMUS_3_0_OPENAPI_SPEC.yaml",
+    "primary_spec": "https://github.com/TheBluCog/ReactorTheory/blob/main/docs/ARTYMUS_3_0_SPEC.md",
+    "contract_api": "https://github.com/TheBluCog/ReactorTheory/blob/main/docs/AGENTIC_CONTRACT_SERVICE_API.md",
+    "build_spec": "https://github.com/TheBluCog/ReactorTheory/blob/main/docs/ARTYMUS_3_0_BUILD_SPEC.md"
+  },
+  "api": {
+    "type": "openapi",
+    "version": "3.1.0",
+    "spec_url": "https://raw.githubusercontent.com/TheBluCog/ReactorTheory/main/docs/ARTYMUS_3_0_OPENAPI_SPEC.yaml"
+  },
+  "capabilities": [
+    "agent_registration",
+    "agentic_contracts",
+    "authority_validation",
+    "policy_enforcement",
+    "boundary_checks",
+    "governed_execution",
+    "audit_events",
+    "memory_references",
+    "resonance_scoring",
+    "uap_telemetry",
+    "system_state"
+  ],
+  "security": {
+    "authentication": [
+      "Bearer JWT",
+      "Signed Agent Request"
+    ],
+    "headers": [
+      "Authorization",
+      "X-ARTYMUS-SIGNATURE"
+    ],
+    "audit_required": true
+  },
+  "status": "marketplace-ready",
+  "slogan": "Govern. Don’t worship."
+}
