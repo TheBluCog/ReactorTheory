@@ -1,0 +1,902 @@
+openapi: 3.1.0
+
+info:
+  title: ARTYMUS 3.0 Agentic Governance API
+  version: 3.0.0
+  summary: OpenAPI contract surface for governed agentic artificial intelligence.
+  description: |
+    ARTYMUS 3.0 defines a governed execution interface for agentic AI systems.
+
+    This API provides contract-bound access to agent registration, authority validation,
+    policy enforcement, boundary checks, execution requests, audit events, system state,
+    memory references, Resonance Engine telemetry, and Unified Alignment Performance scoring.
+
+    Core principle:
+
+    If an agent can call it, govern it.
+    If a system can execute it, audit it.
+    If intelligence touches the real world, bind it to a contract.
+
+  contact:
+    name: George Dunphy
+    url: https://github.com/TheBluCog/ReactorTheory
+
+  license:
+    name: Reactor Theory / ARTYMUS Governance License
+    url: https://github.com/TheBluCog/ReactorTheory
+
+servers:
+  - url: https://api.artymus.ethicvault.com/v3
+    description: Production API
+  - url: https://sandbox.artymus.ethicvault.com/v3
+    description: Sandbox API
+  - url: http://localhost:8787/v3
+    description: Local development
+
+tags:
+  - name: System
+    description: System health, status, and runtime state.
+  - name: Agents
+    description: Agent identity, registration, status, and authority profile.
+  - name: Contracts
+    description: Agentic execution contracts and service authority boundaries.
+  - name: Governance
+    description: Policy checks, authority validation, and deterministic control.
+  - name: Boundary
+    description: Execution boundary checks and drift containment.
+  - name: Execution
+    description: Governed action requests and execution lifecycle.
+  - name: Audit
+    description: Audit trail creation, retrieval, and verification.
+  - name: Memory
+    description: Governed memory references and context lineage.
+  - name: Resonance
+    description: Resonance Engine scoring and coherence telemetry.
+  - name: UAP
+    description: Unified Alignment Performance scoring.
+  - name: Webhooks
+    description: Event delivery contracts for external systems.
+
+security:
+  - bearerAuth: []
+  - signedAgentRequest: []
+
+paths:
+  /system/health:
+    get:
+      tags: [System]
+      summary: Health check
+      operationId: getSystemHealth
+      security: []
+      responses:
+        "200":
+          description: System is reachable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemHealth"
+
+  /system/state:
+    get:
+      tags: [System]
+      summary: Get ARTYMUS runtime state
+      operationId: getSystemState
+      responses:
+        "200":
+          description: Current governed runtime state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemState"
+
+  /agents:
+    post:
+      tags: [Agents]
+      summary: Register an agent
+      operationId: registerAgent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterAgentRequest"
+      responses:
+        "201":
+          description: Agent registered.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agent"
+
+    get:
+      tags: [Agents]
+      summary: List registered agents
+      operationId: listAgents
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: Agent list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentList"
+
+  /agents/{agentId}:
+    get:
+      tags: [Agents]
+      summary: Get agent profile
+      operationId: getAgent
+      parameters:
+        - $ref: "#/components/parameters/AgentId"
+      responses:
+        "200":
+          description: Agent profile.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agent"
+
+  /contracts:
+    post:
+      tags: [Contracts]
+      summary: Create an agentic contract
+      operationId: createContract
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateContractRequest"
+      responses:
+        "201":
+          description: Contract created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgenticContract"
+
+    get:
+      tags: [Contracts]
+      summary: List contracts
+      operationId: listContracts
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: Contract list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractList"
+
+  /contracts/{contractId}:
+    get:
+      tags: [Contracts]
+      summary: Get contract
+      operationId: getContract
+      parameters:
+        - $ref: "#/components/parameters/ContractId"
+      responses:
+        "200":
+          description: Contract details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgenticContract"
+
+  /governance/validate:
+    post:
+      tags: [Governance]
+      summary: Validate authority and policy before execution
+      operationId: validateGovernance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GovernanceValidationRequest"
+      responses:
+        "200":
+          description: Governance validation result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GovernanceValidationResult"
+
+  /boundary/check:
+    post:
+      tags: [Boundary]
+      summary: Check execution boundary
+      operationId: checkBoundary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BoundaryCheckRequest"
+      responses:
+        "200":
+          description: Boundary decision.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BoundaryCheckResult"
+
+  /execution/request:
+    post:
+      tags: [Execution]
+      summary: Submit governed execution request
+      operationId: requestExecution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExecutionRequest"
+      responses:
+        "202":
+          description: Execution accepted for governed processing.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutionReceipt"
+
+  /execution/{executionId}:
+    get:
+      tags: [Execution]
+      summary: Get execution status
+      operationId: getExecution
+      parameters:
+        - $ref: "#/components/parameters/ExecutionId"
+      responses:
+        "200":
+          description: Execution status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutionRecord"
+
+  /audit/events:
+    post:
+      tags: [Audit]
+      summary: Create audit event
+      operationId: createAuditEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAuditEventRequest"
+      responses:
+        "201":
+          description: Audit event recorded.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEvent"
+
+    get:
+      tags: [Audit]
+      summary: Query audit events
+      operationId: listAuditEvents
+      parameters:
+        - name: executionId
+          in: query
+          schema:
+            type: string
+        - name: agentId
+          in: query
+          schema:
+            type: string
+        - name: contractId
+          in: query
+          schema:
+            type: string
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: Audit events.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEventList"
+
+  /memory/references:
+    post:
+      tags: [Memory]
+      summary: Create governed memory reference
+      operationId: createMemoryReference
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMemoryReferenceRequest"
+      responses:
+        "201":
+          description: Memory reference created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemoryReference"
+
+  /resonance/score:
+    post:
+      tags: [Resonance]
+      summary: Score coherence through Resonance Engine
+      operationId: scoreResonance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResonanceScoreRequest"
+      responses:
+        "200":
+          description: Resonance score result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResonanceScoreResult"
+
+  /uap/score:
+    post:
+      tags: [UAP]
+      summary: Calculate Unified Alignment Performance
+      operationId: scoreUap
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UapScoreRequest"
+      responses:
+        "200":
+          description: Unified Alignment Performance score.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UapScoreResult"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+    signedAgentRequest:
+      type: apiKey
+      in: header
+      name: X-ARTYMUS-SIGNATURE
+      description: Cryptographic signature over request body, timestamp, nonce, and agent identity.
+
+  parameters:
+    AgentId:
+      name: agentId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    ContractId:
+      name: contractId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    ExecutionId:
+      name: executionId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 50
+
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+
+  schemas:
+    SystemHealth:
+      type: object
+      required: [ok, version, timestamp]
+      properties:
+        ok:
+          type: boolean
+        version:
+          type: string
+          example: "3.0.0"
+        timestamp:
+          type: string
+          format: date-time
+
+    SystemState:
+      type: object
+      required: [state, governanceMode, driftLevel, timestamp]
+      properties:
+        state:
+          type: string
+          enum: [ready, degraded, restricted, emergency, offline]
+        governanceMode:
+          type: string
+          enum: [standard, strict, recovery, audit_lockdown]
+        driftLevel:
+          type: number
+          minimum: 0
+          maximum: 1
+        activeContracts:
+          type: integer
+        activeAgents:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+
+    RegisterAgentRequest:
+      type: object
+      required: [name, type, authorityProfile]
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [human_operator, ai_agent, service_agent, audit_agent, system_agent]
+        authorityProfile:
+          $ref: "#/components/schemas/AuthorityProfile"
+        publicKey:
+          type: string
+          description: Optional public key for signed agent requests.
+
+    Agent:
+      type: object
+      required: [agentId, name, type, status, authorityProfile, createdAt]
+      properties:
+        agentId:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+          enum: [active, suspended, revoked, pending]
+        authorityProfile:
+          $ref: "#/components/schemas/AuthorityProfile"
+        createdAt:
+          type: string
+          format: date-time
+
+    AgentList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Agent"
+        nextCursor:
+          type: string
+
+    AuthorityProfile:
+      type: object
+      required: [scopes, maxRiskTier]
+      properties:
+        scopes:
+          type: array
+          items:
+            type: string
+          example:
+            - contracts:read
+            - execution:request
+            - audit:create
+        maxRiskTier:
+          type: string
+          enum: [low, moderate, high, critical]
+        requiresHumanApproval:
+          type: boolean
+          default: false
+
+    CreateContractRequest:
+      type: object
+      required: [name, agentId, service, permissions, constraints]
+      properties:
+        name:
+          type: string
+        agentId:
+          type: string
+        service:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+        constraints:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContractConstraint"
+        expiresAt:
+          type: string
+          format: date-time
+
+    AgenticContract:
+      type: object
+      required: [contractId, name, agentId, service, permissions, constraints, status, createdAt]
+      properties:
+        contractId:
+          type: string
+        name:
+          type: string
+        agentId:
+          type: string
+        service:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+        constraints:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContractConstraint"
+        status:
+          type: string
+          enum: [active, expired, revoked, suspended]
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+
+    ContractConstraint:
+      type: object
+      required: [type, rule]
+      properties:
+        type:
+          type: string
+          enum: [rate_limit, risk_limit, data_boundary, approval_required, jurisdiction, financial_limit, action_limit]
+        rule:
+          type: object
+          additionalProperties: true
+
+    ContractList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/AgenticContract"
+        nextCursor:
+          type: string
+
+    GovernanceValidationRequest:
+      type: object
+      required: [agentId, contractId, requestedAction]
+      properties:
+        agentId:
+          type: string
+        contractId:
+          type: string
+        requestedAction:
+          $ref: "#/components/schemas/RequestedAction"
+        evidence:
+          type: array
+          items:
+            $ref: "#/components/schemas/EvidenceReference"
+
+    GovernanceValidationResult:
+      type: object
+      required: [decision, reason, riskTier, auditRequired]
+      properties:
+        decision:
+          type: string
+          enum: [allow, deny, require_human_approval, escalate, quarantine]
+        reason:
+          type: string
+        riskTier:
+          type: string
+          enum: [low, moderate, high, critical]
+        auditRequired:
+          type: boolean
+        policyIds:
+          type: array
+          items:
+            type: string
+
+    BoundaryCheckRequest:
+      type: object
+      required: [agentId, action, context]
+      properties:
+        agentId:
+          type: string
+        action:
+          $ref: "#/components/schemas/RequestedAction"
+        context:
+          type: object
+          additionalProperties: true
+
+    BoundaryCheckResult:
+      type: object
+      required: [decision, boundaryState, driftScore]
+      properties:
+        decision:
+          type: string
+          enum: [inside_boundary, outside_boundary, uncertain, blocked]
+        boundaryState:
+          type: string
+          enum: [stable, strained, breached, recovery_required]
+        driftScore:
+          type: number
+          minimum: 0
+          maximum: 1
+        notes:
+          type: string
+
+    ExecutionRequest:
+      type: object
+      required: [agentId, contractId, action]
+      properties:
+        agentId:
+          type: string
+        contractId:
+          type: string
+        action:
+          $ref: "#/components/schemas/RequestedAction"
+        idempotencyKey:
+          type: string
+        humanApprovalToken:
+          type: string
+
+    ExecutionReceipt:
+      type: object
+      required: [executionId, status, receivedAt]
+      properties:
+        executionId:
+          type: string
+        status:
+          type: string
+          enum: [accepted, pending_approval, rejected, quarantined]
+        receivedAt:
+          type: string
+          format: date-time
+
+    ExecutionRecord:
+      type: object
+      required: [executionId, status, agentId, contractId, createdAt]
+      properties:
+        executionId:
+          type: string
+        status:
+          type: string
+          enum: [accepted, pending_approval, running, completed, failed, rejected, quarantined]
+        agentId:
+          type: string
+        contractId:
+          type: string
+        result:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+
+    RequestedAction:
+      type: object
+      required: [actionType, target]
+      properties:
+        actionType:
+          type: string
+          example: service.call
+        target:
+          type: string
+          example: payments.create_invoice
+        payload:
+          type: object
+          additionalProperties: true
+        riskDeclared:
+          type: string
+          enum: [low, moderate, high, critical]
+
+    EvidenceReference:
+      type: object
+      required: [type, uri]
+      properties:
+        type:
+          type: string
+          enum: [document, memory, audit_event, external_record, operator_note, system_state]
+        uri:
+          type: string
+        hash:
+          type: string
+
+    CreateAuditEventRequest:
+      type: object
+      required: [eventType, actorId, subjectId, payload]
+      properties:
+        eventType:
+          type: string
+        actorId:
+          type: string
+        subjectId:
+          type: string
+        executionId:
+          type: string
+        contractId:
+          type: string
+        payload:
+          type: object
+          additionalProperties: true
+
+    AuditEvent:
+      type: object
+      required: [auditEventId, eventType, actorId, subjectId, timestamp, hash]
+      properties:
+        auditEventId:
+          type: string
+        eventType:
+          type: string
+        actorId:
+          type: string
+        subjectId:
+          type: string
+        executionId:
+          type: string
+        contractId:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        payload:
+          type: object
+          additionalProperties: true
+        previousHash:
+          type: string
+        hash:
+          type: string
+
+    AuditEventList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditEvent"
+        nextCursor:
+          type: string
+
+    CreateMemoryReferenceRequest:
+      type: object
+      required: [agentId, type, uri, purpose]
+      properties:
+        agentId:
+          type: string
+        type:
+          type: string
+          enum: [short_term, long_term, external, canonical, audit_linked]
+        uri:
+          type: string
+        purpose:
+          type: string
+        hash:
+          type: string
+
+    MemoryReference:
+      type: object
+      required: [memoryReferenceId, agentId, type, uri, createdAt]
+      properties:
+        memoryReferenceId:
+          type: string
+        agentId:
+          type: string
+        type:
+          type: string
+        uri:
+          type: string
+        purpose:
+          type: string
+        hash:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    ResonanceScoreRequest:
+      type: object
+      required: [subject, context]
+      properties:
+        subject:
+          type: object
+          additionalProperties: true
+        context:
+          type: object
+          additionalProperties: true
+        dimensions:
+          type: array
+          items:
+            type: string
+          example:
+            - coherence
+            - drift
+            - trust
+            - signal_integrity
+
+    ResonanceScoreResult:
+      type: object
+      required: [coherenceScore, driftScore, trustScore, verdict]
+      properties:
+        coherenceScore:
+          type: number
+          minimum: 0
+          maximum: 1
+        driftScore:
+          type: number
+          minimum: 0
+          maximum: 1
+        trustScore:
+          type: number
+          minimum: 0
+          maximum: 1
+        verdict:
+          type: string
+          enum: [stable, watch, degraded, unstable, blocked]
+        notes:
+          type: string
+
+    UapScoreRequest:
+      type: object
+      required: [energy, intentAlignment, controlCoherence, drift]
+      properties:
+        energy:
+          type: number
+          minimum: 0
+        intentAlignment:
+          type: number
+          minimum: 0
+        controlCoherence:
+          type: number
+          minimum: 0
+        drift:
+          type: number
+          exclusiveMinimum: 0
+        context:
+          type: object
+          additionalProperties: true
+        beliefSystem:
+          type: object
+          additionalProperties: true
+
+    UapScoreResult:
+      type: object
+      required: [uap, interpretation]
+      properties:
+        uap:
+          type: number
+        formula:
+          type: string
+          example: "UAP = (E × I × C) / D | (X, Φ)"
+        interpretation:
+          type: string
+        risk:
+          type: string
+          enum: [low, moderate, high, critical]
