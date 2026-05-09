@@ -1,15 +1,15 @@
 {
-  "name": "ARTYMUS 3.0",
-  "slug": "artymus-3-governed-agentic-ai",
+  "name": "Ethic Vault",
+  "slug": "ethic-vault-governed-agentic-ai",
   "version": "3.0.0",
   "publisher": {
-    "name": "George Dunphy",
+    "name": "Ethic Vault",
     "organization": "Ethic Vault",
-    "role": "Chief Technology Officer",
+    "role": "Governed AI Infrastructure",
     "repository": "https://github.com/TheBluCog/ReactorTheory"
   },
   "summary": "Governed agentic artificial intelligence infrastructure for contract-bound execution, auditability, boundary enforcement, and trust control.",
-  "description": "ARTYMUS 3.0 provides a callable governance surface for agentic artificial intelligence systems. It defines OpenAPI-based interfaces for agent registration, agentic contracts, governance validation, deterministic boundary checks, governed execution, audit event creation, memory references, Resonance Engine scoring, and Unified Alignment Performance telemetry.",
+  "description": "Ethic Vault provides a callable governance surface for agentic artificial intelligence systems powered by ARTYMUS 3.0. It defines OpenAPI-based interfaces for agent registration, agentic contracts, governance validation, deterministic boundary checks, governed execution, audit event creation, memory references, Resonance Engine scoring, and Unified Alignment Performance telemetry.",
   "category": [
     "AI Governance",
     "Agentic AI",
@@ -19,9 +19,9 @@
     "Enterprise Automation"
   ],
   "tags": [
+    "Ethic Vault",
     "ARTYMUS",
     "Reactor Theory",
-    "Ethic Vault",
     "Resonance Engine",
     "OpenAPI",
     "Agentic AI",
@@ -71,5 +71,6 @@
     "audit_required": true
   },
   "status": "marketplace-ready",
+  "powered_by": "ARTYMUS 3.0",
   "slogan": "Govern. Don’t worship."
 }
