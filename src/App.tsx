@@ -22,7 +22,7 @@ const actions: Action[] = [
 const boot: Entry[] = [
   { type: 'system', text: 'Chuck is online. You are not here to fight. You are here to get organized.' },
   { type: 'output', text: 'First rule: do not send the angry message. Document it. Date it. Save it. Let counsel review it.' },
-  { type: 'output', text: 'Pick a button below. Start with “What do I do?” if you are overwhelmed.' },
+  { type: 'output', text: 'Pick a button below. Start with What do I do? if you are overwhelmed.' },
 ];
 
 function respond(raw: string): Entry[] {
@@ -33,11 +33,14 @@ function respond(raw: string): Entry[] {
   if (cmd === 'CALM') return [{ type: 'output', text: 'Calm protocol: put the phone down for 10 minutes. No response while activated. Your power is the record, not the reaction.' }];
   if (cmd === 'DOCUMENT') return [{ type: 'output', text: 'Incident note template: Date/time. What happened. Exact words if available. Who was present. Screenshot/export saved? Impact on parenting, safety, finances, or communication. No insults. Just facts.' }];
   if (cmd === 'TIMELINE') return [{ type: 'output', text: 'Timeline builder: list events oldest to newest. One event per line. Start each line with date. Attach proof. Mark missing dates as UNKNOWN, not guessed.' }];
-  if (cmd === 'LAWYER') return [{ type: 'output', text: 'Lawyer brief: “Here are the dated facts, supporting records, what I need help deciding, and what I am not going to do without advice.” Keep it short. Keep it clean.' }];
+  if (cmd === 'LAWYER') return [{ type: 'output', text: 'Lawyer brief: Here are the dated facts, supporting records, what I need help deciding, and what I am not going to do without advice. Keep it short. Keep it clean.' }];
   if (cmd === 'REWRITE') return [{ type: 'output', text: 'Court-safe rewrite rule: remove insults, motives, diagnoses, and certainty you cannot prove. Replace with dates, observable conduct, exact words, and records.' }];
   if (cmd === 'CHECK') return [{ type: 'warn', text: 'Risk check: do not threaten, publish, contact repeatedly, involve the kids as messengers, violate orders, or improvise legal strategy. HOLD means lawyer review.' }];
   if (cmd === 'CLEAR') return [];
-  return [{ type: 'input', text: `You wrote: ${input}` }, { type: 'output', text: 'Chuck response: turn this into a dated fact. What date did it happen? What proof do you have? What is the safest next step that does not escalate?' }];
+  return [
+    { type: 'input', text: 'You wrote: ' + input },
+    { type: 'output', text: 'Chuck response: turn this into a dated fact. What date did it happen? What proof do you have? What is the safest next step that does not escalate?' },
+  ];
 }
 
 export default function App() {
@@ -53,12 +56,12 @@ export default function App() {
       setActive('HELP');
       return;
     }
-    setEntries((prev) => [...prev, { type: 'input', text: `> ${command}` }, ...next]);
+    setEntries((prev) => [...prev, { type: 'input', text: '> ' + command }, ...next]);
     setInput('');
     setActive(command.toUpperCase());
   }
 
-  function submit(event: FormEvent) {
+  function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     run(input);
   }
@@ -98,7 +101,7 @@ export default function App() {
 
         <section className="tui-screen dad-screen" aria-live="polite">
           {entries.map((entry, index) => (
-            <p key={`${entry.text}-${index}`} className={`line ${entry.type}`}>{entry.text}</p>
+            <p key={entry.text + '-' + index} className={'line ' + entry.type}>{entry.text}</p>
           ))}
         </section>
 
