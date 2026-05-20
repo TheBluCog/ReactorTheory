@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agent Chuck Workspace Schema",
+  "type": "object",
+  "required": [
+    "workspace_id",
+    "created_at",
+    "operator",
+    "status",
+    "governance_posture",
+    "timeline",
+    "evidence_packets"
+  ],
+  "properties": {
+    "workspace_id": {
+      "type": "string",
+      "pattern": "^CHUCK-WS-[0-9]{8}-[A-Z0-9]+$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "operator": {
+      "type": "object",
+      "required": ["id", "role"],
+      "properties": {
+        "id": { "type": "string" },
+        "role": { "type": "string" },
+        "counsel_attached": { "type": "boolean" }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["INTAKE", "ACTIVE", "REVIEW", "ARCHIVED"]
+    },
+    "governance_posture": {
+      "type": "string",
+      "enum": ["ALLOW", "HOLD", "BLOCK"]
+    },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/timeline_event"
+      }
+    },
+    "evidence_packets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence_packet"
+      }
+    },
+    "drift_audit": {
+      "$ref": "#/$defs/drift_audit"
+    },
+    "hash_chain": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/hash_record"
+      }
+    },
+    "redaction_records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/redaction_record"
+      }
+    }
+  },
+  "$defs": {
+    "timeline_event": {
+      "type": "object",
+      "required": ["event_id", "event_date", "summary"],
+      "properties": {
+        "event_id": { "type": "string" },
+        "event_date": { "type": "string", "format": "date" },
+        "summary": { "type": "string" },
+        "source_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "pattern_tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "evidence_packet": {
+      "type": "object",
+      "required": ["packet_id", "source_type", "summary"],
+      "properties": {
+        "packet_id": { "type": "string" },
+        "source_type": { "type": "string" },
+        "summary": { "type": "string" },
+        "custody_status": { "type": "string" },
+        "recommended_posture": {
+          "type": "string",
+          "enum": ["ALLOW", "HOLD", "BLOCK"]
+        }
+      }
+    },
+    "drift_audit": {
+      "type": "object",
+      "properties": {
+        "unsupported_claims": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "missing_dates": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "emotional_language_flags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "drift_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "hash_record": {
+      "type": "object",
+      "required": ["record_id", "sha256", "created_at"],
+      "properties": {
+        "record_id": { "type": "string" },
+        "sha256": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "redaction_record": {
+      "type": "object",
+      "required": ["target", "redaction_type"],
+      "properties": {
+        "target": { "type": "string" },
+        "redaction_type": {
+          "type": "string",
+          "enum": ["PHONE", "EMAIL", "ADDRESS", "CHILD_NAME", "DOB", "ACCOUNT"]
+        },
+        "replacement": { "type": "string" }
+      }
+    }
+  }
+}
