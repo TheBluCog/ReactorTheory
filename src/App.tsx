@@ -3,22 +3,22 @@ import { FormEvent, useState } from 'react';
 type Mode = 'calm' | 'document' | 'lawyer' | 'rewrite';
 
 const modeLabels: Record<Mode, string> = {
-  calm: 'Calm plan',
-  document: 'Document it',
-  lawyer: 'Lawyer brief',
-  rewrite: 'Safe rewrite',
+  calm: 'Steady first',
+  document: 'Capture facts',
+  lawyer: 'Prep counsel',
+  rewrite: 'Clean reply',
 };
 
 const sampleResponses: Record<Mode, string> = {
-  calm: 'Do not answer right now. Take ten minutes. Save the message. Your job is not to win the argument. Your job is to protect the record and stay steady.',
-  document: 'Write one clean note: date, time, what happened, exact words if available, who was present, proof saved, and impact on parenting or safety. No insults. No guesses.',
-  lawyer: 'Send counsel the dated facts, supporting records, what decision you need help with, and what you are not going to do without advice. Keep it short and factual.',
-  rewrite: 'Remove anger, motive-reading, labels, and accusations you cannot prove. Use observable conduct, exact dates, exact words, and attached records.',
+  calm: 'Pause before responding. Take a few minutes, save the message, and let the adrenaline drop. Your strongest move is a calm record, not a fast reaction.',
+  document: 'Create one factual note: date, time, what happened, exact words if you have them, who was present, what proof you saved, and how it affected parenting, safety, money, or communication.',
+  lawyer: 'Send counsel a short brief: the dated facts, the records attached, the decision you need help with, and the response you are considering. Ask before sending anything risky.',
+  rewrite: 'Keep the reply short, neutral, and child-focused. Remove blame, insults, motives, and legal threats. Use facts, dates, and one clear request or boundary.',
 };
 
 function answer(mode: Mode, text: string) {
   if (!text.trim()) return sampleResponses[mode];
-  return sampleResponses[mode] + ' Based on what you wrote, the next safe move is: turn it into a dated fact, save proof, and do not escalate contact.';
+  return sampleResponses[mode] + ' For what you entered, the safest next step is to turn it into a dated record, save the proof, and keep any reply brief, neutral, and reviewable.';
 }
 
 export default function App() {
@@ -41,13 +41,13 @@ export default function App() {
       <section className="demo-card">
         <header className="demo-header">
           <p>AGENT CHUCK</p>
-          <h1>Dad, stay calm.</h1>
-          <span>Do not react. Build the record.</span>
+          <h1>Stay steady.</h1>
+          <span>Protect your kids. Protect the record. Respond with control.</span>
         </header>
 
         <section className="demo-alert">
-          <b>Next safest move</b>
-          <span>Document first. Reply later, if counsel says so.</span>
+          <b>Best next move</b>
+          <span>Save the proof. Write the facts. Get advice before you reply.</span>
         </section>
 
         <section className="demo-modes" aria-label="Choose support mode">
@@ -60,8 +60,8 @@ export default function App() {
 
         <form className="demo-prompt" onSubmit={submit}>
           <label htmlFor="incident">What happened?</label>
-          <textarea id="incident" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Paste or type the message, event, or problem here." />
-          <button type="submit">Sort it calmly</button>
+          <textarea id="incident" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Type the message, incident, or decision you are facing." />
+          <button type="submit">Give me the calm plan</button>
         </form>
 
         <section className="demo-response">
@@ -73,10 +73,10 @@ export default function App() {
         </section>
 
         <footer className="demo-footer">
-          <span>No angry texts</span>
-          <span>No public posts</span>
-          <span>No guessing</span>
+          <span>Stay calm</span>
           <span>Save proof</span>
+          <span>Use facts</span>
+          <span>Ask counsel</span>
         </footer>
       </section>
     </main>
