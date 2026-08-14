@@ -1,0 +1,72 @@
+{
+  "schema": "ethicvault.machine-math.nft-deployment-manifest.v1",
+  "prepared_at": "2026-08-14T20:28:57Z",
+  "status": "PREPARED_NOT_BROADCAST",
+  "network": {
+    "name": "Ethereum Sepolia",
+    "chain_id": 11155111
+  },
+  "deployer_and_initial_owner": "0x4710035E0Bf14bEc0d438461FD7F1C6E0E0d7198",
+  "expected_deployer_nonce": 1,
+  "expected_contract_address_if_nonce_is_1": "0x68f90c860A9E3eb0A66061472a6Bd936AbB0dE00",
+  "contract": {
+    "name": "MACHINE.MATH Evidence",
+    "symbol": "MMATH",
+    "token_id": 13,
+    "design": "direct non-proxy one-of-one ERC-721; constructor mint; no administrator or future mint function",
+    "source_file": "MachineMathEvidenceNFT.sol",
+    "source_sha256": "263d496867b7a6f4f735d9d63b74187d35cbcab6591e448d2d11b0cc7589b601",
+    "source_commit": "a856b9a92117d50c7b62eb14cd18a78a64ffc40c",
+    "source_url": "https://github.com/TheBluCog/ReactorTheory/blob/a856b9a92117d50c7b62eb14cd18a78a64ffc40c/nft/machine-math/MachineMathEvidenceNFT.sol",
+    "compiler": "solc 0.8.24+commit.e11b9ed9.Emscripten.clang",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "creation_bytecode_bytes": 6206,
+    "creation_bytecode_sha256": "c3bc80aec2ebef1e1f09bc8ef0ec61eede8eb8fe810c9bfa1dd8adbb8d337f8d"
+  },
+  "evidence_binding": {
+    "registry": "0x7F768D887397f305f146E5852625Eb2908Bac3B9",
+    "artifact_id": 13,
+    "anchor_transaction": "0x1a646c24073d3d79e51afcf9b71ad62c5b18097acca8298e843441a35bf4b934",
+    "source_jpg_sha256": "95505502c600c81e276192e26108facab2bb496bf4117ef5f50a1116c0452019",
+    "source_jpg_keccak256": "0x0ecbe462bbdf05832eec55d40987e5571d3ea53b05a9a5df29827841de9928d4",
+    "source_jpg_bytes": 464260,
+    "source_uri": "urn:ethicvault:sha256:95505502c600c81e276192e26108facab2bb496bf4117ef5f50a1116c0452019"
+  },
+  "metadata": {
+    "storage": "immutable data:application/json;base64 tokenURI in contract runtime",
+    "pretty_json_file": "MACHINE_MATH_NFT_METADATA_TOKEN_13.json",
+    "pretty_json_sha256": "c519cc8242d34280e07fac80d266ff7dd923c5274d4bb17f60eff140c68442ac",
+    "onchain_minified_json_bytes": 2084,
+    "onchain_minified_json_sha256": "a383d7899323678b7d10fad495366d9c65bb33e6c192851d8e0a060d91269a2a",
+    "semantic_match_between_pretty_and_onchain_json": true,
+    "display_image_sha256": "1b62bb01019eaa0edd6cb69bec4d617846ef2935a3c0b5ebb8f0e3ae2b7c9c94",
+    "display_image_commit": "24d2ee36324a68845d53e5b460321d752010dad1",
+    "display_image_url": "https://raw.githubusercontent.com/TheBluCog/ReactorTheory/24d2ee36324a68845d53e5b460321d752010dad1/nft/machine-math/MACHINE_MATH_TRINOMIAL_POLYMATH_NFT_DISPLAY.jpg"
+  },
+  "preflight": {
+    "block": 11489498,
+    "constructor_eth_call": "SUCCESS",
+    "estimated_gas": 1382996,
+    "suggested_gas_limit": 1660000,
+    "observed_gas_price_wei": 1058025597,
+    "estimated_fee_at_observed_gas_price_wei": 1463245168548612,
+    "estimated_fee_at_observed_gas_price_sepolia_eth": "0.001463245168548612",
+    "transaction_value_wei": 0
+  },
+  "signature_boundary": {
+    "expected_confirmations": 1,
+    "expected_action": "Contract deployment",
+    "expected_value": "0 Sepolia ETH",
+    "reject_if_prompted_for": [
+      "token approval",
+      "setApprovalForAll",
+      "permit",
+      "swap",
+      "token spending",
+      "a second mint transaction"
+    ]
+  }
+}
