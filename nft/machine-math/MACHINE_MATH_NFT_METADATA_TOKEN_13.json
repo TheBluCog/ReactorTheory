@@ -1,0 +1,38 @@
+{
+  "name": "MACHINE.MATH Trinomial Polymath Evidence #13",
+  "description": "Immutable ERC-721 evidence token bound to Ethic Vault RT5 artifact 13 on Ethereum Sepolia. The registry proves the supplied source-artifact hashes and URI; the public display image is a Git-commit-pinned derivative of the anchored JPG.",
+  "image": "https://raw.githubusercontent.com/TheBluCog/ReactorTheory/24d2ee36324a68845d53e5b460321d752010dad1/nft/machine-math/MACHINE_MATH_TRINOMIAL_POLYMATH_NFT_DISPLAY.jpg",
+  "external_url": "https://eth-sepolia.blockscout.com/tx/0x1a646c24073d3d79e51afcf9b71ad62c5b18097acca8298e843441a35bf4b934",
+  "attributes": [
+    { "trait_type": "Artifact ID", "value": 13, "display_type": "number" },
+    { "trait_type": "Artifact Type", "value": "MACHINE.MATH.SPEC" },
+    { "trait_type": "System ID", "value": "MACHINE.MATH.TRINOMIAL_POLYMATH" },
+    { "trait_type": "Ring", "value": "LEFT" },
+    { "trait_type": "Node", "value": "DUNPHYG" },
+    { "trait_type": "Network", "value": "Ethereum Sepolia" },
+    { "trait_type": "Registry", "value": "RT5ArtifactRegistry" },
+    { "trait_type": "Evidence Status", "value": "ANCHORED" }
+  ],
+  "properties": {
+    "chain_id": 11155111,
+    "token_id": 13,
+    "registry": "0x7F768D887397f305f146E5852625Eb2908Bac3B9",
+    "artifact_id": 13,
+    "anchor_transaction": "0x1a646c24073d3d79e51afcf9b71ad62c5b18097acca8298e843441a35bf4b934",
+    "source_artifact": {
+      "file_name": "MACHINE_MATH_TRINOMIAL_POLYMATH_SPEC_ETHICVAULT.jpg",
+      "mime_type": "image/jpeg",
+      "bytes": 464260,
+      "sha256": "95505502c600c81e276192e26108facab2bb496bf4117ef5f50a1116c0452019",
+      "keccak256": "0x0ecbe462bbdf05832eec55d40987e5571d3ea53b05a9a5df29827841de9928d4",
+      "uri": "urn:ethicvault:sha256:95505502c600c81e276192e26108facab2bb496bf4117ef5f50a1116c0452019"
+    },
+    "display_derivative": {
+      "file_name": "MACHINE_MATH_TRINOMIAL_POLYMATH_NFT_DISPLAY.jpg",
+      "bytes": 60566,
+      "sha256": "1b62bb01019eaa0edd6cb69bec4d617846ef2935a3c0b5ebb8f0e3ae2b7c9c94",
+      "git_commit": "24d2ee36324a68845d53e5b460321d752010dad1"
+    },
+    "claim_scope": "This token records provenance and hash binding on Ethereum Sepolia. It does not independently validate the substantive claims within the source artifact and has no contractual or financial authority."
+  }
+}
